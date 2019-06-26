@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
+import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils.dart';
+import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -16,58 +20,74 @@ class Homepage extends StatefulWidget {
 
 class HomePageState extends State<Homepage> {
   List<StorageItemAbstract> items = [];
+  String errorMessage;
 
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    List<StorageItemAbstract> items = await fetchItems();
-    setState(() {
-      this.items = items;
-    });
+  void initState() {
+    fetchData();
+    super.initState();
   }
 
-  Future<List<StorageItemAbstract>> fetchItems() async {
-    var url = getURL("item/");
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      Utf8Decoder decode = Utf8Decoder();
-      List<dynamic> data = json.decode(decode.convert(response.bodyBytes));
-      List<StorageItemAbstract> list = [];
-      data.forEach((data) {
-        list.add(StorageItemAbstract.fromJson(data));
+  Future fetchData() async {
+    try {
+      setState(() {
+        errorMessage = null;
       });
-      return list;
-    } else {
-      throw ("Failed to fetch");
+      List<StorageItemAbstract> items = await fetchItems();
+      setState(() {
+        this.items = items;
+      });
+      final settings = await fetchSetting();
+      ItemDetailEditPageState settingsState =
+      Provider.of<ItemDetailEditPageState>(context);
+      settingsState.updateAll(
+          positions: settings.positions,
+          locations: settings.locations,
+          series: settings.series,
+          authors: settings.authors,
+          categories: settings.categories);
+    } on Exception catch (err) {
+      setState(() {
+        errorMessage = err.toString();
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget body = ItemDisplay(items);
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Storage Management"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(
-                    context: context, delegate: CustomSearchDelegate(items));
-              },
-            )
-          ],
-        ),
-        body: Container(
-          child: RefreshIndicator(
-            child: ItemDisplay(items),
-            onRefresh: () async {
-              var list = await fetchItems();
-              setState(() {
-                this.items = list;
-              });
+      appBar: AppBar(
+        title: errorMessage == null
+            ? Text("Storage Management")
+            : Text(errorMessage),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                  context: context, delegate: CustomSearchDelegate(items));
             },
-          ),
-        ));
+          )
+        ],
+      ),
+      body: Container(
+        child: RefreshIndicator(
+          child: body,
+          onRefresh: () async {
+            await fetchData();
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return EditPage();
+          }));
+        },
+      ),
+    );
   }
 }
 

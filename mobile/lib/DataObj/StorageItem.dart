@@ -91,7 +91,15 @@ class Author {
   Author({this.id, this.name, this.description});
 
   factory Author.fromJson(Map<String, dynamic> json) {
-    return Author(id: json['id'], name: json['name'], description: json['description']);
+    return Author(
+        id: json['id'], name: json['name'], description: json['description']);
+  }
+
+  Map toJson() {
+    var map = Map<String, dynamic>();
+    map['name'] = name;
+    map['description'] = description;
+    return map;
   }
 }
 
@@ -150,7 +158,6 @@ class StorageItemDetail {
       this.images});
 
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
-
     return StorageItemDetail(
         id: json['id'],
         name: json['name'],
