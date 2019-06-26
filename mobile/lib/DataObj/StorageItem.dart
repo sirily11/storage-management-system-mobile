@@ -83,7 +83,7 @@ class Series {
 
   factory Series.fromJson(Map<String, dynamic> json) {
     if (json != null) {
-      return Series(id: json['id'], name: json['name']);
+      return Series(id: json['id'], name: json['name'], description: json['description']);
     }
     return null;
   }
