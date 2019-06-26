@@ -1,10 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class HorizontalImage extends StatelessWidget {
   final List<String> images;
+  final isLocal;
 
-  HorizontalImage(this.images);
+  HorizontalImage(this.images, {this.isLocal = false});
+
+  Widget getImage(String imagePath) {
+    return this.isLocal
+        ? Image.file(
+            File(imagePath),
+            fit: BoxFit.cover,
+            width: 200,
+          )
+        : Image.network(
+            imagePath,
+            fit: BoxFit.cover,
+            width: 200,
+          );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +40,11 @@ class HorizontalImage extends StatelessWidget {
                   itemCount: images.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Image.network(images[index]),
-                    );
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: getImage(images[index]),
+                        ));
                   },
                 ),
               )

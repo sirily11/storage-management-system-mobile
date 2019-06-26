@@ -9,6 +9,7 @@ import 'package:mobile/Home/Detail/SubDetail/AuthorDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
+import 'package:mobile/ItemImage/ItemImageScreen.dart';
 import 'package:mobile/utils.dart';
 import 'package:mobile/Home/Detail/HorizontalImage.dart';
 
@@ -160,6 +161,16 @@ class ItemDetailPageState extends State<ItemDetailPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(name),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (_){
+                return ItemImageScreen(_id, this.name);
+              }));
+            },
+          )
+        ],
       ),
       body: GestureDetector(
         child: body,
