@@ -9,8 +9,8 @@ import 'package:mobile/DataObj/StorageItem.dart';
 import 'DataObj/StorageItem.dart';
 
 String getURL(String path) {
-//  String base = "http://192.168.31.90/storage_management";
-  String base = "https://serverless.sirileepage.com/storage_management";
+  String base = "http://192.168.31.90/storage_management";
+//  String base = "https://serverless.sirileepage.com/storage_management";
   return "$base/$path";
 }
 
@@ -90,6 +90,36 @@ Future<Author> addAuthor(Author author) async {
     Utf8Decoder decode = Utf8Decoder();
     var data = json.decode(decode.convert(response.bodyBytes));
     return Author.fromJson(data);
+  } else {
+    throw ("Failed to post");
+  }
+}
+
+Future<Author> editAuthor(Author author) async {
+  var url = getURL("author/${author.id}/");
+  var body = {"name": author.name, "description": author.description};
+  final response = await http.patch(url,
+      body: json.encode(body),
+      headers: {HttpHeaders.contentTypeHeader: "application/json"});
+  if (response.statusCode == 200) {
+    Utf8Decoder decode = Utf8Decoder();
+    var data = json.decode(decode.convert(response.bodyBytes));
+    return Author.fromJson(data);
+  } else {
+    throw ("Failed to post");
+  }
+}
+
+Future<Series> editSeries(Series series) async {
+  var url = getURL("series/${series.id}/");
+  var body = {"name": series.name, "description": series.description};
+  final response = await http.patch(url,
+      body: json.encode(body),
+      headers: {HttpHeaders.contentTypeHeader: "application/json"});
+  if (response.statusCode == 200) {
+    Utf8Decoder decode = Utf8Decoder();
+    var data = json.decode(decode.convert(response.bodyBytes));
+    return Series.fromJson(data);
   } else {
     throw ("Failed to post");
   }

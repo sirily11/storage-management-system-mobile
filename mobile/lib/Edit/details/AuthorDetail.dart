@@ -13,38 +13,72 @@ class AuthorDetail extends StatelessWidget {
 
   AuthorDetail({this.isEdit = false});
 
-  update(context) async {}
-
-  add(context) async {
+  update(context) async {
     ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    _formKey.currentState.save();
+    Provider.of<ItemDetailEditPageState>(context);
     try {
-      var newAuthor = await addAuthor(
-          Author(name: authorName, description: authorDescription));
+      var newAuthor = await editAuthor(Author(name: authorName, description: authorDescription, id: settings.selectedAuthor));
+      settings.authors.removeWhere((author) => author.id == newAuthor.id);
       settings.authors.add(newAuthor);
+      settings.isLoading = false;
+      settings.update();
       Navigator.pop(context);
     } on Exception catch (err) {
+      settings.isLoading = false;
+      settings.update();
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(err.toString()),
         duration: Duration(seconds: 1),
       ));
     }
+  }
 
-    settings.isLoading = false;
-    settings.update();
+  add(context) async {
+    ItemDetailEditPageState settings =
+    Provider.of<ItemDetailEditPageState>(context);
+    try {
+      var newAuthor = await addAuthor(
+          Author(name: authorName, description: authorDescription));
+
+      settings.authors.add(newAuthor);
+      settings.isLoading = false;
+      settings.update();
+      Navigator.pop(context);
+    } on Exception catch (err) {
+      settings.isLoading = false;
+      settings.update();
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(err.toString()),
+        duration: Duration(seconds: 1),
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-
-
+    Provider.of<ItemDetailEditPageState>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: isEdit ? Text("Edit author") : Text("Add author"),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.file_upload),
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  settings.isLoading = true;
+                  settings.update();
+                  if (isEdit) {
+                    await update(context);
+                  } else {
+                    await add(context);
+                  }
+                }
+              }
+          )
+        ],
       ),
       body: Container(
         child: Padding(
@@ -57,10 +91,10 @@ class AuthorDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Author name"),
                   initialValue: isEdit
                       ? settings.authors
-                          .where(
-                              (author) => author.id == settings.selectedAuthor)
-                          .toList()[0]
-                          .name
+                      .where(
+                          (author) => author.id == settings.selectedAuthor)
+                      .toList()[0]
+                      .name
                       : null,
                   validator: isEmpty,
                   onSaved: (value) => authorName = value,
@@ -75,31 +109,15 @@ class AuthorDetail extends StatelessWidget {
                       .description
                       : null,
                   minLines: 3,
-                  maxLines: 15,
-                  validator: isEmpty,
+                  maxLines: 13,
                   onSaved: (value) => authorDescription = value,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     settings.isLoading
-                        ? CircularProgressIndicator()
-                        : Container(),
-                    RaisedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          settings.isLoading = true;
-                          settings.update();
-                          if (isEdit) {
-                            await update(context);
-                          } else {
-                            await add(context);
-                          }
-                        }
-                      },
-                      child: Text("Push to server"),
-                    ),
+                        ? LinearProgressIndicator()
+                        : Container()
                   ],
                 )
               ],

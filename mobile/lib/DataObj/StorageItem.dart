@@ -94,6 +94,11 @@ class Author {
   String name;
   String description;
 
+  @override
+  String toString() {
+    return 'Author{id: $id, name: $name, description: $description}';
+  }
+
   Author({this.id, this.name, this.description});
 
   factory Author.fromJson(Map<String, dynamic> json) {

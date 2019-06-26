@@ -14,12 +14,29 @@ class SeriesEditDetail extends StatelessWidget {
 
   SeriesEditDetail({this.isEdit = false});
 
-  update(context) async {}
+  update(context) async {
+    ItemDetailEditPageState settings =
+    Provider.of<ItemDetailEditPageState>(context);
+    try {
+      var newSeries = await editSeries(Series(name: seriesName, description: seriesDescription, id: settings.selectedSeries));
+      settings.series.removeWhere((author) => author.id == newSeries.id);
+      settings.series.add(newSeries);
+      settings.isLoading = false;
+      settings.update();
+      Navigator.pop(context);
+    } on Exception catch (err) {
+      settings.isLoading = false;
+      settings.update();
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(err.toString()),
+        duration: Duration(seconds: 1),
+      ));
+    }
+  }
 
   add(context) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
-    _formKey.currentState.save();
     try {
       var series = await addSeries(
           Series(name: seriesName, description: seriesDescription));
@@ -46,6 +63,23 @@ class SeriesEditDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: isEdit ? Text("Edit Series") : Text("Add Series"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.file_upload),
+            onPressed: () async {
+              if (_formKey.currentState.validate()) {
+                _formKey.currentState.save();
+                settings.isLoading = true;
+                settings.update();
+                if (isEdit) {
+                  await update(context);
+                } else {
+                  await add(context);
+                }
+              }
+            },
+          )
+        ],
       ),
       body: Container(
         child: Padding(
@@ -77,7 +111,6 @@ class SeriesEditDetail extends StatelessWidget {
                       : null,
                   minLines: 3,
                   maxLines: 15,
-                  validator: isEmpty,
                   onSaved: (value) => seriesDescription = value,
                 ),
                 Row(
@@ -86,21 +119,6 @@ class SeriesEditDetail extends StatelessWidget {
                     settings.isLoading
                         ? CircularProgressIndicator()
                         : Container(),
-                    RaisedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          settings.isLoading = true;
-                          settings.update();
-                          if (isEdit) {
-                            await update(context);
-                          } else {
-                            await add(context);
-                          }
-                        }
-                      },
-                      child: Text("Push to server"),
-                    ),
                   ],
                 )
               ],
