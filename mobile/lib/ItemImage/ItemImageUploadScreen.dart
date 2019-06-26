@@ -20,6 +20,8 @@ class ItemImageUploadScreen extends StatelessWidget {
       var url = getURL("item-image/");
       var dio = Dio();
       var done = 0;
+      imageState.progress = 0;
+      imageState.update();
       for(var path in imageState.imagePath){
         FormData formData = new FormData.from(
             {"item": this._id, "image": UploadFileInfo(File(path), path)});

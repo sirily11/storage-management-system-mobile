@@ -2,6 +2,8 @@ PODS:
   - barcode_scan (0.0.1):
     - Flutter
     - MTBBarcodeScanner
+  - camera (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - MTBBarcodeScanner (5.0.11)
   - path_provider (0.0.1):
@@ -11,6 +13,7 @@ PODS:
 
 DEPENDENCIES:
   - barcode_scan (from `.symlinks/plugins/barcode_scan/ios`)
+  - camera (from `.symlinks/plugins/camera/ios`)
   - Flutter (from `.symlinks/flutter/ios-profile`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -22,6 +25,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   barcode_scan:
     :path: ".symlinks/plugins/barcode_scan/ios"
+  camera:
+    :path: ".symlinks/plugins/camera/ios"
   Flutter:
     :path: ".symlinks/flutter/ios-profile"
   path_provider:
@@ -31,6 +36,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   barcode_scan: 33f586d02270046fc6559135038b34b5754eaa4f
+  camera: d56ad165545ae5a0ffb892376033760a969c68c8
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
