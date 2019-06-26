@@ -33,6 +33,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   final String author;
   final String series;
   StorageItemDetail item;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   ItemDetailPageState(this._id, {this.name, this.series, this.author});
 
@@ -46,17 +47,20 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   }
 
   Future<StorageItemDetail> fetItem() async {
-    var url = getURL("item/$_id");
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      Utf8Decoder decode = Utf8Decoder();
-      var data = json.decode(decode.convert(response.bodyBytes));
-      return StorageItemDetail.fromJson(data);
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
+    try {
+      var url = getURL("item/$_id");
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        Utf8Decoder decode = Utf8Decoder();
+        var data = json.decode(decode.convert(response.bodyBytes));
+        return StorageItemDetail.fromJson(data);
+      } else {
+        throw ("Error");
+      }
+    } on Exception catch (err) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Failed to fetch item details"),
       ));
-      throw ("Error");
     }
   }
 
@@ -128,14 +132,15 @@ class ItemDetailPageState extends State<ItemDetailPage> {
       child: ListView(
         children: <Widget>[
           itemRow(item.name, "物品名", null),
-          itemRow(item.category.name, "种类", null),
-          itemRow(item.series.name, "系列名", () => navigationTo("series")),
-          itemRow(item.author.name, "作者", () => navigationTo("author")),
-          itemRow(item.description, "简介", null),
-          itemRow(item.price.toString(), "价格", null),
-          itemRow(item.location.toString(), "地址", () => navigationTo("location")),
-          itemRow(item.position.name, "详细地址", () => navigationTo("position")),
-          itemRow("Column: ${item.column}\nRow:${item.row}", "坐标", null),
+          item.category != null ? itemRow(item.category.name, "种类", null) : Container() ,
+          item.series != null ? itemRow(item.series.name, "系列名", () => navigationTo("series")) : Container(),
+          item.author != null ? itemRow(item.author.name, "作者", () => navigationTo("author")) : Container(),
+          item.description != null ?itemRow(item.description, "简介", null) : Container(),
+          item.price != null ?itemRow(item.price.toString(), "价格", null) : Container(),
+          item.location != null ?itemRow(
+              item.location.toString(), "地址", () => navigationTo("location")) : Container(),
+          item.position != null ?itemRow(item.position.name, "详细地址", () => navigationTo("position")) : Container(),
+          item.column != null  ?itemRow("Column: ${item.column}\nRow:${item.row}", "坐标", null) : Container(),
           HorizontalImage(item.images)
         ],
       ),
@@ -152,6 +157,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(name),
       ),

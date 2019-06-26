@@ -3,6 +3,7 @@ import 'package:mobile/DataObj/StorageItem.dart';
 
 class ItemDetailEditPageState with ChangeNotifier {
   bool isLoading = false;
+
   // authors
   List<Author> authors = [];
 
@@ -40,7 +41,7 @@ class ItemDetailEditPageState with ChangeNotifier {
 
   String itemDescription = "";
 
-
+  String qrCode = "";
 
   updateAll(
       {List<Category> categories,
@@ -54,10 +55,16 @@ class ItemDetailEditPageState with ChangeNotifier {
     this.locations = locations;
     this.positions = positions;
     this.selectedAuthor = null;
+    this.selectedCategory = null;
+    this.selectedPosition = null;
+    this.selectedSeries = null;
+    this.selectedLocation = null;
+    this.selectedPosition = null;
+    this.qrCode = null;
 //    notifyListeners();
   }
 
-  update(){
+  update() {
     notifyListeners();
   }
 }

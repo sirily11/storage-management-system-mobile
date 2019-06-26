@@ -3,11 +3,14 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
+import 'package:mobile/utils.dart';
 
 class ItemDisplay extends StatelessWidget {
   final List<StorageItemAbstract> _items;
+  final GlobalKey<ScaffoldState> _key;
+  final Function removeItemById;
 
-  ItemDisplay(this._items);
+  ItemDisplay(this._items, this._key, this.removeItemById);
 
   Widget itemIcon(String type) {
     switch (type) {
@@ -26,28 +29,47 @@ class ItemDisplay extends StatelessWidget {
     }
 
     return ListView.builder(
-        itemCount: 2 * _items.length,
+        itemCount:  _items.length,
         itemBuilder: (BuildContext context, int i) {
-          if (i.isOdd) return Divider();
-          final index = i ~/ 2;
-          var item = _items[index];
-          print(item);
-          return ListTile(
-            leading: itemIcon(item.categoryName),
-            title: Text("${item.name}"),
-            subtitle: Text("${item.authorName} - ${item.seriesName}"),
-            trailing:
-                Text("${item.position}\nRow:${item.row}: Col:${item.column}"),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return ItemDetailPage(
-                  item.id,
-                  name: item.name,
-                  series: item.seriesName,
-                  author: item.authorName,
-                );
-              }));
+          var item = _items[i];
+          return Dismissible(
+            key: Key(item.id.toString()),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: Colors.red,
+            ),
+            onDismissed: (direction) async{
+              try {
+                await removeItemById(item);
+                await removeItem(item);
+              } on Exception catch (err) {
+                _key.currentState.showSnackBar(SnackBar(
+                  content: Text("Failed to delete"),
+                ));
+              }
             },
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: itemIcon(item.categoryName),
+                  title: Text("${item.name}"),
+                  subtitle: Text("${item.authorName} - ${item.seriesName}"),
+                  trailing:
+                      Text("${item.position}\nRow:${item.row}: Col:${item.column}"),
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return ItemDetailPage(
+                        item.id,
+                        name: item.name,
+                        series: item.seriesName,
+                        author: item.authorName,
+                      );
+                    }));
+                  },
+                ), Divider()
+              ],
+            ),
           );
         });
   }

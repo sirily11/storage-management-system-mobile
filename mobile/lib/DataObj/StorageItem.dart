@@ -60,14 +60,17 @@ class Location {
       this.unit});
 
   factory Location.fromJson(Map<String, dynamic> json) {
-    return Location(
-        id: json['id'],
-        city: json['city'],
-        building: json['building'],
-        street: json['street'],
-        country: json['country'],
-        room_number: json['room_number'],
-        unit: json['unit']);
+    if (json != null) {
+      return Location(
+          id: json['id'],
+          city: json['city'],
+          building: json['building'],
+          street: json['street'],
+          country: json['country'],
+          room_number: json['room_number'],
+          unit: json['unit']);
+    }
+    return null;
   }
 }
 
@@ -79,7 +82,10 @@ class Series {
   Series({this.id, this.name, this.description});
 
   factory Series.fromJson(Map<String, dynamic> json) {
-    return Series(id: json['id'], name: json['name']);
+    if (json != null) {
+      return Series(id: json['id'], name: json['name']);
+    }
+    return null;
   }
 }
 
@@ -91,8 +97,11 @@ class Author {
   Author({this.id, this.name, this.description});
 
   factory Author.fromJson(Map<String, dynamic> json) {
-    return Author(
-        id: json['id'], name: json['name'], description: json['description']);
+    if (json != null) {
+      return Author(
+          id: json['id'], name: json['name'], description: json['description']);
+    }
+    return null;
   }
 
   Map toJson() {
@@ -110,7 +119,10 @@ class Category {
   Category({this.id, this.name});
 
   factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(id: json['id'], name: json['name']);
+    if (json != null) {
+      return Category(id: json['id'], name: json['name']);
+    }
+    return null;
   }
 }
 
@@ -122,10 +134,13 @@ class Position {
   Position({this.id, this.name, this.description});
 
   factory Position.fromJson(Map<String, dynamic> json) {
-    return Position(
-        id: json['id'],
-        name: json['position'],
-        description: json['description']);
+    if (json != null) {
+      return Position(
+          id: json['id'],
+          name: json['position'],
+          description: json['description']);
+    }
+    return null;
   }
 }
 
@@ -142,6 +157,7 @@ class StorageItemDetail {
   int row;
   double price;
   List<String> images;
+  String qrCode;
 
   StorageItemDetail(
       {this.id,
@@ -155,7 +171,8 @@ class StorageItemDetail {
       this.row,
       this.position,
       this.price,
-      this.images});
+      this.images,
+      this.qrCode});
 
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
     return StorageItemDetail(
@@ -170,6 +187,7 @@ class StorageItemDetail {
         row: json['row'],
         price: json['price'],
         position: Position.fromJson(json['position_name']),
+        qrCode: json['qr_code'],
         images: json['images'].cast<String>());
   }
 }

@@ -1,7 +1,13 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/details/AuthorDetail.dart';
+import 'package:mobile/Edit/details/CategoryDetail.dart';
+import 'package:mobile/Edit/details/DetailPositionDetail.dart';
+import 'package:mobile/Edit/details/LocationDetail.dart';
+import 'package:mobile/Edit/details/SeriesDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils.dart';
 import 'package:provider/provider.dart';
@@ -9,23 +15,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EditPage extends StatefulWidget {
   final bool isEditMode;
+  Function addItem;
 
-  EditPage({this.isEditMode = false});
+  EditPage({this.isEditMode = false, this.addItem});
 
   @override
   State<StatefulWidget> createState() {
-    return EditPageState();
+    return EditPageState(addItemToHome: this.addItem);
   }
 }
 
 class EditPageState extends State<EditPage> {
   final bool isEditMode;
+  Function addItemToHome;
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final itemNameController = TextEditingController();
   final itemDescriptionController = TextEditingController();
+  final priceController = TextEditingController();
+  final columnController = TextEditingController();
+  final rowController = TextEditingController();
+  final qrController = TextEditingController();
+
   String value = "";
 
-  EditPageState({this.isEditMode});
+  EditPageState({this.isEditMode, this.addItemToHome});
 
   @override
   void initState() {
@@ -44,6 +58,8 @@ class EditPageState extends State<EditPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
             child: TextFormField(
+              controller: priceController,
+              validator: isEmpty,
               inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: "Price"),
@@ -54,6 +70,8 @@ class EditPageState extends State<EditPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: TextFormField(
+              controller: columnController,
+              validator: isEmpty,
               inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: "Column"),
@@ -64,6 +82,8 @@ class EditPageState extends State<EditPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
             child: TextFormField(
+              controller: rowController,
+              validator: isEmpty,
               inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: "Row"),
@@ -115,10 +135,27 @@ class EditPageState extends State<EditPage> {
 
   onAddSelection(String page, {bool isEdit = false}) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      if (page == "author") {
-        return AuthorDetail(
-          isEdit: isEdit,
-        );
+      switch (page) {
+        case "author":
+          return AuthorDetail(
+            isEdit: isEdit,
+          );
+        case "category":
+          return CategoryDetail(
+            isEdit: isEdit,
+          );
+        case "series":
+          return SeriesEditDetail(
+            isEdit: isEdit,
+          );
+        case "position":
+          return PositionDetail(
+            isEdit: isEdit,
+          );
+        case "location":
+          return LocationDetailEditPage(
+            isEdit: isEdit,
+          );
       }
     }));
   }
@@ -130,6 +167,7 @@ class EditPageState extends State<EditPage> {
       children: <Widget>[
         Expanded(
           child: DropdownButtonFormField(
+            validator: isSelected,
             decoration: InputDecoration(labelText: "Select author"),
             value: settingsState.selectedAuthor,
             onChanged: (value) {
@@ -164,13 +202,14 @@ class EditPageState extends State<EditPage> {
       children: <Widget>[
         Expanded(
           child: DropdownButtonFormField(
-            decoration: InputDecoration(labelText: "Select series"),
-            value: settingsState.selectedAuthor,
+            validator: isSelected,
+            decoration: InputDecoration(labelText: "Select categories"),
+            value: settingsState.selectedCategory,
             onChanged: (value) {
-              settingsState.selectedAuthor = value;
+              settingsState.selectedCategory = value;
               settingsState.update();
             },
-            items: settingsState.series.map<DropdownMenuItem>((category) {
+            items: settingsState.categories.map<DropdownMenuItem>((category) {
               return DropdownMenuItem(
                 value: category.id,
                 child: Text(category.name),
@@ -180,11 +219,11 @@ class EditPageState extends State<EditPage> {
         ),
         Expanded(
             child: dropdownActions(
-                editValue: settingsState.selectedAuthor,
-                add: () => onAddSelection("author"),
-                edit: () => onAddSelection("author", isEdit: true),
+                editValue: settingsState.selectedCategory,
+                add: () => onAddSelection("category"),
+                edit: () => onAddSelection("category", isEdit: true),
                 remove: () {
-                  settingsState.selectedAuthor = null;
+                  settingsState.selectedCategory = null;
                   settingsState.update();
                 }))
       ],
@@ -198,27 +237,28 @@ class EditPageState extends State<EditPage> {
       children: <Widget>[
         Expanded(
           child: DropdownButtonFormField(
-            decoration: InputDecoration(labelText: "Select author"),
-            value: settingsState.selectedAuthor,
+            validator: isSelected,
+            decoration: InputDecoration(labelText: "Select Series"),
+            value: settingsState.selectedSeries,
             onChanged: (value) {
-              settingsState.selectedAuthor = value;
+              settingsState.selectedSeries = value;
               settingsState.update();
             },
-            items: settingsState.authors.map<DropdownMenuItem>((author) {
+            items: settingsState.series.map<DropdownMenuItem>((s) {
               return DropdownMenuItem(
-                value: author.id,
-                child: Text(author.name),
+                value: s.id,
+                child: Text(s.name),
               );
             }).toList(),
           ),
         ),
         Expanded(
             child: dropdownActions(
-                editValue: settingsState.selectedAuthor,
-                add: () => onAddSelection("author"),
-                edit: () => onAddSelection("author", isEdit: true),
+                editValue: settingsState.selectedSeries,
+                add: () => onAddSelection("series"),
+                edit: () => onAddSelection("series", isEdit: true),
                 remove: () {
-                  settingsState.selectedAuthor = null;
+                  settingsState.selectedSeries = null;
                   settingsState.update();
                 }))
       ],
@@ -232,27 +272,28 @@ class EditPageState extends State<EditPage> {
       children: <Widget>[
         Expanded(
           child: DropdownButtonFormField(
-            decoration: InputDecoration(labelText: "Select author"),
-            value: settingsState.selectedAuthor,
+            validator: isSelected,
+            decoration: InputDecoration(labelText: "Select Detail Position"),
+            value: settingsState.selectedPosition,
             onChanged: (value) {
-              settingsState.selectedAuthor = value;
+              settingsState.selectedPosition = value;
               settingsState.update();
             },
-            items: settingsState.authors.map<DropdownMenuItem>((author) {
+            items: settingsState.positions.map<DropdownMenuItem>((position) {
               return DropdownMenuItem(
-                value: author.id,
-                child: Text(author.name),
+                value: position.id,
+                child: Text(position.name),
               );
             }).toList(),
           ),
         ),
         Expanded(
             child: dropdownActions(
-                editValue: settingsState.selectedAuthor,
-                add: () => onAddSelection("author"),
-                edit: () => onAddSelection("author", isEdit: true),
+                editValue: settingsState.selectedPosition,
+                add: () => onAddSelection("position"),
+                edit: () => onAddSelection("position", isEdit: true),
                 remove: () {
-                  settingsState.selectedAuthor = null;
+                  settingsState.selectedPosition = null;
                   settingsState.update();
                 }))
       ],
@@ -266,29 +307,121 @@ class EditPageState extends State<EditPage> {
       children: <Widget>[
         Expanded(
           child: DropdownButtonFormField(
-            decoration: InputDecoration(labelText: "Select author"),
-            value: settingsState.selectedAuthor,
+            validator: isSelected,
+            decoration: InputDecoration(labelText: "Select Location"),
+            value: settingsState.selectedLocation,
             onChanged: (value) {
-              settingsState.selectedAuthor = value;
+              settingsState.selectedLocation = value;
               settingsState.update();
             },
-            items: settingsState.authors.map<DropdownMenuItem>((author) {
+            items: settingsState.locations.map<DropdownMenuItem>((location) {
               return DropdownMenuItem(
-                value: author.id,
-                child: Text(author.name),
+                value: location.id,
+                child: SizedBox(
+                  child: Text(location.toString()),
+                  width: 140,
+                ),
               );
             }).toList(),
           ),
         ),
         Expanded(
             child: dropdownActions(
-                editValue: settingsState.selectedAuthor,
-                add: () => onAddSelection("author"),
-                edit: () => onAddSelection("author", isEdit: true),
+                editValue: settingsState.selectedLocation,
+                add: () => onAddSelection("location"),
+                edit: () => onAddSelection("location", isEdit: true),
                 remove: () {
-                  settingsState.selectedAuthor = null;
+                  settingsState.selectedLocation = null;
                   settingsState.update();
                 }))
+      ],
+    );
+  }
+
+  Widget submitButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+      child: RaisedButton(
+        color: Colors.blue,
+        child: Text(
+          "Add item",
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () async {
+          if (_formKey.currentState.validate()) {
+            try{
+              ItemDetailEditPageState settings =
+              Provider.of<ItemDetailEditPageState>(context);
+              _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Adding item"),));
+              StorageItemAbstract item = await addItem(StorageItemDetail(
+                  name: itemNameController.text,
+                  description: itemDescriptionController.text,
+                  price: double.parse(priceController.text),
+                  column: int.parse(columnController.text),
+                  row: int.parse(rowController.text),
+                  qrCode: qrController.text,
+                  author: Author(id: settings.selectedAuthor),
+                  series: Series(id: settings.selectedSeries),
+                  category: Category(id: settings.selectedCategory),
+                  position: Position(id: settings.selectedPosition),
+                  location: Location(id: settings.selectedLocation)));
+              addItemToHome(item);
+              Navigator.of(context).pop();
+            } on Exception catch(err){
+              print(err);
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(err.toString()),
+              ));
+            }
+
+          }
+        },
+      ),
+    );
+  }
+
+  Future scan() async {
+    ItemDetailEditPageState settings =
+        Provider.of<ItemDetailEditPageState>(context);
+    try {
+      String barcode = await BarcodeScanner.scan();
+      settings.qrCode = barcode;
+      setState(() {
+        qrController.text = barcode;
+        settings.update();
+      });
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.CameraAccessDenied) {
+       _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Unable to access camera"),
+        ));
+      }
+    } on FormatException {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("No qr has been scanned"),
+      ));
+    }
+  }
+
+  Widget qrField() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 7,
+          child: TextField(
+            controller: qrController,
+            decoration: InputDecoration(labelText: "QR Code"),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: () async {
+              await scan();
+            },
+          ),
+        ),
       ],
     );
   }
@@ -302,13 +435,19 @@ class EditPageState extends State<EditPage> {
           decoration: InputDecoration(labelText: "Item Name"),
         ),
         TextFormField(
-            controller: itemDescriptionController,
+//            controller: itemDescriptionController,
             validator: isEmpty,
             decoration: InputDecoration(labelText: "Item Description"),
             minLines: 3,
             maxLines: 3),
+        qrField(),
         priceColRowWidget(),
-        authorSelector()
+        authorSelector(),
+        categorySelector(),
+        seriesSelector(),
+        positionSelector(),
+        locationSelector(),
+        submitButton()
       ],
     );
   }
@@ -325,15 +464,18 @@ class EditPageState extends State<EditPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text("Add new item"),
         ),
         body: Container(
           child: Form(
             key: _formKey,
-            child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: formList()),
+            child: Scrollbar(
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: formList()),
+            ),
           ),
         ),
       ),
