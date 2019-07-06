@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+      - 27019:27019
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sirily11
+      MONGO_INITDB_ROOT_PASSWORD: 1234
