@@ -9,9 +9,13 @@ import 'package:mobile/DataObj/StorageItem.dart';
 import 'DataObj/StorageItem.dart';
 
 String getURL(String path) {
-  String base = "http://192.168.31.90/storage_management";
-//  String base = "https://serverless.sirileepage.com/storage_management";
+//  String base = "http://192.168.31.90/storage_management";
+  String base = "https://serverless.sirileepage.com/storage_management";
   return "$base/$path";
+}
+
+String getWebSocket(String path){
+  String base = "";
 }
 
 showErrorMessageSnackBar(BuildContext context, String message) {

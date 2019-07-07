@@ -6,6 +6,7 @@ import 'package:mobile/Home/Detail/HorizontalImage.dart';
 import 'package:mobile/States/CameraState.dart';
 import 'package:mobile/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:image/image.dart' as img;
 
 class ItemImageUploadScreen extends StatelessWidget {
   final int _id;
@@ -14,34 +15,41 @@ class ItemImageUploadScreen extends StatelessWidget {
 
   ItemImageUploadScreen(this._id, this._name);
 
-  Future upload(context) async {
-    try {
-      var imageState = Provider.of<CameraState>(context);
-      var url = getURL("item-image/");
-      var dio = Dio();
-      var done = 0;
-      imageState.progress = 0;
-      imageState.update();
-      for(var path in imageState.imagePath){
-        FormData formData = new FormData.from(
-            {"item": this._id, "image": UploadFileInfo(File(path), path)});
-        var response = await dio.post(url, data: formData);
-        done = done + 1;
-        imageState.progress = done / imageState.imagePath.length;
-        imageState.update();
-      }
-      if(done == imageState.imagePath.length){
-        await Future.delayed(Duration(seconds: 2), () {
-          imageState.progress = null;
-          Navigator.pop(context);
-        });
-      }
+  static Future<List<int>> _resizeImage(File file) async {
+    final bytes = await file.readAsBytes();
+    final img.Image image = img.decodeImage(bytes);
+    final img.Image resized = img.copyResize(image, width: 800);
+    final List<int> resizedBytes = img.encodeJpg(resized, quality: 90);
 
-    } on Exception catch (err) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(err.toString()),
-      ));
+    return resizedBytes;
+  }
+
+  Future upload(context) async {
+    var imageState = Provider.of<CameraState>(context);
+    var url = getURL("item-image/");
+    var dio = Dio();
+    var done = 0;
+    imageState.progress = 0;
+    imageState.update();
+    for (var path in imageState.imagePath) {
+      var file = File(path);
+      final bytes = await _resizeImage(file);
+      print("File Size: ${bytes.length}, Orginal: ${file.lengthSync()}");
+      FormData formData = new FormData.from(
+          {"item": this._id, "image": UploadFileInfo.fromBytes(bytes, path)});
+      var response = await dio.post(url, data: formData);
+      print(response.statusCode);
+      done = done + 1;
+      imageState.progress = done / imageState.imagePath.length;
+      imageState.update();
     }
+    if (done == imageState.imagePath.length) {
+      await Future.delayed(Duration(seconds: 2), () {
+        imageState.progress = null;
+        Navigator.pop(context);
+      });
+    }
+
     ;
   }
 
@@ -73,7 +81,9 @@ class ItemImageUploadScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: imageState.progress != null
-                ? LinearProgressIndicator(value: imageState.progress,)
+                ? LinearProgressIndicator(
+                    value: imageState.progress,
+                  )
                 : Container(),
           )
         ],

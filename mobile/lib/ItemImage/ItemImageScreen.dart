@@ -54,7 +54,7 @@ class ItemImageScreenState extends State<ItemImageScreen> {
     var imageState = Provider.of<CameraState>(context);
     final path = join(
       (await getTemporaryDirectory()).path,
-      '${DateTime.now()}.png',
+      '${DateTime.now()}.jpg',
     );
     await _controller.takePicture(path);
     imageState.imagePath.add(path);

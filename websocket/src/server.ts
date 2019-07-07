@@ -12,7 +12,7 @@ const wss = new WebSocket.Server({ server: server, path: "" });
 const scanner: WebSocket[] = [];
 const recievers: WebSocket[] = [];
 
-wss.on("connection", async (ws: WebSocket, req) => {
+wss.on("connection", async (ws: WebSocket, req: any) => {
   let type = "";
   if (req.url) {
     try {
@@ -22,7 +22,7 @@ wss.on("connection", async (ws: WebSocket, req) => {
         from: "scanner"
       };
 
-      let receiverMsg : Message = {
+      let receiverMsg: Message = {
         type: "connect",
         from: "receiver"
       };
@@ -30,20 +30,20 @@ wss.on("connection", async (ws: WebSocket, req) => {
       if (type === "scanner") {
         console.log("Scanner online");
         if (recievers.length > 0) {
-          ws.send(JSON.stringify(receiverMsg));
+          ws.send(receiverMsg);
         }
         scanner.push(ws);
         recievers.forEach(reciever => {
-          reciever.send(JSON.stringify(scanner));
+          reciever.send(scanner);
         });
       } else if (type === "receiver") {
         console.log("Receiver online");
         if (scanner.length > 0) {
-          ws.send(JSON.stringify(scannerMsg));
+          ws.send(scannerMsg);
         }
         recievers.push(ws);
         scanner.forEach(s => {
-          s.send(JSON.stringify(receiverMsg));
+          s.send(receiverMsg);
         });
       }
     } catch (err) {
@@ -61,7 +61,7 @@ wss.on("connection", async (ws: WebSocket, req) => {
       };
       scanner.splice(index, 1);
       recievers.forEach(reciever => {
-        reciever.send(JSON.stringify(message));
+        reciever.send(message);
       });
     } else if (type === "receiver") {
       let index = recievers.indexOf(ws);
@@ -71,14 +71,14 @@ wss.on("connection", async (ws: WebSocket, req) => {
       };
       recievers.splice(index, 1);
       scanner.forEach(s => {
-        s.send(JSON.stringify(message));
+        s.send(message);
       });
     }
   });
 
   ws.on("message", (msg: Message) => {
     recievers.forEach(r => {
-      r.send(JSON.stringify(msg));
+      r.send(msg);
     });
   });
 });

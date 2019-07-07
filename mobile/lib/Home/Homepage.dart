@@ -1,23 +1,18 @@
-import 'dart:convert';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
-import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
-import 'package:mobile/ItemImage/ItemImageScreen.dart';
-import 'package:mobile/States/CameraState.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 
-class Homepage extends StatefulWidget {
+import 'DrawerNav.dart';
 
+class Homepage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return HomePageState();
@@ -142,6 +137,7 @@ class HomePageState extends State<Homepage> {
 //          )
         ],
       ),
+      drawer: new HomepageDrawer(),
       body: Container(
         child: RefreshIndicator(
           child: body,
