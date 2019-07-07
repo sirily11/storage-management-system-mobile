@@ -1,0 +1,94 @@
+body,
+html {
+  height: 100%;
+  margin: 0px;
+  padding-top: 20px;
+}
+
+#root,
+#second-root {
+  height: 100%;
+}
+
+#sidebar {
+  margin-top: 10px;
+}
+
+.content {
+  padding-left: 70px;
+  height: 90%;
+}
+
+.switch-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.switch-wrapper > div {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.item-icon {
+  margin-right: -30px;
+  color: red;
+}
+
+.title-input-text {
+  width: 65%;
+  margin-right: 20px;
+}
+
+.main-editor {
+  padding-right: 80px;
+}
+
+img:hover {
+  box-shadow: 0 0 0 3px #d2e3f7;
+  border-radius: 2px;
+}
+
+.left-image {
+  background-image: url(signInBackground.png);
+}
+
+blockquote{
+  font-size: 1em;
+  width:100%;
+  margin:50px auto;
+  font-style:italic;
+  color: #555555;
+  padding:10px 10px 10px 40px;
+  border-left:8px solid rgb(255, 166, 0) ;
+  line-height:1.6;
+  position: relative;
+  background:#EDEDED;
+}
+
+blockquote::before{
+  font-family:Arial;
+  content: "\201C";
+  color:rgb(255, 136, 0);
+  font-size:4em;
+  position: absolute;
+  left: 10px;
+  top:-10px;
+}
+
+blockquote::after{
+  content: '';
+}
+
+blockquote span{
+  display:block;
+  color:#333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top:1em;
+}
+
+pre{
+  background-color: #ececec;
+}

@@ -1,0 +1,6 @@
+title: [Blog Editor]
+theme: jekyll-theme-cayman
+show_downloads: ["true"]
+github:
+  mac_url: https://github.com/sirily11/postEditor/releases/download/0.7/post-editor-0.7.0-mac.zip
+  windows_url: https://github.com/sirily11/postEditor/releases/download/0.7/post-editor.Setup.0.7.0.exe
