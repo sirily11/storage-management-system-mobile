@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class AuthorDetail extends StatelessWidget {
@@ -15,9 +15,12 @@ class AuthorDetail extends StatelessWidget {
 
   update(context) async {
     ItemDetailEditPageState settings =
-    Provider.of<ItemDetailEditPageState>(context);
+        Provider.of<ItemDetailEditPageState>(context);
     try {
-      var newAuthor = await editAuthor(Author(name: authorName, description: authorDescription, id: settings.selectedAuthor));
+      var newAuthor = await editAuthor(Author(
+          name: authorName,
+          description: authorDescription,
+          id: settings.selectedAuthor));
       settings.authors.removeWhere((author) => author.id == newAuthor.id);
       settings.authors.add(newAuthor);
       settings.isLoading = false;
@@ -35,7 +38,7 @@ class AuthorDetail extends StatelessWidget {
 
   add(context) async {
     ItemDetailEditPageState settings =
-    Provider.of<ItemDetailEditPageState>(context);
+        Provider.of<ItemDetailEditPageState>(context);
     try {
       var newAuthor = await addAuthor(
           Author(name: authorName, description: authorDescription));
@@ -57,7 +60,7 @@ class AuthorDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ItemDetailEditPageState settings =
-    Provider.of<ItemDetailEditPageState>(context);
+        Provider.of<ItemDetailEditPageState>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -76,8 +79,7 @@ class AuthorDetail extends StatelessWidget {
                     await add(context);
                   }
                 }
-              }
-          )
+              })
         ],
       ),
       body: Container(
@@ -91,10 +93,10 @@ class AuthorDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Author name"),
                   initialValue: isEdit
                       ? settings.authors
-                      .where(
-                          (author) => author.id == settings.selectedAuthor)
-                      .toList()[0]
-                      .name
+                          .where(
+                              (author) => author.id == settings.selectedAuthor)
+                          .toList()[0]
+                          .name
                       : null,
                   validator: isEmpty,
                   onSaved: (value) => authorName = value,
@@ -103,10 +105,10 @@ class AuthorDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Author description"),
                   initialValue: isEdit
                       ? settings.authors
-                      .where(
-                          (author) => author.id == settings.selectedAuthor)
-                      .toList()[0]
-                      .description
+                          .where(
+                              (author) => author.id == settings.selectedAuthor)
+                          .toList()[0]
+                          .description
                       : null,
                   minLines: 3,
                   maxLines: 13,
@@ -115,9 +117,7 @@ class AuthorDetail extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    settings.isLoading
-                        ? LinearProgressIndicator()
-                        : Container()
+                    settings.isLoading ? LinearProgressIndicator() : Container()
                   ],
                 )
               ],

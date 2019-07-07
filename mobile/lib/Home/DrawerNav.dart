@@ -23,7 +23,6 @@ class HomepageDrawer extends StatelessWidget {
           ListTile(
             title: Text("Home"),
             onTap: () {
-              Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return Homepage();
               }));
@@ -32,7 +31,6 @@ class HomepageDrawer extends StatelessWidget {
           ListTile(
             title: Text("Scanner"),
             onTap: () {
-              Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return ScannerPage();
               }));

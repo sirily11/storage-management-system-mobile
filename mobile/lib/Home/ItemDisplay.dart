@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 
 class ItemDisplay extends StatelessWidget {
   final List<StorageItemAbstract> _items;

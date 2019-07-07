@@ -66,16 +66,22 @@ class ItemImageScreenState extends State<ItemImageScreen> {
     ));
   }
 
+  onClear(context) async {
+    var imageState = Provider.of<CameraState>(context);
+    await imageState.clear();
+    Navigator.of(context).pop();
+  }
+
   Widget cameraPreview() {
     return Stack(children: <Widget>[
       CameraPreview(this._controller),
       ImageCard(),
-      FormButtons()
+      FormButtons(this.takePhoto)
     ]);
   }
 
-  navToUploadScreen(){
-    Navigator.push(context, MaterialPageRoute(builder: (_){
+  navToUploadScreen() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) {
       return ItemImageUploadScreen(this.itemId, this.itemName);
     }));
   }
@@ -94,22 +100,27 @@ class ItemImageScreenState extends State<ItemImageScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Add Item Image"),
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async{
-          await imageState.clear();
-          Navigator.pop(context);
-        },),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () async {
+            await imageState.clear();
+            Navigator.pop(context);
+          },
+        ),
         actions: <Widget>[
           IconButton(
-            onPressed: imageState.imagePath.length == 0 ? null : navToUploadScreen,
+            onPressed:
+                imageState.imagePath.length == 0 ? null : navToUploadScreen,
             icon: Icon(Icons.done),
           )
         ],
       ),
       body: body,
       floatingActionButton: FloatingActionButton(
-        heroTag: "Take photo",
-        child: Icon(Icons.camera_alt),
-        onPressed: takePhoto,
+        backgroundColor: Colors.red,
+        heroTag: "Clear photo",
+        child: Icon(Icons.clear),
+        onPressed: () => onClear(context),
       ),
     );
   }
@@ -175,6 +186,9 @@ class ImageCard extends StatelessWidget {
 class FormButtons extends StatelessWidget {
   final double _mb = 60;
   final double _height = 100;
+  final Function takePhoto;
+
+  FormButtons(this.takePhoto);
 
   onClear(context) async {
     var imageState = Provider.of<CameraState>(context);
@@ -190,25 +204,20 @@ class FormButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-//          Expanded(
-//            child: Padding(
-//              padding: const EdgeInsets.all(8.0),
-//              child: FloatingActionButton(
-//                backgroundColor: Colors.green,
-//                elevation: 0,
-//                child: Icon(Icons.done),
-//              ),
-//            ),
-//          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
+              // child: FloatingActionButton(
+              //   heroTag: "Clear photos",
+              //   backgroundColor: Colors.red,
+              //   elevation: 0,
+              //   child: Icon(Icons.clear),
+              //   onPressed: () => onClear(context),
+              // ),
               child: FloatingActionButton(
-                heroTag: "Clear photos",
-                backgroundColor: Colors.red,
-                elevation: 0,
-                child: Icon(Icons.clear),
-                onPressed: () => onClear(context),
+                heroTag: "Take photo",
+                child: Icon(Icons.camera_alt),
+                onPressed: takePhoto,
               ),
             ),
           )

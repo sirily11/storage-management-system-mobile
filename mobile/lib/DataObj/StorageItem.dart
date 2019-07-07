@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'Decodeable.dart';
+
 class StorageItemAbstract {
   int id;
   String name;
@@ -36,7 +38,7 @@ class StorageItemAbstract {
   }
 }
 
-class Location {
+class Location implements Decodeable {
   int id;
   String country;
   String city;
@@ -72,9 +74,21 @@ class Location {
     }
     return null;
   }
+
+  @override
+  Map toJson() {
+    return {
+      "country": country,
+      "city": city,
+      "street": street,
+      "building": building,
+      "unit": unit,
+      "room_number": room_number
+    };
+  }
 }
 
-class Series {
+class Series implements Decodeable {
   int id;
   String name;
   String description;
@@ -83,13 +97,18 @@ class Series {
 
   factory Series.fromJson(Map<String, dynamic> json) {
     if (json != null) {
-      return Series(id: json['id'], name: json['name'], description: json['description']);
+      return Series(
+          id: json['id'], name: json['name'], description: json['description']);
     }
     return null;
   }
+  
+  Map toJson() {
+    return {"name": name, "description": description};
+  }
 }
 
-class Author {
+class Author implements Decodeable {
   int id;
   String name;
   String description;
@@ -110,14 +129,11 @@ class Author {
   }
 
   Map toJson() {
-    var map = Map<String, dynamic>();
-    map['name'] = name;
-    map['description'] = description;
-    return map;
+    return {"name": name, "description": description};
   }
 }
 
-class Category {
+class Category implements Decodeable {
   int id;
   String name;
 
@@ -129,9 +145,13 @@ class Category {
     }
     return null;
   }
+
+  Map toJson() {
+    return {"name": name};
+  }
 }
 
-class Position {
+class Position implements Decodeable {
   int id;
   String name;
   String description;
@@ -146,6 +166,10 @@ class Position {
           description: json['description']);
     }
     return null;
+  }
+
+  Map toJson() {
+    return {"position": name, "description": description};
   }
 }
 

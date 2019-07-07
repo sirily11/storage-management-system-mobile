@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
-import 'DataObj/StorageItem.dart';
+import '../DataObj/StorageItem.dart';
 
 String getURL(String path) {
 //  String base = "http://192.168.31.90/storage_management";
@@ -14,8 +14,9 @@ String getURL(String path) {
   return "$base/$path";
 }
 
-String getWebSocket(String path){
-  String base = "";
+String getWebSocket({String path}) {
+  String base = "ws://192.168.43.19:8000/?type=scanner";
+  return base;
 }
 
 showErrorMessageSnackBar(BuildContext context, String message) {
@@ -50,6 +51,12 @@ Future<SettingObj> fetchSetting() async {
   } else {
     throw ("Failed to fetch");
   }
+}
+/**
+ * Get api url for each path
+ */
+String getAPIUrl(dynamic object){
+
 }
 
 Future<Category> addCategory(Category category) async {
@@ -185,7 +192,7 @@ Future<Location> addLocation(Location location) async {
 }
 
 Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
-  if(item == null){
+  if (item == null) {
     throw Exception("Item should not be null");
   }
   print(item);
@@ -246,7 +253,7 @@ Future<StorageItemAbstract> searchByQR(String qrCode) async {
     var detailItem = StorageItemAbstract.fromJson(data);
     return detailItem;
   } else {
-   throw Exception();
+    throw Exception();
   }
 }
 

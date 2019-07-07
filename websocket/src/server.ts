@@ -28,22 +28,24 @@ wss.on("connection", async (ws: WebSocket, req: any) => {
       };
 
       if (type === "scanner") {
+        console.log(scanner.length)
         console.log("Scanner online");
         if (recievers.length > 0) {
-          ws.send(receiverMsg);
+          ws.send(JSON.stringify(receiverMsg));
         }
         scanner.push(ws);
         recievers.forEach(reciever => {
-          reciever.send(scanner);
+          reciever.send(JSON.stringify(scanner));
         });
       } else if (type === "receiver") {
+        if (recievers.includes(ws)) return
         console.log("Receiver online");
         if (scanner.length > 0) {
-          ws.send(scannerMsg);
+          ws.send(JSON.stringify(scannerMsg));
         }
         recievers.push(ws);
         scanner.forEach(s => {
-          s.send(receiverMsg);
+          s.send(JSON.stringify(receiverMsg));
         });
       }
     } catch (err) {
@@ -61,7 +63,7 @@ wss.on("connection", async (ws: WebSocket, req: any) => {
       };
       scanner.splice(index, 1);
       recievers.forEach(reciever => {
-        reciever.send(message);
+        reciever.send(JSON.stringify(message));
       });
     } else if (type === "receiver") {
       let index = recievers.indexOf(ws);
@@ -71,14 +73,14 @@ wss.on("connection", async (ws: WebSocket, req: any) => {
       };
       recievers.splice(index, 1);
       scanner.forEach(s => {
-        s.send(message);
+        s.send(JSON.stringify(message));
       });
     }
   });
 
   ws.on("message", (msg: Message) => {
     recievers.forEach(r => {
-      r.send(msg);
+      r.send(JSON.stringify(msg));
     });
   });
 });

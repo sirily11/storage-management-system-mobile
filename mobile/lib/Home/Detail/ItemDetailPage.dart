@@ -10,7 +10,7 @@ import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
 import 'package:mobile/ItemImage/ItemImageScreen.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:mobile/Home/Detail/HorizontalImage.dart';
 
 class ItemDetailPage extends StatefulWidget {

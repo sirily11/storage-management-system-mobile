@@ -6,7 +6,7 @@ import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 

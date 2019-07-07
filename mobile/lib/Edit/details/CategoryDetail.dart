@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class CategoryDetail extends StatelessWidget {

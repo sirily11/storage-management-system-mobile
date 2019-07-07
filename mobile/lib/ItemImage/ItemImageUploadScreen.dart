@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/Home/Detail/HorizontalImage.dart';
 import 'package:mobile/States/CameraState.dart';
-import 'package:mobile/utils.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:image/image.dart' as img;
 
@@ -33,12 +34,11 @@ class ItemImageUploadScreen extends StatelessWidget {
     imageState.update();
     for (var path in imageState.imagePath) {
       var file = File(path);
-      final bytes = await _resizeImage(file);
+      final bytes = await compute(_resizeImage, file);
       print("File Size: ${bytes.length}, Orginal: ${file.lengthSync()}");
       FormData formData = new FormData.from(
           {"item": this._id, "image": UploadFileInfo.fromBytes(bytes, path)});
       var response = await dio.post(url, data: formData);
-      print(response.statusCode);
       done = done + 1;
       imageState.progress = done / imageState.imagePath.length;
       imageState.update();
@@ -49,8 +49,6 @@ class ItemImageUploadScreen extends StatelessWidget {
         Navigator.pop(context);
       });
     }
-
-    ;
   }
 
   @override
