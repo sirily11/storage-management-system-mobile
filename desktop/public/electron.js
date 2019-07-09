@@ -2,9 +2,10 @@
 exports.__esModule = true;
 var electron_1 = require("electron");
 var path = require("path");
-var fs = require("fs");
+var notifier = require("node-notifier");
 var isDev = require("electron-is-dev");
 var mainWindow;
+var editWindow;
 var menu = electron_1.Menu.buildFromTemplate([
     {
         label: 'Menu'
@@ -44,10 +45,22 @@ function createWindow() {
             webSecurity: false
         }
     });
-    console.log("Starting the webserver");
+    editWindow = new electron_1.BrowserWindow({
+        width: 720,
+        height: 600,
+        titleBarStyle: "hidden",
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            webSecurity: false
+        }
+    });
     mainWindow.loadURL(isDev
         ? "http://localhost:3000#/"
         : "file://" + path.join(__dirname, "../build/index.html"));
+    editWindow.loadURL(isDev
+        ? "http://localhost:3000#/edit"
+        : "file://" + path.join(__dirname, "../build/index.html#/edit"));
     mainWindow.once("ready-to-show", function () {
         if (mainWindow) {
             mainWindow.show();
@@ -57,9 +70,14 @@ function createWindow() {
         // Open the DevTools.
         //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
         mainWindow.webContents.openDevTools();
+        editWindow.webContents.openDevTools();
     }
     mainWindow.on("closed", function () {
         mainWindow = undefined;
+    });
+    editWindow.on("close", function (e) {
+        e.preventDefault();
+        editWindow.hide();
     });
 }
 electron_1.app.on("ready", createWindow);
@@ -73,15 +91,41 @@ electron_1.app.on("activate", function () {
         createWindow();
     }
 });
-electron_1.ipcMain.on("get-image", function (imagePath) {
-    var data = fs.readFileSync(imagePath, { encoding: "base64" });
-    console.log("Got the image", imagePath);
-    if (mainWindow) {
-        mainWindow.webContents.send("preview-image", data);
+electron_1.ipcMain.on("show-edit", function (event, message) {
+    if (message.isEdit) {
+        // Edit 
+        if (message.id) {
+            editWindow.show();
+            editWindow.webContents.send("edit", message);
+        }
+        else {
+            notifier.notify("Error when showing edit page");
+        }
+    }
+    else {
+        // Create
+        editWindow.show();
+        editWindow.webContents.send("edit", message);
     }
 });
-electron_1.ipcMain.on("hello", function () {
-    if (mainWindow) {
-        mainWindow.webContents.send("helloback", "hello");
+electron_1.ipcMain.on("close-edit", function (event, message) {
+    if (message.isEdit) {
+        if (message.id) {
+            mainWindow.webContents.send("edit", message.item);
+        }
+        else {
+            notifier.notify("Error when showing edit page");
+        }
     }
+    else {
+        // Create
+        mainWindow.webContents.send("create", message.item);
+    }
+});
+electron_1.ipcMain.on("notification", function (event, message) {
+    console.log(message);
+    notifier.notify({
+        title: "Notification",
+        message: message
+    });
 });
