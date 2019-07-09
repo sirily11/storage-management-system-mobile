@@ -56,12 +56,27 @@ void main() {
       when(client.post(getURL("category/"),
               body: json.encode(category),
               headers: {HttpHeaders.contentTypeHeader: "application/json"}))
-          .thenAnswer(
-              (_) async => http.Response('{"id" : ${category.id}}', 201));
+          .thenAnswer((_) async =>
+              http.Response('{"id" : ${category.id}, "name": "Food"}', 201));
 
       var newCategory =
           await Uploader<Category>(client: client).create(category);
       expect(newCategory.id, 1);
+      expect(newCategory.name, "Food");
+    });
+
+    test("create author", () async {
+      Author author = Author(id: 3, name: "Harry");
+      final client = MockClient();
+      when(client.post(getURL("author/"),
+              body: json.encode(author),
+              headers: {HttpHeaders.contentTypeHeader: "application/json"}))
+          .thenAnswer((_) async => http.Response(
+              '{"id" : ${author.id}, "name": "${author.name}"}', 201));
+
+      var newauthor = await Uploader<Author>(client: client).create(author);
+      expect(newauthor.id, author.id);
+      expect(newauthor.name, author.name);
     });
   });
 }

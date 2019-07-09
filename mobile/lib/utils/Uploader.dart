@@ -21,7 +21,7 @@ class Uploader<T> {
     } else if (object is Location) {
       return getURL("location/");
     } else if (object is Position) {
-      return getURL("position/");
+      return getURL("detail-position/");
     }
   }
 
@@ -57,5 +57,21 @@ class Uploader<T> {
     return null;
   }
 
-  Future<Decodeable> update(Decodeable object) async {}
+  Future<T> update(Decodeable object) async {
+    if (client == null) {
+      throw Exception("Client should not be null");
+    }
+    String url = getAPIURL(object);
+    var jsonBody = json.encode(object);
+    final response = await client.patch("$url${object.id}/",
+        body: jsonBody,
+        headers: {HttpHeaders.contentTypeHeader: "application/json"});
+
+    if (response.statusCode == 200) {
+      Utf8Decoder decode = Utf8Decoder();
+      var data = json.decode(decode.convert(response.bodyBytes));
+      return _castObject(data, object) as T;
+    }
+    return null;
+  }
 }

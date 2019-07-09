@@ -22,15 +22,15 @@ export class CreateAndupdater<T>{
     _getPath(): string {
         switch (this.pathName) {
             case "author":
-                return getURL("/author/")
+                return getURL("author/")
             case "category":
-                return getURL("/category/")
+                return getURL("category/")
             case "series":
-                return getURL("/series/")
+                return getURL("series/")
             case "location":
-                return getURL("/location/")
+                return getURL("location/")
             case "position":
-                return getURL("/detail-position/")
+                return getURL("detail-position/")
             default:
                 throw ("Path not found")
         }
@@ -53,9 +53,22 @@ export class CreateAndupdater<T>{
     async update(object: T, id: number): Promise<T> {
         return new Promise(async (resolve, reject) => {
             try {
-                let url = `${this._getPath()}/${id}`
+                let url = `${this._getPath()}${id}/`
                 let response = await this.client.patch(url, object)
                 if (response.status === 200)
+                    resolve(response.data)
+            } catch (err) {
+                reject(err)
+            }
+        })
+    }
+
+    async delete(id: number): Promise<T> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let url = `${this._getPath()}${id}/`
+                let response = await this.client.delete(url)
+                if (response.status === 204)
                     resolve(response.data)
             } catch (err) {
                 reject(err)

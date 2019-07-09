@@ -4,6 +4,7 @@ import { AbstractStorageItem } from "../home/storageItem";
 export interface FormValue {
   name?: string;
   description?: string;
+  qrCode?: string;
   price?: number;
   col?: number;
   row?: number;
@@ -17,6 +18,7 @@ export interface FormValue {
 const initForm: FormValue = {
   name: "",
   description: "",
+  qrCode: "",
   price: 0,
   col: 0,
   row: 0,
@@ -53,6 +55,9 @@ export default class FormProvider extends Component<Props, State> {
         break;
       case "description":
         f.description = value;
+        break;
+      case "qrcode":
+        f.qrCode = value;
         break;
       case "price":
         f.price = value;
@@ -96,6 +101,9 @@ export default class FormProvider extends Component<Props, State> {
 
       case "price":
         return f.price;
+
+      case "qrcode":
+        return f.qrCode;
 
       case "col":
         return f.col;

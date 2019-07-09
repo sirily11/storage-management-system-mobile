@@ -28,22 +28,21 @@ wss.on("connection", async (ws: WebSocket, req: any) => {
       };
 
       if (type === "scanner") {
-        console.log(scanner.length)
         console.log("Scanner online");
         if (recievers.length > 0) {
-          ws.send(JSON.stringify(receiverMsg));
+          ws.send(JSON.stringify(receiverMsg))
         }
         scanner.push(ws);
         recievers.forEach(reciever => {
-          reciever.send(JSON.stringify(scanner));
+          reciever.send(JSON.stringify(scannerMsg));
         });
       } else if (type === "receiver") {
-        if (recievers.includes(ws)) return
-        console.log("Receiver online");
+        console.log("Receiver online")
         if (scanner.length > 0) {
-          ws.send(JSON.stringify(scannerMsg));
+          ws.send(JSON.stringify(scannerMsg))
         }
         recievers.push(ws);
+
         scanner.forEach(s => {
           s.send(JSON.stringify(receiverMsg));
         });
@@ -78,10 +77,14 @@ wss.on("connection", async (ws: WebSocket, req: any) => {
     }
   });
 
-  ws.on("message", (msg: Message) => {
-    recievers.forEach(r => {
-      r.send(JSON.stringify(msg));
-    });
+  ws.on("message", (msg: string) => {
+    let messgae: Message = JSON.parse(msg);
+    if (messgae.from === "scanner" && messgae.type === "message") {
+      recievers.forEach(r => {
+        r.send(msg);
+      });
+    }
+
   });
 });
 

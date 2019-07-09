@@ -102,7 +102,7 @@ class Series implements Decodeable {
     }
     return null;
   }
-  
+
   Map toJson() {
     return {"name": name, "description": description};
   }
@@ -186,6 +186,7 @@ class StorageItemDetail {
   int row;
   double price;
   List<String> images;
+  List<String> files;
   String qrCode;
 
   StorageItemDetail(
@@ -201,7 +202,8 @@ class StorageItemDetail {
       this.position,
       this.price,
       this.images,
-      this.qrCode});
+      this.qrCode,
+      this.files});
 
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
     return StorageItemDetail(
@@ -217,6 +219,7 @@ class StorageItemDetail {
         price: json['price'],
         position: Position.fromJson(json['position_name']),
         qrCode: json['qr_code'],
-        images: json['images'].cast<String>());
+        images: json['images'].cast<String>(),
+        files: json['files'].cast<String>());
   }
 }

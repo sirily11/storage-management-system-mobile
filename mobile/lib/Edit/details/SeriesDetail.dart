@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class SeriesEditDetail extends StatelessWidget {
+class SeriesEditDetail extends StatelessWidget with CreateAndUpdate {
   final bool isEdit;
   static final _formKey = GlobalKey<FormState>();
   String seriesName;
@@ -14,51 +15,10 @@ class SeriesEditDetail extends StatelessWidget {
 
   SeriesEditDetail({this.isEdit = false});
 
-  update(context) async {
-    ItemDetailEditPageState settings =
-    Provider.of<ItemDetailEditPageState>(context);
-    try {
-      var newSeries = await editSeries(Series(name: seriesName, description: seriesDescription, id: settings.selectedSeries));
-      settings.series.removeWhere((author) => author.id == newSeries.id);
-      settings.series.add(newSeries);
-      settings.isLoading = false;
-      settings.update();
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      settings.isLoading = false;
-      settings.update();
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    }
-  }
-
-  add(context) async {
-    ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    try {
-      var series = await addSeries(
-          Series(name: seriesName, description: seriesDescription));
-      settings.series.add(series);
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    }
-
-    settings.isLoading = false;
-    settings.update();
-  }
-
   @override
   Widget build(BuildContext context) {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -72,9 +32,15 @@ class SeriesEditDetail extends StatelessWidget {
                 settings.isLoading = true;
                 settings.update();
                 if (isEdit) {
-                  await update(context);
+                  await update(
+                      context,
+                      Series(
+                          name: seriesName,
+                          description: seriesDescription,
+                          id: settings.selectedSeries));
                 } else {
-                  await add(context);
+                  await add(context,
+                      Series(name: seriesName, description: seriesDescription));
                 }
               }
             },
@@ -92,8 +58,7 @@ class SeriesEditDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Series name"),
                   initialValue: isEdit
                       ? settings.series
-                          .where(
-                              (s) => s.id == settings.selectedSeries)
+                          .where((s) => s.id == settings.selectedSeries)
                           .toList()[0]
                           .name
                       : null,
@@ -104,10 +69,9 @@ class SeriesEditDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Series description"),
                   initialValue: isEdit
                       ? settings.series
-                      .where(
-                          (s) => s.id == settings.selectedSeries)
-                      .toList()[0]
-                      .description
+                          .where((s) => s.id == settings.selectedSeries)
+                          .toList()[0]
+                          .description
                       : null,
                   minLines: 3,
                   maxLines: 15,

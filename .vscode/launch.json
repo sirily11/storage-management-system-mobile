@@ -5,6 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "node",
+      "name": "vscode-jest-tests",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/desktop/node_modules/.bin/react-scripts",
+      "args": ["test", "--env=jsdom", "--runInBand"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "protocol": "inspector",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
+    },
+
+    {
       "name": "Flutter",
       "type": "dart",
       "request": "launch",

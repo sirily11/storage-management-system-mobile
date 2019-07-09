@@ -15,18 +15,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EditPage extends StatefulWidget {
   final bool isEditMode;
-  Function addItem;
+  final int id;
+  final StorageItemDetail item;
 
-  EditPage({this.isEditMode = false, this.addItem});
+  Function addItem;
+  Function updateItem;
+
+  EditPage(
+      {this.isEditMode = false,
+      this.addItem,
+      this.id,
+      this.item,
+      this.updateItem});
 
   @override
   State<StatefulWidget> createState() {
-    return EditPageState(addItemToHome: this.addItem);
+    return EditPageState(
+        addItemToHome: this.addItem,
+        isEditMode: isEditMode,
+        id: id,
+        item: item,
+        updateDetailPageItem: this.updateItem);
   }
 }
 
 class EditPageState extends State<EditPage> {
   final bool isEditMode;
+  final int id;
   Function addItemToHome;
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -36,19 +51,29 @@ class EditPageState extends State<EditPage> {
   final columnController = TextEditingController();
   final rowController = TextEditingController();
   final qrController = TextEditingController();
+  final StorageItemDetail item;
+  final Function updateDetailPageItem;
 
   String value = "";
 
-  EditPageState({this.isEditMode, this.addItemToHome});
+  EditPageState(
+      {this.isEditMode = false,
+      this.addItemToHome,
+      this.id,
+      this.item,
+      this.updateDetailPageItem});
 
   @override
   void initState() {
-    init();
     super.initState();
-  }
-
-  init() async {
-    final prefs = await SharedPreferences.getInstance();
+    if (item != null) {
+      priceController.text = item.price.toString();
+      itemNameController.text = item.name;
+      itemDescriptionController.text = item.description;
+      columnController.text = item.column.toString();
+      rowController.text = item.row.toString();
+      qrController.text = item.qrCode;
+    }
   }
 
   Widget priceColRowWidget() {
@@ -344,40 +369,80 @@ class EditPageState extends State<EditPage> {
       child: RaisedButton(
         color: Colors.blue,
         child: Text(
-          "Add item",
+          isEditMode ? "Update item" : "Add item",
           style: TextStyle(color: Colors.white),
         ),
         onPressed: () async {
           if (_formKey.currentState.validate()) {
-            try{
-              ItemDetailEditPageState settings =
-              Provider.of<ItemDetailEditPageState>(context);
-              _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Adding item"),));
-              StorageItemAbstract item = await addItem(StorageItemDetail(
-                  name: itemNameController.text,
-                  description: itemDescriptionController.text,
-                  price: double.parse(priceController.text),
-                  column: int.parse(columnController.text),
-                  row: int.parse(rowController.text),
-                  qrCode: qrController.text,
-                  author: Author(id: settings.selectedAuthor),
-                  series: Series(id: settings.selectedSeries),
-                  category: Category(id: settings.selectedCategory),
-                  position: Position(id: settings.selectedPosition),
-                  location: Location(id: settings.selectedLocation)));
-              addItemToHome(item);
-              Navigator.of(context).pop();
-            } on Exception catch(err){
-              print(err);
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text(err.toString()),
-              ));
+            _formKey.currentState.save();
+            if (this.isEditMode) {
+              await update();
+            } else {
+              await addNewItem();
             }
-
           }
         },
       ),
     );
+  }
+
+  Future addNewItem() async {
+    try {
+      ItemDetailEditPageState settings =
+          Provider.of<ItemDetailEditPageState>(context);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Adding item"),
+      ));
+      StorageItemAbstract item = await addItem(StorageItemDetail(
+          name: itemNameController.text,
+          description: itemDescriptionController.text,
+          price: double.parse(priceController.text),
+          column: int.parse(columnController.text),
+          row: int.parse(rowController.text),
+          qrCode: qrController.text,
+          author: Author(id: settings.selectedAuthor),
+          series: Series(id: settings.selectedSeries),
+          category: Category(id: settings.selectedCategory),
+          position: Position(id: settings.selectedPosition),
+          location: Location(id: settings.selectedLocation)));
+      addItemToHome(item);
+      Navigator.of(context).pop();
+    } on Exception catch (err) {
+      print(err);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(err.toString()),
+      ));
+    }
+  }
+
+  Future update() async {
+    try {
+      ItemDetailEditPageState settings =
+          Provider.of<ItemDetailEditPageState>(context);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Updating item"),
+      ));
+      StorageItemDetail item = await UpdateItem(StorageItemDetail(
+          id: id,
+          name: itemNameController.text,
+          description: itemDescriptionController.text,
+          price: double.parse(priceController.text),
+          column: int.parse(columnController.text),
+          row: int.parse(rowController.text),
+          qrCode: qrController.text,
+          author: Author(id: settings.selectedAuthor),
+          series: Series(id: settings.selectedSeries),
+          category: Category(id: settings.selectedCategory),
+          position: Position(id: settings.selectedPosition),
+          location: Location(id: settings.selectedLocation)));
+      updateDetailPageItem(item);
+      Navigator.of(context).pop();
+    } on Exception catch (err) {
+      print(err);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(err.toString()),
+      ));
+    }
   }
 
   Future scan() async {
@@ -392,7 +457,7 @@ class EditPageState extends State<EditPage> {
       });
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-       _scaffoldKey.currentState.showSnackBar(SnackBar(
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Unable to access camera"),
         ));
       }
@@ -404,6 +469,8 @@ class EditPageState extends State<EditPage> {
   }
 
   Widget qrField() {
+    ItemDetailEditPageState settingsState =
+        Provider.of<ItemDetailEditPageState>(context);
     return Row(
       children: <Widget>[
         Expanded(
@@ -427,15 +494,16 @@ class EditPageState extends State<EditPage> {
   }
 
   Widget formList() {
+    ItemDetailEditPageState settingsState =
+        Provider.of<ItemDetailEditPageState>(context);
     return ListView(
       children: <Widget>[
         TextFormField(
-          controller: itemNameController,
-          validator: isEmpty,
-          decoration: InputDecoration(labelText: "Item Name"),
-        ),
+            controller: itemNameController,
+            validator: isEmpty,
+            decoration: InputDecoration(labelText: "Item Name")),
         TextFormField(
-//            controller: itemDescriptionController,
+            controller: itemDescriptionController,
             validator: isEmpty,
             decoration: InputDecoration(labelText: "Item Description"),
             minLines: 3,
@@ -466,7 +534,7 @@ class EditPageState extends State<EditPage> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text("Add new item"),
+          title: Text(isEditMode ? "Update item" : "Add new item"),
         ),
         body: Container(
           child: Form(

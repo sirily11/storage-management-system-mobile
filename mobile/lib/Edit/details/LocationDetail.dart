@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class LocationDetailEditPage extends StatelessWidget {
+class LocationDetailEditPage extends StatelessWidget with CreateAndUpdate {
   final bool isEdit;
   static final _formKey = GlobalKey<FormState>();
   String city;
@@ -17,33 +18,6 @@ class LocationDetailEditPage extends StatelessWidget {
   String roomNumber;
 
   LocationDetailEditPage({this.isEdit = false});
-
-  update(context) async {}
-
-  add(context) async {
-    ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    _formKey.currentState.save();
-    try {
-      var location = await addLocation(Location(
-          country: country,
-          city: city,
-          street: street,
-          building: building,
-          unit: unit,
-          room_number: roomNumber));
-      settings.locations.add(location);
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    } finally {
-      settings.isLoading = false;
-      settings.update();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +120,26 @@ class LocationDetailEditPage extends StatelessWidget {
                           settings.isLoading = true;
                           settings.update();
                           if (isEdit) {
-                            await update(context);
+                            await update(
+                                context,
+                                Location(
+                                    city: city,
+                                    country: country,
+                                    street: street,
+                                    building: building,
+                                    unit: unit,
+                                    room_number: roomNumber,
+                                    id: settings.selectedLocation));
                           } else {
-                            await add(context);
+                            await add(
+                                context,
+                                Location(
+                                    city: city,
+                                    country: country,
+                                    street: street,
+                                    building: building,
+                                    unit: unit,
+                                    room_number: roomNumber));
                           }
                         }
                       },

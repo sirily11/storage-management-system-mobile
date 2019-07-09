@@ -43,6 +43,29 @@ class ItemDetailEditPageState with ChangeNotifier {
 
   String qrCode = "";
 
+  int col = 0;
+
+  int row = 0;
+
+  double price = 0;
+
+  /**
+   * Init setting page
+   */
+  updateItem(StorageItemDetail item) {
+    selectedLocation = item.location?.id;
+    selectedAuthor = item.author?.id;
+    selectedCategory = item.category?.id;
+    selectedPosition = item.position?.id;
+    selectedSeries = item.series?.id;
+    itemDescription = item.description;
+    itemName = item.name;
+    col = item.column;
+    qrCode = item.qrCode;
+    row = item.row;
+    price = item.price;
+  }
+
   updateAll(
       {List<Category> categories,
       List<Series> series,

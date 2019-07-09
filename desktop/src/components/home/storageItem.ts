@@ -15,7 +15,7 @@ export abstract class Uploadable {
     
 }
 
-interface Base {
+export interface Base {
     id: number;
     name: string;
 }

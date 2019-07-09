@@ -8,6 +8,14 @@ interface Props {
   onchanges?: any[];
   multiline: boolean;
   varient?: any;
+  type:
+    | "name"
+    | "description"
+    | "qrCode"
+    | "price"
+    | "col"
+    | "row"
+    | "multiple";
 }
 
 export default function TextInputField(props: Props) {
@@ -19,7 +27,14 @@ export default function TextInputField(props: Props) {
           return (
             <TextField
               onChange={e => {
-                formContext.setForm(label, e.target.value);
+                if (props.type !== "multiple") {
+                  formContext.setForm(props.type, e.target.value);
+                } else {
+                  formContext.setForm(
+                    label.toLocaleLowerCase(),
+                    e.target.value
+                  );
+                }
               }}
               required
               variant={props.varient}
@@ -44,7 +59,14 @@ export default function TextInputField(props: Props) {
             <TextField
               required
               onChange={e => {
-                formContext.setForm(label, e.target.value);
+                if (props.type !== "multiple") {
+                  formContext.setForm(props.type, e.target.value);
+                } else {
+                  formContext.setForm(
+                    label.toLocaleLowerCase(),
+                    e.target.value
+                  );
+                }
               }}
               className="my-2"
               variant={props.varient}

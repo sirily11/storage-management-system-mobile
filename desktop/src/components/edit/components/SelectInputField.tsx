@@ -15,9 +15,12 @@ import { FormContext } from "../../Datamodel/FormContext";
 interface Props {
   label: string;
   labels: string[];
+  type: "category" | "series" | "author" | "location" | "position";
   values: any[];
-  onAdd(from: string): void;
-  onUpdate(from: string): void;
+  onAdd(from: "category" | "series" | "author" | "location" | "position"): void;
+  onUpdate(
+    from: "category" | "series" | "author" | "location" | "position"
+  ): void;
 }
 
 export default function SelectInputField(props: Props) {
@@ -28,7 +31,7 @@ export default function SelectInputField(props: Props) {
         <InputLabel>{props.label}</InputLabel>
         <Select
           required
-          value={context.getForm(props.label)}
+          value={context.getForm(props.type)}
           onChange={e => {
             context.setForm(props.label, e.target.value);
           }}
@@ -44,13 +47,22 @@ export default function SelectInputField(props: Props) {
         </Select>
       </FormControl>
       <div className="col-md-4 col-6 m-3">
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            props.onAdd(props.type);
+          }}
+        >
           <AddIcon />
         </IconButton>
         <IconButton>
           <RemoveIcon />
         </IconButton>
-        <IconButton>
+        <IconButton
+          disabled={context.getForm(props.type) < 0}
+          onClick={() => {
+            props.onUpdate(props.type);
+          }}
+        >
           <EditIcon />
         </IconButton>
       </div>

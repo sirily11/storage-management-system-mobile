@@ -1,38 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-class CategoryDetail extends StatelessWidget {
+class CategoryDetail extends StatelessWidget with CreateAndUpdate {
   final bool isEdit;
   static final _formKey = GlobalKey<FormState>();
   String categoryName;
 
   CategoryDetail({this.isEdit = false});
-
-  update(context) async {}
-
-  add(context) async {
-    ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    _formKey.currentState.save();
-    try {
-      var newCategory = await addCategory(
-          Category(name: categoryName)
-      );
-      settings.categories.add(newCategory);
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    }
-    settings.isLoading = false;
-    settings.update();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +34,8 @@ class CategoryDetail extends StatelessWidget {
                   decoration: InputDecoration(labelText: "Category name"),
                   initialValue: isEdit
                       ? settings.categories
-                          .where(
-                              (category) => category.id == settings.selectedCategory)
+                          .where((category) =>
+                              category.id == settings.selectedCategory)
                           .toList()[0]
                           .name
                       : null,
@@ -76,9 +55,14 @@ class CategoryDetail extends StatelessWidget {
                           settings.isLoading = true;
                           settings.update();
                           if (isEdit) {
-                            await update(context);
+                            print("Editing");
+                            await update(
+                                context,
+                                Category(
+                                    id: settings.selectedCategory,
+                                    name: categoryName));
                           } else {
-                            await add(context);
+                            await add(context, Category(name: categoryName));
                           }
                         }
                       },

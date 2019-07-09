@@ -8,7 +8,6 @@ import 'package:flutter/widgets.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:mobile/utils/utils.dart';
 
-
 class ScannerPage extends StatefulWidget {
   _ScannerState createState() => _ScannerState();
 }
@@ -46,22 +45,25 @@ class _ScannerState extends State<ScannerPage> {
       _socket = await WebSocket.connect(getWebSocket());
       _socket.listen((dynamic data) async {
         Message message = await _onMessage(data);
-        print(message);
+        print("Message: ${message.type} ${message.from}");
         if (message.type == "disconnect") {
           setState(() {
             _status = 0;
           });
         } else if (message.type == "connect") {
+          print("Setting state");
           setState(() {
             _status = 1;
           });
         }
       }, onError: (error) {
+        print("Error");
         _socket.close();
         setState(() {
           _status = 0;
         });
       }, onDone: () {
+        print("Connection closed");
         _socket.close();
         setState(() {
           _status = 0;
@@ -83,7 +85,7 @@ class _ScannerState extends State<ScannerPage> {
         this.qrCode = barcode;
       });
       Message message =
-          Message(body: barcode, type: "Message", from: "scanner");
+          Message(body: barcode, type: "message", from: "scanner");
       _socket.add(json.encode(message));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
@@ -121,6 +123,14 @@ class _ScannerState extends State<ScannerPage> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () async {
+                await this.connectToWebsocket();
+              },
+            )
+          ],
           title:
               _status == 0 ? Text("Waiting for connection") : Text("Connected"),
         ),

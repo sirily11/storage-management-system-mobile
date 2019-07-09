@@ -1,61 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-class AuthorDetail extends StatelessWidget {
+class AuthorDetail extends StatelessWidget with CreateAndUpdate {
   final bool isEdit;
   static final _formKey = GlobalKey<FormState>();
   String authorName;
   String authorDescription;
 
   AuthorDetail({this.isEdit = false});
-
-  update(context) async {
-    ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    try {
-      var newAuthor = await editAuthor(Author(
-          name: authorName,
-          description: authorDescription,
-          id: settings.selectedAuthor));
-      settings.authors.removeWhere((author) => author.id == newAuthor.id);
-      settings.authors.add(newAuthor);
-      settings.isLoading = false;
-      settings.update();
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      settings.isLoading = false;
-      settings.update();
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    }
-  }
-
-  add(context) async {
-    ItemDetailEditPageState settings =
-        Provider.of<ItemDetailEditPageState>(context);
-    try {
-      var newAuthor = await addAuthor(
-          Author(name: authorName, description: authorDescription));
-
-      settings.authors.add(newAuthor);
-      settings.isLoading = false;
-      settings.update();
-      Navigator.pop(context);
-    } on Exception catch (err) {
-      settings.isLoading = false;
-      settings.update();
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(err.toString()),
-        duration: Duration(seconds: 1),
-      ));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +31,17 @@ class AuthorDetail extends StatelessWidget {
                   settings.isLoading = true;
                   settings.update();
                   if (isEdit) {
-                    await update(context);
+                    await update(
+                        context,
+                        Author(
+                            name: authorName,
+                            description: authorDescription,
+                            id: settings.selectedAuthor));
                   } else {
-                    await add(context);
+                    await add(
+                        context,
+                        Author(
+                            name: authorName, description: authorDescription));
                   }
                 }
               })
