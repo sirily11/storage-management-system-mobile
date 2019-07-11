@@ -100,9 +100,9 @@ electron_1.ipcMain.on("print", function (e, qrCode) {
     // console.log({ code: qrCode })
     // qrWindow.show()
     qrWindow.webContents.send("qrCode", { code: qrCode });
-    setTimeout(function () {
-        qrWindow.webContents.print({ silent: false });
-    });
+    // setTimeout(() => {
+    //   qrWindow.webContents.print({ silent: false })
+    // })
 });
 electron_1.ipcMain.on("notification", function (event, message) {
     console.log(message);
