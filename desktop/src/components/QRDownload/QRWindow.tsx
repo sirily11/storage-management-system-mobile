@@ -18,21 +18,22 @@ export default class QRWindow extends Component<Props, State> {
 
   componentDidMount() {
     console.log("Window mounted", this.state.qrCode);
-    ipcRenderer.on("qrCode", (qr: any) => {
-      this.setState({ qrCode: qr.code });
+    ipcRenderer.on("qrCode", (evnt: any, qr: any) => {
+      let qrCode: string = qr.code;
+      this.setState({ qrCode });
+      
     });
   }
 
   render() {
-    if (this.state.qrCode) {
+    if (!this.state.qrCode) {
       return <div>No content</div>;
     } else {
       return (
         <div className="d-flex h-100">
-          <h4>{this.state.qrCode}</h4>
           <div className="m-auto">
             <QRCode
-              size={100}
+              size={200}
               value={this.state.qrCode ? this.state.qrCode : ""}
             />
           </div>

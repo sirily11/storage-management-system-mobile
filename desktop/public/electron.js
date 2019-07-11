@@ -74,8 +74,8 @@ function createWindow() {
     if (isDev) {
         // Open the DevTools.
         //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-        // mainWindow.webContents.openDevTools();
-        qrWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
+        // qrWindow.webContents.openDevTools()
     }
     mainWindow.on("closed", function () {
         mainWindow = undefined;
@@ -97,9 +97,12 @@ electron_1.app.on("activate", function () {
     }
 });
 electron_1.ipcMain.on("print", function (e, qrCode) {
-    // console.log(qrCode)
-    qrWindow.show();
+    // console.log({ code: qrCode })
+    // qrWindow.show()
     qrWindow.webContents.send("qrCode", { code: qrCode });
+    setTimeout(function () {
+        qrWindow.webContents.print({ silent: false });
+    });
 });
 electron_1.ipcMain.on("notification", function (event, message) {
     console.log(message);

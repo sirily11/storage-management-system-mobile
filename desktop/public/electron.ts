@@ -119,9 +119,12 @@ app.on("activate", () => {
 });
 
 ipcMain.on("print", (e: any, qrCode: string) => {
-  // console.log(qrCode)
-  qrWindow.show()
+  // console.log({ code: qrCode })
+  // qrWindow.show()
   qrWindow.webContents.send("qrCode", { code: qrCode })
+  setTimeout(() => {
+    qrWindow.webContents.print({ silent: false })
+  })
 
 })
 
