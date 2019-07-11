@@ -110,8 +110,8 @@ pre {
   background-color: #ececec;
 }
 
-@media print and (width: 30mm) and (height: 20mm) {
+/* @media print and (width: 30mm) and (height: 20mm) {
   @page {
     margin: 2mm;
   }
-}
+} */

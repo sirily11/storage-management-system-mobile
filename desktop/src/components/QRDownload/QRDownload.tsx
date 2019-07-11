@@ -9,6 +9,7 @@ import {
   Button
 } from "@material-ui/core";
 import { IpcRenderer } from "electron";
+import printer from 'print-js'
 const electron = (window as any).require("electron");
 const ipc: IpcRenderer = electron.ipcRenderer;
 
@@ -24,7 +25,9 @@ export default function QRDownload(props: Props) {
       <DialogTitle>Print QR Code</DialogTitle>
       <DialogContent>
         <div className="row ml-2">
-          <QRCode value={props.item ? props.item.uuid : ""} />
+          <div id="qrCode" className="pr-2 mb-2">
+            <QRCode size={60} value={props.item ? props.item.uuid : ""} />
+          </div>
           <div className="ml-3">
             <div>{props.item ? props.item.name : ""}</div>
             <div>{props.item ? props.item.description : ""}</div>
@@ -37,7 +40,8 @@ export default function QRDownload(props: Props) {
         <Button
           onClick={() => {
             if (props.item) {
-              ipc.send("print", props.item.uuid);
+              // ipc.send("print", props.item.uuid);
+              printer("qrCode", "html")
             }
           }}
         >

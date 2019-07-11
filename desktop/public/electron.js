@@ -98,7 +98,7 @@ electron_1.app.on("activate", function () {
 });
 electron_1.ipcMain.on("print", function (e, qrCode) {
     // console.log({ code: qrCode })
-    // qrWindow.show()
+    qrWindow.show();
     qrWindow.webContents.send("qrCode", { code: qrCode });
     // setTimeout(() => {
     //   qrWindow.webContents.print({ silent: false })
