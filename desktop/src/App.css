@@ -2,7 +2,24 @@ body,
 html {
   height: 100%;
   margin: 0px;
-  font-family: Georgia, "Times New Roman", "Microsoft YaHei", "微软雅黑", STXihei, "华文细黑", serif;
+}
+
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+span,
+p,
+label,
+ul,
+ol,
+label {
+
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #root,
@@ -25,7 +42,7 @@ html {
   width: 100%;
 }
 
-.switch-wrapper > div {
+.switch-wrapper>div {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -95,6 +112,6 @@ pre {
 
 @media print and (width: 30mm) and (height: 20mm) {
   @page {
-     margin: 2mm;
+    margin: 2mm;
   }
 }

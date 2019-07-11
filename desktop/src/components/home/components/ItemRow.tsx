@@ -23,6 +23,7 @@ export default function ItemRow(props: Props) {
     <ListItem
       selected={props.item.id === props.selected}
       style={props.style}
+      className="px-3"
       button
       onClick={() => {
         props.onSelected(props.item.id);

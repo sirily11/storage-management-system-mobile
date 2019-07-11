@@ -120,7 +120,7 @@ export default class Homepage extends Component<Props, State> {
       } catch (err) {
         alert(err);
       } finally {
-        setTimeout(
+         setTimeout(
           () => this.setState({ loadingProgress: undefined }),
           waitAndDispearTime
         );
@@ -191,7 +191,7 @@ export default class Homepage extends Component<Props, State> {
         <div className="row h-100">
           <div
             className="col-5 pt-4"
-            style={{ position: "sticky", overflowY: "scroll" }}
+            style={{  overflowY: "scroll" }}
           >
             <SearchField
               search={this.search}
@@ -203,7 +203,7 @@ export default class Homepage extends Component<Props, State> {
               {({ height, width }) => (
                 <List
                   height={height}
-                  width={width}
+                  width={width -20}
                   itemCount={this.state.searchItems.length}
                   itemSize={106}
                 >
