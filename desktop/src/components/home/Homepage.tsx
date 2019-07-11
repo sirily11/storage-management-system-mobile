@@ -115,13 +115,15 @@ export default class Homepage extends Component<Props, State> {
             })
         });
         let items: AbstractStorageItem[] = response.data;
+       
+        resolve(items);
+      } catch (err) {
+        alert(err);
+      } finally {
         setTimeout(
           () => this.setState({ loadingProgress: undefined }),
           waitAndDispearTime
         );
-        resolve(items);
-      } catch (err) {
-        alert(err);
       }
     });
   }

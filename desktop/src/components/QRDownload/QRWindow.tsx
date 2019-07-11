@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { IpcRenderer } from "electron";
 import QRCode from "qrcode.react";
+import print from 'print-js'
 const ipcRenderer: IpcRenderer = (window as any).require("electron")
   .ipcRenderer;
+
 
 interface Props {}
 
@@ -21,7 +23,9 @@ export default class QRWindow extends Component<Props, State> {
     ipcRenderer.on("qrCode", (evnt: any, qr: any) => {
       let qrCode: string = qr.code;
       this.setState({ qrCode });
-      
+      setTimeout(()=>{
+        print("qrCode", "html")
+      }, 100)
     });
   }
 
@@ -30,14 +34,12 @@ export default class QRWindow extends Component<Props, State> {
       return <div>No content</div>;
     } else {
       return (
-        <div className="d-flex h-100">
-          <div className="m-auto">
+          <div className="row m-auto pt-3 pb-3" id="qrCode">
             <QRCode
-              size={200}
+              size={60}
               value={this.state.qrCode ? this.state.qrCode : ""}
             />
           </div>
-        </div>
       );
     }
   }

@@ -2,6 +2,7 @@ body,
 html {
   height: 100%;
   margin: 0px;
+  font-family: Georgia, "Times New Roman", "Microsoft YaHei", "微软雅黑", STXihei, "华文细黑", serif;
 }
 
 #root,
@@ -90,4 +91,10 @@ blockquote span {
 
 pre {
   background-color: #ececec;
+}
+
+@media print and (width: 30mm) and (height: 20mm) {
+  @page {
+     margin: 2mm;
+  }
 }

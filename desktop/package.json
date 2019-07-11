@@ -30,6 +30,8 @@
     "electron-is-dev": "^1.1.0",
     "jquery": "^3.4.1",
     "node-notifier": "^5.4.0",
+    "print-js": "^1.0.61",
+    "printjs": "^1.1.0",
     "qrcode.react": "^0.9.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -57,7 +59,7 @@
     "mac": "electron-builder -m",
     "all": "electron-builder -mw",
     "clean": "rm -rf dist",
-    "electron-dev": " tsc public/electron.ts && concurrently \"BROWSER=none yarn start \" \"wait-on http://localhost:3000  && electron .\""
+    "electron-dev": " tsc public/electron.ts && concurrently \"yarn start \" \"wait-on http://localhost:3000  && electron .\""
   },
   "build": {
     "appId": "app.test",
@@ -81,6 +83,7 @@
   "devDependencies": {
     "axios-mock-adapter": "^1.17.0",
     "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
     "electron": "^4.1.4",
     "electron-builder": "^20.44.4",
     "ts-mockito": "^2.3.1",

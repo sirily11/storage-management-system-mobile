@@ -84,7 +84,6 @@ export default class FormProvider extends Component<Props, State> {
 
   setForm = (name: string, value: any) => {
     let f = this.state.formValue;
-    console.log(f);
     switch (name.toLowerCase()) {
       case "name":
         f.name = value;

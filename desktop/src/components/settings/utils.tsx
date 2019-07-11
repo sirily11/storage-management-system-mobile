@@ -22,7 +22,9 @@ export function computeDownloadProgress(progressEvent: any, callback?: any) {
       progressEvent.target.getResponseHeader("x-decompressed-content-length");
   if (totalLength !== null) {
     let progress = Math.round((progressEvent.loaded * 100) / totalLength);
-    callback(progress);
+    if(callback){
+      callback(progress);
+    }
   }
 }
 

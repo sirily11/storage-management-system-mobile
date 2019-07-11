@@ -24,14 +24,16 @@ export default function ItemRow(props: Props) {
       selected={props.item.id === props.selected}
       style={props.style}
       button
+      onClick={() => {
+        props.onSelected(props.item.id);
+      }}
+      key={`item-${props.item.id}`}
     >
       {/* Title */}
       <ListItemText
         primary={props.item.name}
         secondary={`${props.item.description} -<${props.item.category_name}>`}
-        onClick={() => {
-          props.onSelected(props.item.id);
-        }}
+       
       />
       {/* Buttons */}
       <Link to={`/edit/${props.item.id}`}>
