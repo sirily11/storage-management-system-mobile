@@ -12,6 +12,7 @@ import CropFreeIcon from "@material-ui/icons/CropFree";
 import CreateIcon from "@material-ui/icons/Create";
 import { HomepageContext } from "../../Datamodel/HomepageContext";
 import { openEditPage } from "../../settings/utils";
+import { Link } from "react-router-dom";
 
 interface Props {
   search(
@@ -54,13 +55,11 @@ export default function SearchField(props: Props) {
             </IconButton>
           </Tooltip>
           <Tooltip title="Open Edit page">
-            <IconButton
-              onClick={() => {
-                openEditPage({ isEdit: false });
-              }}
-            >
-              <CreateIcon />
-            </IconButton>
+            <Link to="/edit">
+              <IconButton>
+                <CreateIcon />
+              </IconButton>
+            </Link>
           </Tooltip>
         </div>
       </Paper>

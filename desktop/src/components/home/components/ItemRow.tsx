@@ -3,14 +3,18 @@ import { AbstractStorageItem } from "../storageItem";
 import { ListItem, ListItemText, IconButton } from "@material-ui/core";
 import PrintIcon from "@material-ui/icons/Print";
 import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { HomepageContext } from "../../Datamodel/HomepageContext";
-import { openEditPage } from "../../settings/utils";
+import { openEditPage, showNotification } from "../../settings/utils";
+import { Link } from "react-router-dom";
+import { CreateAndupdater } from "../../settings/UpdateAndCreate";
 
 interface Props {
   selected: number;
   onSelected(id: number): void;
   item: AbstractStorageItem;
   style: React.CSSProperties;
+  onDeleted(id: number): void;
 }
 
 export default function ItemRow(props: Props) {
@@ -21,20 +25,20 @@ export default function ItemRow(props: Props) {
       style={props.style}
       button
     >
+      {/* Title */}
       <ListItemText
         primary={props.item.name}
-        secondary={`${props.item.description} ${props.item.category_name}`}
+        secondary={`${props.item.description} -<${props.item.category_name}>`}
         onClick={() => {
           props.onSelected(props.item.id);
         }}
       />
-      <IconButton
-        onClick={() => {
-          openEditPage({ isEdit: false, id: props.item.id });
-        }}
-      >
-        <EditIcon />
-      </IconButton>
+      {/* Buttons */}
+      <Link to={`/edit/${props.item.id}`}>
+        <IconButton>
+          <EditIcon />
+        </IconButton>
+      </Link>
       <IconButton
         onClick={() => {
           openQR();
@@ -42,6 +46,22 @@ export default function ItemRow(props: Props) {
         }}
       >
         <PrintIcon />
+      </IconButton>
+      <IconButton
+        onClick={async () => {
+          let willDelete = window.confirm("真的要删除吗？");
+          if (willDelete) {
+            try {
+              let client = new CreateAndupdater<AbstractStorageItem>("item");
+              await client.delete(props.item.id);
+              props.onDeleted(props.item.id);
+            } catch (err) {
+              showNotification(err.toString());
+            }
+          }
+        }}
+      >
+        <DeleteIcon />
       </IconButton>
     </ListItem>
   );

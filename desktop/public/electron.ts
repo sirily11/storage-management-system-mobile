@@ -1,12 +1,21 @@
-import { app, BrowserWindow, ipcMain, Menu, remote, Notification } from "electron";
+import { app, BrowserWindow, ipcMain, Menu, remote, Notification, dialog } from "electron";
 import * as path from "path";
 import * as fs from 'fs';
 import * as notifier from "node-notifier"
+import * as  contextMenu from "electron-context-menu"
 
 const isDev = require("electron-is-dev");
 
 let mainWindow: Electron.BrowserWindow | undefined;
-let editWindow: Electron.BrowserWindow | undefined;
+let qrWindow: Electron.BrowserWindow | undefined;
+
+contextMenu({
+  prepend: (actions, params, browserWindow) => (
+    [
+
+    ]
+  )
+})
 
 var menu = Menu.buildFromTemplate([
   {
@@ -49,9 +58,9 @@ function createWindow() {
     },
   });
 
-  editWindow = new BrowserWindow({
-    width: 720,
-    height: 600,
+  qrWindow = new BrowserWindow({
+    width: 300,
+    height: 300,
     titleBarStyle: "hidden",
     show: false,
     webPreferences: {
@@ -66,15 +75,16 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  editWindow.loadURL(
+  qrWindow.loadURL(
     isDev
-      ? "http://localhost:3000#/edit"
-      : `file://${path.join(__dirname, "../build/index.html#/edit")}`
+      ? "http://localhost:3000#/qr"
+      : `file://${path.join(__dirname, "../build/index.html#/qr")}`
   );
 
   mainWindow.once("ready-to-show", () => {
     if (mainWindow) {
       mainWindow.show()
+      // qrWindow.show()
     }
   })
 
@@ -82,15 +92,15 @@ function createWindow() {
     // Open the DevTools.
     //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
     mainWindow.webContents.openDevTools();
-    editWindow.webContents.openDevTools()
+    // qrWindow.webContents.openDevTools()
   }
   mainWindow.on("closed", () => {
     mainWindow = undefined;
   })
 
-  editWindow.on("close", e => {
+  qrWindow.on("close", e => {
     e.preventDefault()
-    editWindow.hide()
+    qrWindow.hide()
   })
 }
 
@@ -108,40 +118,11 @@ app.on("activate", () => {
   }
 });
 
+ipcMain.on("print", (e: any, qrCode: string) => {
+  // console.log(qrCode)
+  qrWindow.show()
+  qrWindow.webContents.send("qrCode", { code: qrCode })
 
-interface EditMessage {
-  isEdit: boolean;
-  id?: number;
-  item?: any
-}
-
-ipcMain.on("show-edit", (event: any, message: EditMessage) => {
-  if (message.isEdit) {
-    // Edit 
-    if (message.id) {
-      editWindow.show()
-      editWindow.webContents.send("edit", message)
-    } else {
-      notifier.notify("Error when showing edit page")
-    }
-  } else {
-    // Create
-    editWindow.show()
-    editWindow.webContents.send("edit", message)
-  }
-})
-
-ipcMain.on("close-edit", (event: any, message: EditMessage) => {
-  if (message.isEdit) {
-    if (message.id) {
-      mainWindow.webContents.send("edit", message.item)
-    } else {
-      notifier.notify("Error when showing edit page")
-    }
-  } else {
-    // Create
-    mainWindow.webContents.send("create", message.item)
-  }
 })
 
 ipcMain.on("notification", (event: any, message: string) => {
@@ -151,4 +132,3 @@ ipcMain.on("notification", (event: any, message: string) => {
     message: message
   })
 })
-

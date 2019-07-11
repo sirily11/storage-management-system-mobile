@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { DetailStorageItem } from "../storageItem";
+import { DetailStorageItem, FileObject } from "../storageItem";
 import { getURL } from "../../settings/settings";
 import FolderIcon from "@material-ui/icons/Folder";
+import DeleteIcon from "@material-ui/icons/Delete";
 import {
   CircularProgress,
   Divider,
@@ -15,12 +16,26 @@ import {
   CardContent,
   Icon,
   Card,
-  ListSubheader
+  ListSubheader,
+  IconButton,
+  CardActions,
+  Collapse,
+  Button
 } from "@material-ui/core";
-import { fetchDetailItem } from "../../settings/utils";
+import {
+  fetchDetailItem,
+  showNotification,
+  getIcon
+} from "../../settings/utils";
+import FileUploader from "../../uploadFile/FileUploader";
+import AddIcon from "@material-ui/icons/Add";
+import { async } from "q";
+import { CreateAndupdater } from "../../settings/UpdateAndCreate";
 
 interface State {
   item?: DetailStorageItem;
+  openAddFile: boolean;
+  showFile: boolean;
 }
 
 interface Props {
@@ -31,7 +46,9 @@ export default class ItemDetailPage extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      item: undefined
+      item: undefined,
+      openAddFile: false,
+      showFile: false
     };
   }
 
@@ -81,15 +98,29 @@ export default class ItemDetailPage extends Component<Props, State> {
     }
   }
 
+  deleteFile = async (id: number, index: number) => {
+    try {
+      let client = new CreateAndupdater<FileObject>("files");
+      await client.delete(id);
+      let item = this.state.item;
+      if (item) {
+        item.files_objects.splice(index, 1);
+        this.setState({ item });
+      }
+    } catch (err) {
+      showNotification(err.toString());
+    }
+  };
+
   renderTextField(title: string, label?: string, value?: string, numLine = 5) {
     return (
       <div>
         <h5>{title}</h5>
         <TextField
+          InputLabelProps={{ shrink: true }}
           className="mt-2 mb-2"
           value={value}
           label={label}
-          InputLabelProps={{ shrink: true }}
           fullWidth
           variant="outlined"
           rowsMax={numLine}
@@ -100,25 +131,41 @@ export default class ItemDetailPage extends Component<Props, State> {
     );
   }
 
-  renderFiles(files: string[]) {
+  renderFiles(files: FileObject[]) {
     return (
-      <GridList cellHeight={80} cols={3} spacing={20} className="pt-2">
-        <GridListTile key="Subheader" cols={3} style={{ height: "auto" }}>
-          <h5>Files</h5>
-        </GridListTile>
-        {files.map((file, index) => {
-          return (
-            <GridListTile key={`file-${index}`}>
-              <Card>
-                <CardContent className="row mx-2">
-                  <FolderIcon />
-                  <div>{file}</div>
-                </CardContent>
-              </Card>
-            </GridListTile>
-          );
-        })}
-      </GridList>
+      <Collapse
+        in={this.state.showFile}
+        mountOnEnter
+        unmountOnExit
+        className="pb-3"
+      >
+        <GridList cellHeight={"auto"} cols={2} spacing={20} className="pt-2">
+          {files.map((file, index) => {
+            return (
+              <GridListTile key={`file-${index}`}>
+                <Card>
+                  <CardContent className="row mx-2">
+                    {getIcon(file.file)}
+                    <div>{file.file}</div>
+                  </CardContent>
+                  <CardActions>
+                    <IconButton
+                      onClick={() => {
+                        let confirm = window.confirm("确定要删除吗？");
+                        if (file.id && confirm) {
+                          this.deleteFile(file.id, index);
+                        }
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+              </GridListTile>
+            );
+          })}
+        </GridList>
+      </Collapse>
     );
   }
 
@@ -138,7 +185,9 @@ export default class ItemDetailPage extends Component<Props, State> {
       return (
         <div className="container pt-4">
           <h3>{item.name}</h3>
-          <span>{item.category_name.name}</span>
+          <span>
+            {item.category_name !== null ? item.category_name.name : ""}
+          </span>
           <Divider />
           <div className="pt-3">
             <h5>Images</h5>
@@ -183,22 +232,57 @@ export default class ItemDetailPage extends Component<Props, State> {
             />
             {this.renderTextField(
               "Author",
-              item.author_name.name,
-              item.author_name.description
+              item.author_name !== null ? item.author_name.name : "",
+              item.author_name !== null ? item.author_name.description : ""
             )}
             {this.renderTextField(
               "Series",
-              item.series_name.name,
-              item.series_name.description
+              item.series_name !== null ? item.series_name.name : "",
+              item.series_name !== null ? item.series_name.description : ""
             )}
             {this.renderTextField(
               "Position",
-              item.position_name.position,
-              item.position_name.description,
+              item.position_name !== null ? item.position_name.position : "",
+              item.position_name !== null ? item.position_name.description : "",
               2
             )}
-            {this.renderFiles(item.files)}
+            <h5>
+              Files
+              <IconButton
+                onClick={() => {
+                  this.setState({ openAddFile: true });
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+              <Button
+                onClick={() => {
+                  let showFile = !this.state.showFile;
+                  this.setState({
+                    showFile
+                  });
+                }}
+              >
+                {!this.state.showFile ? "显示更多" : "隐藏"}
+              </Button>
+            </h5>
+            {this.renderFiles(item.files_objects)}
           </div>
+          <FileUploader
+            existingFiles={this.state.item ? this.state.item.files_objects : []}
+            open={this.state.openAddFile}
+            itemID={this.props.itemID}
+            onClose={() => {
+              this.setState({ openAddFile: false });
+            }}
+            onSave={(newFiles: FileObject[]) => {
+              let item = this.state.item;
+              if (item) {
+                item.files_objects = [...item.files_objects, ...newFiles];
+                this.setState({ item: item, openAddFile: false });
+              }
+            }}
+          />
         </div>
       );
     }

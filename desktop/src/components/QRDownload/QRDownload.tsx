@@ -8,6 +8,9 @@ import {
   DialogActions,
   Button
 } from "@material-ui/core";
+import { IpcRenderer } from "electron";
+const electron = (window as any).require("electron");
+const ipc: IpcRenderer = electron.ipcRenderer;
 
 interface Props {
   item?: AbstractStorageItem;
@@ -31,7 +34,15 @@ export default function QRDownload(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose}>Cancel</Button>
-        <Button>Print</Button>
+        <Button
+          onClick={() => {
+            if (props.item) {
+              ipc.send("print", props.item.uuid);
+            }
+          }}
+        >
+          Print
+        </Button>
       </DialogActions>
     </Dialog>
   );

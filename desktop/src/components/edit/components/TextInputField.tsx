@@ -2,12 +2,15 @@ import React, { useContext } from "react";
 import { TextField, Grid, GridList, GridListTile } from "@material-ui/core";
 import { FormContext } from "../../Datamodel/FormContext";
 
+const multiplesType = ["col", "row", "price"];
+
 interface Props {
   labels: string[];
   values?: string[];
   onchanges?: any[];
   multiline: boolean;
   varient?: any;
+  number?: boolean;
   type:
     | "name"
     | "description"
@@ -24,25 +27,22 @@ export default function TextInputField(props: Props) {
     return (
       <div>
         {props.labels.map((label, index) => {
+          const value = formContext.getForm(label.toLocaleLowerCase());
           return (
             <TextField
+              type={props.number ? "number" : undefined}
               onChange={e => {
-                if (props.type !== "multiple") {
-                  formContext.setForm(props.type, e.target.value);
-                } else {
-                  formContext.setForm(
-                    label.toLocaleLowerCase(),
-                    e.target.value
-                  );
-                }
+                formContext.setForm(label.toLocaleLowerCase(), e.target.value);
               }}
               required
+              InputLabelProps={{ shrink: true }}
               variant={props.varient}
               fullWidth
               rows={3}
               multiline={true}
               label={label}
-              defaultValue={props.values ? props.values[index] : ""}
+              // defaultValue={props.values ? props.values[index] : ""}
+              value={value !== null ? value : ""}
               key={label}
             />
           );
@@ -54,10 +54,13 @@ export default function TextInputField(props: Props) {
   return (
     <GridList cols={props.labels.length} cellHeight={80} spacing={30}>
       {props.labels.map((label, index) => {
+        const value = formContext.getForm(label.toLocaleLowerCase());
         return (
           <GridListTile cols={1}>
             <TextField
               required
+              InputLabelProps={{ shrink: true }}
+              type={props.number ? "number" : undefined}
               onChange={e => {
                 if (props.type !== "multiple") {
                   formContext.setForm(props.type, e.target.value);
@@ -72,7 +75,7 @@ export default function TextInputField(props: Props) {
               variant={props.varient}
               label={label}
               key={`${label}-label`}
-              defaultValue={props.values ? props.values[index] : ""}
+              value={value !== null ? value : ""}
               fullWidth
             />
           </GridListTile>

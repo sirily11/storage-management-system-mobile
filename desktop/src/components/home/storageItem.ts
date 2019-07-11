@@ -12,7 +12,7 @@ export interface AbstractStorageItem {
 }
 
 export abstract class Uploadable {
-    
+
 }
 
 export interface Base {
@@ -48,6 +48,19 @@ export interface Position {
     description: string;
 }
 
+export interface ImageObject {
+    id?: number;
+    image: string;
+    item: number;
+}
+
+export interface FileObject {
+    id?: number;
+    file: string;
+    item: number;
+
+}
+
 export interface DetailStorageItem extends Base {
     author_name: Author;
     series_name: Series;
@@ -62,6 +75,25 @@ export interface DetailStorageItem extends Base {
     column: number;
     uuid: string;
     description: string;
+    files_objects: FileObject[];
+    images_objects: ImageObject[];
+}
+
+/**
+ * Interface for create item
+ */
+export interface PublishStorageItem {
+    name?: string;
+    description?: string;
+    price?: number;
+    qr_code?: string;
+    column?: number;
+    row?: number;
+    author_id?: number;
+    series_id?: number;
+    category_id?: number;
+    location_id?: number;
+    position_id?: number
 }
 
 export interface Settings {

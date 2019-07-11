@@ -1,12 +1,12 @@
 import axios, { AxiosStatic } from "axios";
 import { getURL } from "./settings";
-import { showNotification } from "./utils";
+import { showNotification, computeDownloadProgress } from "./utils";
 
 export class CreateAndupdater<T>{
     client: AxiosStatic
-    pathName: "category" | "series" | "author" | "location" | "position";
+    pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files";
 
-    constructor(pathName: "category" | "series" | "author" | "location" | "position",
+    constructor(pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files",
         client?: AxiosStatic, ) {
         if (client) {
             this.client = client
@@ -31,17 +31,21 @@ export class CreateAndupdater<T>{
                 return getURL("location/")
             case "position":
                 return getURL("detail-position/")
+            case "item":
+                return getURL("item/")
+            case "files":
+                return getURL("files/")
             default:
                 throw ("Path not found")
         }
     }
 
 
-    async create(object: T): Promise<T> {
+    async create(object: T, callback?: any): Promise<T> {
         return new Promise(async (resolve, reject) => {
             try {
                 let url = this._getPath()
-                let response = await this.client.post(url, object)
+                let response = await this.client.post(url, object, { onUploadProgress: (evt: any) => computeDownloadProgress(evt, callback) })
                 if (response.status === 201)
                     resolve(response.data)
             } catch (err) {

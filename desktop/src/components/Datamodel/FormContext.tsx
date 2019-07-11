@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { AbstractStorageItem } from "../home/storageItem";
+import { AbstractStorageItem, DetailStorageItem } from "../home/storageItem";
+import { IpcRenderer } from "electron";
+const ipcRenderer: IpcRenderer = (window as any).require("electron")
+  .ipcRenderer;
 
 export interface FormValue {
   name?: string;
@@ -33,6 +36,8 @@ interface State {
   formValue: FormValue;
   setForm(name: string, value: any): void;
   getForm(name: string): any;
+  clear(): void;
+  init(item: DetailStorageItem): void;
 }
 
 interface Props {}
@@ -43,12 +48,43 @@ export default class FormProvider extends Component<Props, State> {
     this.state = {
       formValue: initForm,
       setForm: this.setForm,
-      getForm: this.getValue
+      getForm: this.getValue,
+      clear: this.clear,
+      init: this.init
     };
+    ipcRenderer.on("close", () => {
+      console.log("closed");
+      this.setState({ formValue: initForm });
+    });
   }
+
+  init = (item: DetailStorageItem) => {
+    this.setState({
+      formValue: {
+        qrCode: item.qr_code,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        col: item.column,
+        row: item.row,
+        author: item.author_name ? item.author_name.id : undefined,
+        category: item.category_name ? item.category_name.id : undefined,
+        series: item.series_name ? item.series_name.id : undefined,
+        position: item.position_name ? item.position_name.id : undefined,
+        location: item.location_name ? item.location_name.id : undefined
+      }
+    });
+  };
+
+  clear = () => {
+    console.log("clear");
+
+    this.setState({ formValue: initForm });
+  };
 
   setForm = (name: string, value: any) => {
     let f = this.state.formValue;
+    console.log(f);
     switch (name.toLowerCase()) {
       case "name":
         f.name = value;
@@ -143,7 +179,9 @@ export default class FormProvider extends Component<Props, State> {
 const context: State = {
   formValue: initForm,
   setForm: (name: string, value: any) => {},
-  getForm: (name: string) => {}
+  getForm: (name: string) => {},
+  clear: () => {},
+  init: (item: DetailStorageItem) => {}
 };
 
 export const FormContext = React.createContext(context);

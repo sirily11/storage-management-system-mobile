@@ -25,7 +25,7 @@ import LoadingProgress from "./components/LoadingProgress";
 
 let qrCode = "";
 let _lasttime: number | undefined;
-const waitAndDispearTime = 600;
+const waitAndDispearTime = 400;
 
 interface Props {}
 
@@ -137,12 +137,20 @@ export default class Homepage extends Component<Props, State> {
     this.setState({ qrCode: evt.target.value });
   };
 
+  _handleDeleted = (id: number) => {
+    let { abstractItem } = this.state;
+    let index = abstractItem.findIndex(v => v.id === id);
+    abstractItem.splice(index, 1);
+    this.setState({ abstractItem: abstractItem, searchItems: abstractItem });
+  };
+
   /**
    * search by qr code
    */
-  _handleQRSearch = async () => {
+  _handleQRSearch = async (qrCode?: string) => {
+    let qr = qrCode ? qrCode : this.state.qrCode;
     try {
-      let url = getURL("searchByQR?qr=" + this.state.qrCode);
+      let url = getURL("searchByQR?qr=" + qr);
       this.setState({ loadingProgress: 0 });
       let response = await axios.get(url);
       let result: AbstractStorageItem = response.data;
@@ -202,6 +210,7 @@ export default class Homepage extends Component<Props, State> {
                       <ItemRow
                         style={style}
                         selected={this.state.selectedId}
+                        onDeleted={this._handleDeleted}
                         item={this.state.searchItems[index]}
                         onSelected={id => {
                           this.setState({ selectedId: id });
@@ -216,7 +225,7 @@ export default class Homepage extends Component<Props, State> {
           <div
             className="col-7"
             style={{
-              backgroundColor: "#e0e0e0",
+              // backgroundColor: "#e0e0e0",
               position: "sticky",
               overflowY: "scroll"
             }}
@@ -238,11 +247,12 @@ export default class Homepage extends Component<Props, State> {
           }) => (
             <div>
               <RemoteScannerPage
-                close={closeLocalScanner}
+                close={closeRemoteScanner}
                 open={openScannerWindow}
-                onDone={(value: string) => {
-                  console.log(value);
-                  closeLocalScanner();
+                onDone={async (value: string) => {
+                  // console.log(value);
+                  closeRemoteScanner();
+                  await this._handleQRSearch(value);
                 }}
               />
               <QRDownload

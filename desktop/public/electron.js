@@ -3,9 +3,13 @@ exports.__esModule = true;
 var electron_1 = require("electron");
 var path = require("path");
 var notifier = require("node-notifier");
+var contextMenu = require("electron-context-menu");
 var isDev = require("electron-is-dev");
 var mainWindow;
-var editWindow;
+var qrWindow;
+contextMenu({
+    prepend: function (actions, params, browserWindow) { return ([]); }
+});
 var menu = electron_1.Menu.buildFromTemplate([
     {
         label: 'Menu'
@@ -45,9 +49,9 @@ function createWindow() {
             webSecurity: false
         }
     });
-    editWindow = new electron_1.BrowserWindow({
-        width: 720,
-        height: 600,
+    qrWindow = new electron_1.BrowserWindow({
+        width: 300,
+        height: 300,
         titleBarStyle: "hidden",
         show: false,
         webPreferences: {
@@ -58,26 +62,27 @@ function createWindow() {
     mainWindow.loadURL(isDev
         ? "http://localhost:3000#/"
         : "file://" + path.join(__dirname, "../build/index.html"));
-    editWindow.loadURL(isDev
-        ? "http://localhost:3000#/edit"
-        : "file://" + path.join(__dirname, "../build/index.html#/edit"));
+    qrWindow.loadURL(isDev
+        ? "http://localhost:3000#/qr"
+        : "file://" + path.join(__dirname, "../build/index.html#/qr"));
     mainWindow.once("ready-to-show", function () {
         if (mainWindow) {
             mainWindow.show();
+            // qrWindow.show()
         }
     });
     if (isDev) {
         // Open the DevTools.
         //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-        mainWindow.webContents.openDevTools();
-        editWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
+        qrWindow.webContents.openDevTools();
     }
     mainWindow.on("closed", function () {
         mainWindow = undefined;
     });
-    editWindow.on("close", function (e) {
+    qrWindow.on("close", function (e) {
         e.preventDefault();
-        editWindow.hide();
+        qrWindow.hide();
     });
 }
 electron_1.app.on("ready", createWindow);
@@ -91,36 +96,10 @@ electron_1.app.on("activate", function () {
         createWindow();
     }
 });
-electron_1.ipcMain.on("show-edit", function (event, message) {
-    if (message.isEdit) {
-        // Edit 
-        if (message.id) {
-            editWindow.show();
-            editWindow.webContents.send("edit", message);
-        }
-        else {
-            notifier.notify("Error when showing edit page");
-        }
-    }
-    else {
-        // Create
-        editWindow.show();
-        editWindow.webContents.send("edit", message);
-    }
-});
-electron_1.ipcMain.on("close-edit", function (event, message) {
-    if (message.isEdit) {
-        if (message.id) {
-            mainWindow.webContents.send("edit", message.item);
-        }
-        else {
-            notifier.notify("Error when showing edit page");
-        }
-    }
-    else {
-        // Create
-        mainWindow.webContents.send("create", message.item);
-    }
+electron_1.ipcMain.on("print", function (e, qrCode) {
+    // console.log(qrCode)
+    qrWindow.show();
+    qrWindow.webContents.send("qrCode", { code: qrCode });
 });
 electron_1.ipcMain.on("notification", function (event, message) {
     console.log(message);
