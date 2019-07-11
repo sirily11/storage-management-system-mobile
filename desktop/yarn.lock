@@ -9337,11 +9337,14 @@ print-js@^1.0.61:
   resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.0.61.tgz#6e6079f636c04fc34f23fa561f0b8fced32e36d3"
   integrity sha512-H/GhVZMroI7qqXH+6LrtFacLOcapRIUrcJD4F4BONZFTk6VtmGC2dqQydzW4RYJpfsCxNUg2Tyi7A46zKC3wmQ==
 
+<<<<<<< HEAD
 printjs@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/printjs/-/printjs-1.1.0.tgz#6e00c9278d12d467b0c37d4e582967e31575cd97"
   integrity sha1-bgDJJ40S1Geww31OWCln4xV1zZc=
 
+=======
+>>>>>>> 5702cdf207ba3c0894200983fce1a508afbbd35e
 private@^0.1.6:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"
