@@ -191,7 +191,7 @@ export default class Homepage extends Component<Props, State> {
         <div className="row h-100">
           <div
             className="col-5 pt-4"
-            style={{  overflowY: "scroll" }}
+            style={{  overflowY: "hidden" }}
           >
             <SearchField
               search={this.search}
