@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, remote, Notification, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, Menu, remote, Notification, dialog, globalShortcut } from "electron";
 import * as path from "path";
 import * as fs from 'fs';
 import * as notifier from "node-notifier"
@@ -7,7 +7,6 @@ import * as  contextMenu from "electron-context-menu"
 const isDev = require("electron-is-dev");
 
 let mainWindow: Electron.BrowserWindow | undefined;
-let qrWindow: Electron.BrowserWindow | undefined;
 
 contextMenu({
   prepend: (actions, params, browserWindow) => (
@@ -58,33 +57,14 @@ function createWindow() {
     },
   });
 
-  qrWindow = new BrowserWindow({
-    width: 300,
-    height: 300,
-    titleBarStyle: "hidden",
-    show: false,
-    webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false,
-    },
-  });
-
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000#/"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
-
-  qrWindow.loadURL(
-    isDev
-      ? "http://localhost:3000#/qr"
-      : `file://${path.join(__dirname, "../build/index.html#/qr")}`
-  );
-
   mainWindow.once("ready-to-show", () => {
     if (mainWindow) {
       mainWindow.show()
-      // qrWindow.show()
     }
   })
 
@@ -98,18 +78,21 @@ function createWindow() {
     mainWindow = undefined;
   })
 
-  qrWindow.on("close", e => {
-    e.preventDefault()
-    qrWindow.hide()
+  mainWindow.on("close", e => {
+    mainWindow = undefined
   })
 }
 
-app.on("ready", createWindow);
+app.on("ready", () => {
+  createWindow()
+  globalShortcut.register('CommandOrControl+Q', () => {
+    app.quit()
+  })
+});
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit()
+
 });
 
 app.on("activate", () => {
@@ -118,15 +101,6 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on("print", (e: any, qrCode: string) => {
-  // console.log({ code: qrCode })
-  qrWindow.show()
-  qrWindow.webContents.send("qrCode", { code: qrCode })
-  // setTimeout(() => {
-  //   qrWindow.webContents.print({ silent: false })
-  // })
-
-})
 
 ipcMain.on("notification", (event: any, message: string) => {
   console.log(message)

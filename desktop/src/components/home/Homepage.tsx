@@ -200,10 +200,7 @@ export default class Homepage extends Component<Props, State> {
     return (
       <div className="container-fluid h-100">
         <div className="row h-100">
-          <div
-            className="col-5 pt-4"
-            style={{  overflowY: "hidden" }}
-          >
+          <div className="col-5 mt-4 mb-4" style={{ overflowY: "hidden" }}>
             <SearchField
               search={this.search}
               listener={this._handleScanner}
@@ -212,8 +209,15 @@ export default class Homepage extends Component<Props, State> {
             <FilterField
               categories={this.state.categories}
               value={this.state.selectedCategory}
+              onchange={c => {
+                let searchItem = this.state.abstractItem.filter(
+                  v => v.category_name === c
+                );
+                console.log(c);
+                this.setState({ selectedCategory: c, searchItems: searchItem });
+              }}
             />
-            <AutoSizer>
+            <AutoSizer className="h-80">
               {({ height, width }) => (
                 <List
                   height={height}

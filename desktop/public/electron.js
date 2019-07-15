@@ -6,7 +6,6 @@ var notifier = require("node-notifier");
 var contextMenu = require("electron-context-menu");
 var isDev = require("electron-is-dev");
 var mainWindow;
-var qrWindow;
 contextMenu({
     prepend: function (actions, params, browserWindow) { return ([]); }
 });
@@ -49,26 +48,12 @@ function createWindow() {
             webSecurity: false
         }
     });
-    qrWindow = new electron_1.BrowserWindow({
-        width: 300,
-        height: 300,
-        titleBarStyle: "hidden",
-        show: false,
-        webPreferences: {
-            nodeIntegration: true,
-            webSecurity: false
-        }
-    });
     mainWindow.loadURL(isDev
         ? "http://localhost:3000#/"
         : "file://" + path.join(__dirname, "../build/index.html"));
-    qrWindow.loadURL(isDev
-        ? "http://localhost:3000#/qr"
-        : "file://" + path.join(__dirname, "../build/index.html#/qr"));
     mainWindow.once("ready-to-show", function () {
         if (mainWindow) {
             mainWindow.show();
-            // qrWindow.show()
         }
     });
     if (isDev) {
@@ -80,13 +65,18 @@ function createWindow() {
     mainWindow.on("closed", function () {
         mainWindow = undefined;
     });
-    qrWindow.on("close", function (e) {
-        e.preventDefault();
-        qrWindow.hide();
+    mainWindow.on("close", function (e) {
+        mainWindow = undefined;
     });
 }
-electron_1.app.on("ready", createWindow);
+electron_1.app.on("ready", function () {
+    createWindow();
+    electron_1.globalShortcut.register('CommandOrControl+Q', function () {
+        electron_1.app.quit();
+    });
+});
 electron_1.app.on("window-all-closed", function () {
+    console.log("Closed all windows");
     if (process.platform !== "darwin") {
         electron_1.app.quit();
     }
@@ -95,14 +85,6 @@ electron_1.app.on("activate", function () {
     if (mainWindow === null) {
         createWindow();
     }
-});
-electron_1.ipcMain.on("print", function (e, qrCode) {
-    // console.log({ code: qrCode })
-    qrWindow.show();
-    qrWindow.webContents.send("qrCode", { code: qrCode });
-    // setTimeout(() => {
-    //   qrWindow.webContents.print({ silent: false })
-    // })
 });
 electron_1.ipcMain.on("notification", function (event, message) {
     console.log(message);
