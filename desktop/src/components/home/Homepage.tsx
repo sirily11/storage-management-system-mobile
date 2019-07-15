@@ -1,8 +1,12 @@
 import React, { Component, useContext } from "react";
-import { AbstractStorageItem } from "./storageItem";
+import { AbstractStorageItem, Category } from "./storageItem";
 import axios from "axios";
 import { getURL } from "../settings/settings";
-import { computeDownloadProgress, showNotification } from "../settings/utils";
+import {
+  computeDownloadProgress,
+  showNotification,
+  fetchCategories
+} from "../settings/utils";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import ItemRow from "./components/ItemRow";
@@ -22,6 +26,7 @@ import SearchField from "./components/SearchField";
 import ItemDetailPage from "./components/ItemDetailPage";
 import LocalScanner from "../LocalScanner/LocalScanner";
 import LoadingProgress from "./components/LoadingProgress";
+import FilterField from "./components/FilterField";
 
 let qrCode = "";
 let _lasttime: number | undefined;
@@ -38,6 +43,8 @@ interface State {
   // qrcode for search
   qrCode: string;
   _lasttime?: number;
+  categories: Category[];
+  selectedCategory: string;
 }
 
 export default class Homepage extends Component<Props, State> {
@@ -45,6 +52,8 @@ export default class Homepage extends Component<Props, State> {
     super(props);
     this.state = {
       abstractItem: [],
+      categories: [],
+      selectedCategory: "",
       searchItems: [],
       selectedId: -1,
       searchKeyword: undefined,
@@ -59,10 +68,12 @@ export default class Homepage extends Component<Props, State> {
   }
 
   _onmount = async () => {
+    let categories = await fetchCategories();
     var items = await this.fetchItems();
     this.setState({
       abstractItem: items,
-      searchItems: items
+      searchItems: items,
+      categories: categories
     });
   };
 
@@ -115,12 +126,12 @@ export default class Homepage extends Component<Props, State> {
             })
         });
         let items: AbstractStorageItem[] = response.data;
-       
+
         resolve(items);
       } catch (err) {
         alert(err);
       } finally {
-         setTimeout(
+        setTimeout(
           () => this.setState({ loadingProgress: undefined }),
           waitAndDispearTime
         );
@@ -189,21 +200,21 @@ export default class Homepage extends Component<Props, State> {
     return (
       <div className="container-fluid h-100">
         <div className="row h-100">
-          <div
-            className="col-5 pt-4"
-            style={{  overflowY: "scroll" }}
-          >
+          <div className="col-5 pt-4" style={{ overflowY:"hidden" }}>
             <SearchField
               search={this.search}
               listener={this._handleScanner}
               refresh={this._onmount}
             />
-
+            <FilterField
+              categories={this.state.categories}
+              value={this.state.selectedCategory}
+            />
             <AutoSizer>
               {({ height, width }) => (
                 <List
                   height={height}
-                  width={width -20}
+                  width={width - 20}
                   itemCount={this.state.searchItems.length}
                   itemSize={106}
                 >

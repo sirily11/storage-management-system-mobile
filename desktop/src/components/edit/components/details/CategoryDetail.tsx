@@ -16,7 +16,8 @@ export class CategoryDetail extends GenericDetailPage<Category> {
     this.createAndUpdater = new CreateAndupdater<Category>(this.pathName);
     this.schema = categorySchema;
     this.state = {
-      formData: this.formData
+      formData: this.formData,
+      language: "Chinese"
     };
   }
 }

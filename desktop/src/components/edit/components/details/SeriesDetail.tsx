@@ -16,7 +16,8 @@ export default class SeriesDetail extends GenericDetailPage<Series> {
     this.createAndUpdater = new CreateAndupdater<Series>(this.pathName);
     this.schema = seriesSchema;
     this.state = {
-      formData: this.formData
+      formData: this.formData,
+      language: "Chinese"
     };
   }
 }

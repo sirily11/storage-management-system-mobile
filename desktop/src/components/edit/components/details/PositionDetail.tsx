@@ -5,6 +5,9 @@ import { positionSchema } from "./uiForm";
 import { CreateAndupdater } from "../../../settings/UpdateAndCreate";
 
 export class PositionDetail extends GenericDetailPage<Position> {
+  showSearch = false;
+
+
   constructor(props: GenericProps<Position>) {
     super(props);
     this.formData = {
@@ -17,7 +20,8 @@ export class PositionDetail extends GenericDetailPage<Position> {
     this.createAndUpdater = new CreateAndupdater<Position>(this.pathName);
     this.schema = positionSchema;
     this.state = {
-      formData: this.formData
+      formData: this.formData,
+      language: "Chinese"
     };
   }
 }

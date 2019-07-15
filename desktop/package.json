@@ -43,7 +43,8 @@
     "react-scripts": "^3.0.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
-    "typescript": "3.4.5"
+    "typescript": "3.4.5",
+    "wikijs": "^5.5.0"
   },
   "scripts": {
     "add-locale": "lingui add-locale",
@@ -59,7 +60,8 @@
     "mac": "electron-builder -m",
     "all": "electron-builder -mw",
     "clean": "rm -rf dist",
-    "electron-dev": " tsc public/electron.ts && concurrently \"yarn start \" \"wait-on http://localhost:3000  && electron .\""
+    "electron-dev-win": " tsc public/electron.ts && concurrently \"yarn start \" \"wait-on http://localhost:3000  && electron .\"",
+    "electron-dev": " tsc public/electron.ts && concurrently \"BROWSER=none yarn start \" \"wait-on http://localhost:3000  && electron .\""
   },
   "build": {
     "appId": "app.test",

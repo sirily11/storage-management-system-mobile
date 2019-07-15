@@ -7,16 +7,18 @@ import { CreateAndupdater } from "../../../settings/UpdateAndCreate";
 import GenericDetailPage, { GenericProps } from "./GenericDetail";
 
 export default class AuthorDetail extends GenericDetailPage<Author> {
-  
+  showSearch = true;
+  title = "作者";
+  formData = { name: "", id: -1 };
+
   constructor(props: GenericProps<Author>) {
     super(props);
     this.schema = authorSchema;
-    this.title = "作者";
-    this.pathName = "author"
+    this.pathName = "author";
     this.createAndUpdater = new CreateAndupdater<Author>(this.pathName);
-    this.formData = { name: "", id: -1 };
     this.state = {
-      formData: this.formData
+      formData: this.formData,
+      language: "Chinese"
     };
   }
 }

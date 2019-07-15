@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { IpcRenderer } from "electron";
-import { DetailStorageItem, Settings } from "../home/storageItem";
+import { DetailStorageItem, Settings, Category } from "../home/storageItem";
 import { getURL } from "./settings";
 import axios, { AxiosStatic } from "axios";
 import FolderIcon from "@material-ui/icons/Folder";
@@ -22,7 +22,7 @@ export function computeDownloadProgress(progressEvent: any, callback?: any) {
       progressEvent.target.getResponseHeader("x-decompressed-content-length");
   if (totalLength !== null) {
     let progress = Math.round((progressEvent.loaded * 100) / totalLength);
-    if(callback){
+    if (callback) {
       callback(progress);
     }
   }
@@ -59,6 +59,19 @@ export function fetchDetailSettings(): Promise<Settings> {
       let url = getURL(`settings`);
       let response = await axios.get(url);
       let item: Settings = response.data;
+      resolve(item);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export function fetchCategories(): Promise<Category[]> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let url = getURL(`category`);
+      let response = await axios.get(url);
+      let item: Category[] = response.data;
       resolve(item);
     } catch (err) {
       reject(err);
