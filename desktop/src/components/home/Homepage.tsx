@@ -200,7 +200,10 @@ export default class Homepage extends Component<Props, State> {
     return (
       <div className="container-fluid h-100">
         <div className="row h-100">
-          <div className="col-5 pt-4" style={{ overflowY:"hidden" }}>
+          <div
+            className="col-5 pt-4"
+            style={{  overflowY: "hidden" }}
+          >
             <SearchField
               search={this.search}
               listener={this._handleScanner}
