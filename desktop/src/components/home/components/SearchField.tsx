@@ -26,7 +26,7 @@ export default function SearchField(props: Props) {
   const { openRemoteScanner, openLocalScanner } = useContext(HomepageContext);
 
   return (
-    <div className="sticky-top w-100 h-10">
+    <div className="sticky-top w-100 h-10" style={{ zIndex: 10 }}>
       <Paper className="d-flex w-100" elevation={0}>
         <InputBase
           className="col-md-7"

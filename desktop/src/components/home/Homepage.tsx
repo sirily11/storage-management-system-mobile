@@ -245,7 +245,6 @@ export default class Homepage extends Component<Props, State> {
           <div
             className="col-7"
             style={{
-              // backgroundColor: "#e0e0e0",
               position: "sticky",
               overflowY: "scroll"
             }}

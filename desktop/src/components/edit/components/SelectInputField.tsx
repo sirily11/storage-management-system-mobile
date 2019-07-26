@@ -2,15 +2,8 @@ import React, { useContext } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-  Paper
-} from "@material-ui/core";
 import { FormContext } from "../../Datamodel/FormContext";
+import { Button, Dropdown, Label } from "semantic-ui-react";
 
 interface Props {
   label: string;
@@ -25,47 +18,50 @@ interface Props {
 
 export default function SelectInputField(props: Props) {
   const context = useContext(FormContext);
+  const options = props.values.map((v, i) => ({
+    value: v,
+    text: props.labels[i]
+  }));
+
   return (
-    <Paper className="d-flex mt-3">
-      <FormControl className="col-md-4 col-6 m-3">
-        <InputLabel>{props.label}</InputLabel>
-        <Select
-          required
-          value={context.getForm(props.type)}
-          onChange={e => {
-            context.setForm(props.label, e.target.value);
-          }}
-        >
-          {props.labels.map((label, index) => (
-            <MenuItem
-              key={`menu-${label}-${index}`}
-              value={props.values[index]}
-            >
-              {label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <div className="col-md-4 col-6 m-3">
-        <IconButton
-          onClick={() => {
-            props.onAdd(props.type);
-          }}
-        >
-          <AddIcon />
-        </IconButton>
-        <IconButton>
-          <RemoveIcon />
-        </IconButton>
-        <IconButton
-          disabled={context.getForm(props.type) < 0}
-          onClick={() => {
-            props.onUpdate(props.type);
-          }}
-        >
-          <EditIcon />
-        </IconButton>
+    <div className="d-flex mt-3">
+      <Dropdown
+        className="h-50"
+        fluid
+        search
+        selection
+        placeholder={props.label}
+        options={options}
+        onChange={(e, { value }) => {
+          context.setForm(props.label, value);
+        }}
+      />
+      <div className="col-md-4 col-6 mb-3">
+        <Button.Group size="mini" icon>
+          <Button
+            positive
+            onClick={() => {
+              props.onAdd(props.type);
+            }}
+          >
+            <AddIcon />
+          </Button>
+          <Button color="blue">
+            <RemoveIcon />
+          </Button>
+          <Button
+            disabled={context.getForm(props.type) < 0}
+            onClick={() => {
+              props.onUpdate(props.type);
+            }}
+          >
+            <EditIcon />
+          </Button>
+        </Button.Group>
+        <Label className="ml-4 position-absolute" color="red" tag>
+          必须项
+        </Label>
       </div>
-    </Paper>
+    </div>
   );
 }

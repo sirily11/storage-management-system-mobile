@@ -4,21 +4,19 @@ import { DetailStorageItem, FileObject, ImageObject } from "../storageItem";
 import { getURL } from "../../settings/settings";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Lightbox from "react-image-lightbox";
+import "react-image-lightbox/style.css";
+import "semantic-ui-css/semantic.min.css";
 import {
-  CircularProgress,
   Divider,
   List,
   Avatar,
-  ListItem,
-  TextField,
   GridList,
   GridListTile,
   CardContent,
-  ListSubheader,
   IconButton,
   CardActions,
   Collapse,
-  CardHeader,
   Chip,
   Fade
 } from "@material-ui/core";
@@ -28,9 +26,15 @@ import {
   getIcon
 } from "../../settings/utils";
 import FileUploader from "../../uploadFile/FileUploader";
-import AddIcon from "@material-ui/icons/Add";
 import ClearIcon from "@material-ui/icons/Clear";
-import { Card, Message, Label, Icon, Button } from "semantic-ui-react";
+import {
+  Card,
+  Message,
+  Label,
+  Icon,
+  Button,
+  Statistic
+} from "semantic-ui-react";
 import { CreateAndupdater } from "../../settings/UpdateAndCreate";
 
 interface State {
@@ -38,6 +42,8 @@ interface State {
   openAddFile: boolean;
   showFile: boolean;
   isLoading: boolean;
+  openLightbox: boolean;
+  currentShowingImage: number;
 }
 
 interface Props {
@@ -51,7 +57,9 @@ export default class ItemDetailPage extends Component<Props, State> {
       item: undefined,
       openAddFile: false,
       showFile: false,
-      isLoading: false
+      isLoading: false,
+      openLightbox: false,
+      currentShowingImage: 0
     };
   }
 
@@ -79,54 +87,94 @@ export default class ItemDetailPage extends Component<Props, State> {
   }
 
   renderImages() {
-    if (this.state.item !== undefined && this.state.item.images.length > 0) {
-      return (
-        <List
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            overflowY: "hidden",
-            width: "100%"
-          }}
-        >
-          {this.state.item.images_objects.map((i, index) => {
-            return (
-              <div
-                key={`avatar-${i.id}`}
-                id={`images-${i.id}`}
-                style={{ width: "170px", height: "170px" }}
-              >
-                <Avatar
-                  className="m-3"
-                  style={{
-                    position: "absolute",
-                    zIndex: 100,
-                    width: "150px",
-                    height: "150px"
-                  }}
-                  src={i.image}
-                />
-                <IconButton
-                  style={{
-                    position: "relative",
-                    zIndex: 105,
+    const { item, currentShowingImage, openLightbox } = this.state;
 
-                    marginLeft: "auto",
-                    marginRight: "auto"
-                  }}
-                  onClick={() => {
-                    let confirm = window.confirm("你确定要删除照片吗？");
-                    if (confirm && i.id) {
-                      this.deleteImage(i.id, index);
-                    }
-                  }}
+    if (item !== undefined && item.images.length > 0) {
+      return (
+        <div>
+          {openLightbox && (
+            <Lightbox
+              mainSrc={item.images_objects[currentShowingImage].image}
+              nextSrc={
+                item.images_objects[
+                  (currentShowingImage + 1) % item.images_objects.length
+                ].image
+              }
+              prevSrc={
+                item.images_objects[
+                  (currentShowingImage + item.images_objects.length - 1) %
+                    item.images_objects.length
+                ].image
+              }
+              onCloseRequest={() => this.setState({ openLightbox: false })}
+              onMovePrevRequest={() =>
+                this.setState({
+                  currentShowingImage:
+                    (currentShowingImage + item.images_objects.length - 1) %
+                    item.images_objects.length
+                })
+              }
+              onMoveNextRequest={() =>
+                this.setState({
+                  currentShowingImage:
+                    (currentShowingImage + 1) % item.images_objects.length
+                })
+              }
+            />
+          )}
+          <List
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              overflowY: "hidden",
+              width: "100%"
+            }}
+          >
+            {item.images_objects.map((i, index) => {
+              return (
+                <div
+                  key={`avatar-${i.id}`}
+                  id={`images-${i.id}`}
+                  style={{ width: "170px", height: "170px" }}
                 >
-                  <ClearIcon />
-                </IconButton>
-              </div>
-            );
-          })}
-        </List>
+                  <Avatar
+                    className="m-3"
+                    style={{
+                      position: "absolute",
+                      zIndex: 100,
+                      width: "150px",
+                      height: "150px"
+                    }}
+                    src={i.image}
+                    onClick={() => {
+                      this.setState({
+                        currentShowingImage: index,
+                        openLightbox: true
+                      });
+                    }}
+                  />
+                  <IconButton
+                    style={{
+                      position: "relative",
+                      zIndex: 105,
+
+                      marginLeft: "auto",
+                      marginRight: "auto"
+                    }}
+                    onClick={() => {
+                      let confirm = window.confirm("你确定要删除照片吗？");
+                      if (confirm && i.id) {
+                        this.deleteImage(i.id, index);
+                      }
+                    }}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </div>
+              );
+            })}
+          </List>
+        </div>
       );
     } else {
       return <div>No image</div>;
@@ -231,7 +279,7 @@ export default class ItemDetailPage extends Component<Props, State> {
       return (
         <div className="h-100 w-100 row">
           <div className="mx-auto my-auto">
-            <Message icon>
+            <Message icon color="yellow">
               <Icon name="circle notched" loading />
               <Message.Content>
                 <Message.Header>请稍等</Message.Header>
@@ -246,30 +294,33 @@ export default class ItemDetailPage extends Component<Props, State> {
     } else if (item !== undefined) {
       const i = [
         {
-          header: "价格",
-          description: item.price
+          label: "价格",
+          value: item.price
         },
         {
-          header: "Column",
-          description: item.column
+          label: "Column",
+          value: item.column
         },
         {
-          header: "Row",
-          description: item.row
+          label: "Row",
+          value: item.row
         }
       ];
       return (
         <Fade in={true} timeout={300}>
           <div className="container pt-4">
             <h1>{item.name}</h1>
-            <span>
-              {item.category_name !== null ? item.category_name.name : ""}
-            </span>
+            <Chip
+              color="primary"
+              className="mb-2"
+              label={item.category_name !== null ? item.category_name.name : ""}
+            />
             <Divider />
             <div className="pt-3">
               <h1>照片</h1>
               {this.renderImages()}
-              <Card.Group itemsPerRow={3} className="pb-3" items={i} />
+              {/* <Card.Group itemsPerRow={3} className="pb-3" items={i} /> */}
+              <Statistic.Group size="small" widths="3" items={i} color="teal" />
               <Card header="QR Code" fluid description={item.qr_code} />
               {this.renderTextField(
                 "简介",

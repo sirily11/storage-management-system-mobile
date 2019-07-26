@@ -24,7 +24,8 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  createMuiTheme
+  createMuiTheme,
+  Paper
 } from "@material-ui/core";
 import { blueGrey } from "@material-ui/core/colors";
 import { MuiThemeProvider } from "@material-ui/core/styles";
@@ -33,17 +34,12 @@ import AuthorDetail from "./components/details/AuthorDetail";
 import SeriesDetail from "./components/details/SeriesDetail";
 import { PositionDetail } from "./components/details/PositionDetail";
 import { LocationDetail } from "./components/details/LocationDetail";
-import {
-  Base,
-  Author,
-  Series,
-  Category,
-  Location,
-  Position
-} from "../home/storageItem";
+import { Base, Position } from "../home/storageItem";
 import { object } from "prop-types";
 import { CreateAndupdater } from "../settings/UpdateAndCreate";
 import { Link, Redirect, RouteComponentProps } from "react-router-dom";
+import { Label, Dropdown } from "semantic-ui-react";
+import "semantic-ui-css/semantic.min.css";
 
 const ipcRenderer: IpcRenderer = (window as any).require("electron")
   .ipcRenderer;
@@ -53,6 +49,7 @@ const theme = createMuiTheme({
     primary: blueGrey
   }
 });
+
 
 interface Props {
   id?: number;
@@ -329,7 +326,7 @@ export default class MainEditor extends Component<Props, State> {
     }
     return (
       <MuiThemeProvider theme={theme}>
-        <AppBar position="sticky" elevation={0}>
+        <AppBar elevation={0} style={{ height: "200px", zIndex: 3 }}>
           <Toolbar>
             <FormContext.Consumer>
               {({ clear }) => (
@@ -366,8 +363,28 @@ export default class MainEditor extends Component<Props, State> {
               )}
             </FormContext.Consumer>
           </Toolbar>
+          
         </AppBar>
-        <div className="container-fluid py-4" style={{ overflowX: "hidden" }}>
+        <Label
+          color="blue"
+          size="huge"
+          style={{ zIndex: 40, top: "110px", left: "10.5%" }}
+          ribbon
+        >
+          物品信息
+        </Label>
+        <Paper
+          className="container-fluid py-4 w-75"
+          style={{
+            overflowX: "hidden",
+            overflowY: "hidden",
+            position: "absolute",
+            top: "130px",
+            left: 0,
+            right: 0,
+            zIndex: 30
+          }}
+        >
           <div>
             <TextInputField labels={["Name"]} multiline={false} type="name" />
             <TextInputField
@@ -549,7 +566,7 @@ export default class MainEditor extends Component<Props, State> {
               }
             }}
           </FormContext.Consumer>
-        </div>
+        </Paper>
       </MuiThemeProvider>
     );
   }

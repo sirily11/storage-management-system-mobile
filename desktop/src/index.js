@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { I18nProvider } from "@lingui/react";
-import "semantic-ui-css/semantic.min.css";
+
 // import chinese from "./locales/zh/messages";
 
 // const catalogs = { zh: chinese };
