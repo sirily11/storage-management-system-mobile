@@ -76,10 +76,7 @@ electron_1.app.on("ready", function () {
     });
 });
 electron_1.app.on("window-all-closed", function () {
-    console.log("Closed all windows");
-    if (process.platform !== "darwin") {
-        electron_1.app.quit();
-    }
+    electron_1.app.quit();
 });
 electron_1.app.on("activate", function () {
     if (mainWindow === null) {

@@ -198,7 +198,7 @@ export default class Homepage extends Component<Props, State> {
 
   render() {
     return (
-      <div className="container-fluid h-100">
+      <div className="container-fluid h-100" style={{ overflowY: "hidden" }}>
         <div className="row h-100">
           <div className="col-5 mt-4 mb-4" style={{ overflowY: "hidden" }}>
             <SearchField
@@ -220,7 +220,7 @@ export default class Homepage extends Component<Props, State> {
             <AutoSizer className="h-80">
               {({ height, width }) => (
                 <List
-                  height={height}
+                  height={height - 149}
                   width={width - 20}
                   itemCount={this.state.searchItems.length}
                   itemSize={106}

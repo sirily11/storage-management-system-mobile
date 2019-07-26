@@ -4,9 +4,9 @@ import { showNotification, computeDownloadProgress } from "./utils";
 
 export class CreateAndupdater<T>{
     client: AxiosStatic
-    pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files";
+    pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files" | "image";
 
-    constructor(pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files",
+    constructor(pathName: "category" | "series" | "author" | "location" | "position" | "item" | "files" | "image",
         client?: AxiosStatic, ) {
         if (client) {
             this.client = client
@@ -35,6 +35,8 @@ export class CreateAndupdater<T>{
                 return getURL("item/")
             case "files":
                 return getURL("files/")
+            case "image":
+                return getURL("item-image/")
             default:
                 throw ("Path not found")
         }
