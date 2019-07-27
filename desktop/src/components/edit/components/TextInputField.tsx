@@ -4,15 +4,21 @@ import {
   Grid,
   GridList,
   GridListTile,
-  InputAdornment
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  FormHelperText
 } from "@material-ui/core";
 import { FormContext } from "../../Datamodel/FormContext";
-import { Input, Dropdown } from "semantic-ui-react";
+import { Input, Dropdown, Form, Label, LabelDetail } from "semantic-ui-react";
 import Select from "react-select";
+import { unitOptions } from "../../home/storageItem";
 
 const multiplesType = ["col", "row", "price"];
 
 interface Props {
+  unit?: string;
   labels: string[];
   values?: string[];
   onchanges?: any[];
@@ -28,8 +34,6 @@ interface Props {
     | "row"
     | "multiple";
 }
-
-
 
 export default function TextInputField(props: Props) {
   const formContext = useContext(FormContext);
@@ -52,8 +56,7 @@ export default function TextInputField(props: Props) {
               rows={3}
               multiline={true}
               label={label}
-              // defaultValue={props.values ? props.values[index] : ""}
-              className="mt-3"
+              className="mt-3 mb-1"
               value={value !== null ? value : ""}
               key={label}
             />
@@ -64,35 +67,44 @@ export default function TextInputField(props: Props) {
   }
 
   return (
-    <GridList cols={props.labels.length} cellHeight={70} spacing={30}>
+    <div className="row">
       {props.labels.map((label, index) => {
         const value = formContext.getForm(label.toLocaleLowerCase());
         return (
-          <GridListTile cols={1}>
-            <TextField
-              required
-              InputLabelProps={{ shrink: true }}
-              type={props.number ? "number" : undefined}
-              onChange={e => {
-                if (props.type !== "multiple") {
-                  formContext.setForm(props.type, e.target.value);
-                } else {
-                  formContext.setForm(
-                    label.toLocaleLowerCase(),
-                    e.target.value
-                  );
-                }
-              }}
-              className="my-2"
-              variant={props.varient}
-              label={label}
-              key={`${label}-label`}
-              value={value !== null ? value : ""}
-              fullWidth
-            />
-          </GridListTile>
+          <Input
+            fluid
+            type={props.number ? "number" : undefined}
+            key={`${label}-label`}
+            className={`mt-3 col-${props.labels.length === 3 ? "4" : "12"}`}
+            value={value !== null ? value : ""}
+            label={label}
+            action={
+              label.includes("Price") ? (
+                <Dropdown
+                  button
+                  basic
+                  floating
+                  value={formContext.getForm("unit")}
+                  options={unitOptions}
+                  onChange={(e, { value }) => {
+                    formContext.setForm("unit", value);
+                  }}
+                />
+              ) : (
+                undefined
+              )
+            }
+            onChange={e => {
+              if (props.type !== "multiple") {
+                formContext.setForm(props.type, e.target.value);
+              } else {
+                formContext.setForm(label.toLocaleLowerCase(), e.target.value);
+              }
+            }}
+            placeholder={label}
+          />
         );
       })}
-    </GridList>
+    </div>
   );
 }

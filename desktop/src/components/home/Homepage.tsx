@@ -1,5 +1,9 @@
 import React, { Component, useContext } from "react";
-import { AbstractStorageItem, Category } from "./storageItem";
+import {
+  AbstractStorageItem,
+  Category,
+  DetailStorageItem
+} from "./storageItem";
 import axios from "axios";
 import { getURL } from "../settings/settings";
 import {
@@ -27,6 +31,7 @@ import ItemDetailPage from "./components/ItemDetailPage";
 import LocalScanner from "../LocalScanner/LocalScanner";
 import LoadingProgress from "./components/LoadingProgress";
 import FilterField from "./components/FilterField";
+import CheckoutPage from "../checkout/CheckoutPage";
 
 let qrCode = "";
 let _lasttime: number | undefined;
@@ -37,6 +42,7 @@ interface Props {}
 interface State {
   abstractItem: AbstractStorageItem[];
   searchItems: AbstractStorageItem[];
+  fetchItem?: DetailStorageItem;
   selectedId: number;
   searchKeyword?: string;
   loadingProgress?: number;
@@ -183,6 +189,10 @@ export default class Homepage extends Component<Props, State> {
     }
   };
 
+  _handleOnFetchItem = (item: DetailStorageItem) => {
+    this.setState({ fetchItem: item });
+  };
+
   /**
    * Do the filter for the keyword
    */
@@ -200,7 +210,11 @@ export default class Homepage extends Component<Props, State> {
     return (
       <div className="container-fluid h-100" style={{ overflowY: "hidden" }}>
         <div className="row h-100">
-          <div className="col-5 mt-4 mb-4" style={{ overflowY: "hidden" }}>
+          <CheckoutPage item={this.state.fetchItem} />
+          <div
+            className="col-5 col-lg-3 mt-4 mb-4"
+            style={{ overflowY: "hidden" }}
+          >
             <SearchField
               search={this.search}
               listener={this._handleScanner}
@@ -243,13 +257,16 @@ export default class Homepage extends Component<Props, State> {
             </AutoSizer>
           </div>
           <div
-            className="col-7"
+            className="col-7 col-lg-9"
             style={{
               position: "sticky",
               overflowY: "scroll"
             }}
           >
-            <ItemDetailPage itemID={this.state.selectedId} />
+            <ItemDetailPage
+              itemID={this.state.selectedId}
+              onFetchItem={this._handleOnFetchItem}
+            />
           </div>
         </div>
         <HomepageContext.Consumer>

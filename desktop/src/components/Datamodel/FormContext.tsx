@@ -1,5 +1,9 @@
 import React, { Component } from "react";
-import { AbstractStorageItem, DetailStorageItem } from "../home/storageItem";
+import {
+  AbstractStorageItem,
+  DetailStorageItem,
+  unitOptions
+} from "../home/storageItem";
 import { IpcRenderer } from "electron";
 const ipcRenderer: IpcRenderer = (window as any).require("electron")
   .ipcRenderer;
@@ -7,6 +11,7 @@ const ipcRenderer: IpcRenderer = (window as any).require("electron")
 export interface FormValue {
   name?: string;
   description?: string;
+  unit: string;
   qrCode?: string;
   price?: number;
   col?: number;
@@ -29,7 +34,8 @@ const initForm: FormValue = {
   category: -1,
   series: -1,
   position: -1,
-  location: -1
+  location: -1,
+  unit: unitOptions[0].value
 };
 
 interface State {
@@ -71,7 +77,8 @@ export default class FormProvider extends Component<Props, State> {
         category: item.category_name ? item.category_name.id : undefined,
         series: item.series_name ? item.series_name.id : undefined,
         position: item.position_name ? item.position_name.id : undefined,
-        location: item.location_name ? item.location_name.id : undefined
+        location: item.location_name ? item.location_name.id : undefined,
+        unit: item.unit
       }
     });
   };
@@ -118,6 +125,9 @@ export default class FormProvider extends Component<Props, State> {
       case "location":
         f.location = value;
         break;
+      case "unit":
+        f.unit = value;
+        break;
       default:
         console.error("Error happened on set value");
         return;
@@ -160,6 +170,9 @@ export default class FormProvider extends Component<Props, State> {
 
       case "location":
         return f.location;
+
+      case "unit":
+        return f.unit;
       default:
         console.error("Error happened on get value");
         return;

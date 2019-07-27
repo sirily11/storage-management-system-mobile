@@ -77,6 +77,7 @@ export interface DetailStorageItem extends Base {
     description: string;
     files_objects: FileObject[];
     images_objects: ImageObject[];
+    unit: string;
 }
 
 /**
@@ -93,7 +94,8 @@ export interface PublishStorageItem {
     series_id?: number;
     category_id?: number;
     location_id?: number;
-    position_id?: number
+    position_id?: number;
+    unit: string;
 }
 
 export interface Settings {
@@ -103,3 +105,21 @@ export interface Settings {
     locations: Location[],
     positions: Position[]
 }
+
+export let unitOptions = [
+    {
+        text: "USD",
+        value: "USD",
+    },
+    {
+        text: "HKD",
+        value: "HKD",
+    },
+    {
+        text: "JPY",
+        value: "JPY",
+    }, {
+        text: "CNY",
+        value: "CNY",
+    }
+]

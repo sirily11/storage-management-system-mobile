@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d895f99f-3da9-48f9-8393-6b6a4a44d485" name="Default Changelist" comment="" />
+    <list default="true" id="d895f99f-3da9-48f9-8393-6b6a4a44d485" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../desktop/src/components/home/Homepage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../desktop/src/components/home/Homepage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../desktop/src/components/home/components/ItemDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../desktop/src/components/home/components/ItemDetailPage.tsx" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +57,8 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="x" value="-1920" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -203,15 +207,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1563641958444</updated>
-      <workItem from="1563641959549" duration="28214000" />
+      <workItem from="1563641959549" duration="28280000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28214000" />
+    <option name="totallyTimeSpent" value="28280000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
+    <frame x="-1920" y="0" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />

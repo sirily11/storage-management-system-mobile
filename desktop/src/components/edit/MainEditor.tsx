@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import {
   DetailStorageItem,
   Settings,
-  PublishStorageItem
+  PublishStorageItem,
+  unitOptions
 } from "../home/storageItem";
 import { IpcRenderer } from "electron";
 import {
@@ -49,7 +50,6 @@ const theme = createMuiTheme({
     primary: blueGrey
   }
 });
-
 
 interface Props {
   id?: number;
@@ -151,7 +151,8 @@ export default class MainEditor extends Component<Props, State> {
         series_id: value.series,
         category_id: value.category,
         location_id: value.location,
-        position_id: value.position
+        position_id: value.position,
+        unit: value.unit
       };
       console.log(this.state.id, publishItem);
       if (this.state.id) {
@@ -363,7 +364,6 @@ export default class MainEditor extends Component<Props, State> {
               )}
             </FormContext.Consumer>
           </Toolbar>
-          
         </AppBar>
         <Label
           color="blue"
@@ -400,6 +400,7 @@ export default class MainEditor extends Component<Props, State> {
               multiline={false}
               varient="outlined"
             />
+
             <TextInputField
               type="qrCode"
               labels={["QRCode"]}

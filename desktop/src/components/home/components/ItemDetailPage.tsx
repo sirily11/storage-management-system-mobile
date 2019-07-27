@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { DetailStorageItem, FileObject, ImageObject } from "../storageItem";
-import { getURL } from "../../settings/settings";
-import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
@@ -33,9 +30,11 @@ import {
   Label,
   Icon,
   Button,
-  Statistic
+  Statistic,
+  Image
 } from "semantic-ui-react";
 import { CreateAndupdater } from "../../settings/UpdateAndCreate";
+import { ReactComponent as QRBackground } from "../../remoteScanner/qr-code.svg";
 
 interface State {
   item?: DetailStorageItem;
@@ -48,6 +47,7 @@ interface State {
 
 interface Props {
   itemID: number;
+  onFetchItem(item: DetailStorageItem): void;
 }
 
 export default class ItemDetailPage extends Component<Props, State> {
@@ -77,6 +77,7 @@ export default class ItemDetailPage extends Component<Props, State> {
       // item === undefined && this.props.itemID !== -1
       this.setState({ item: undefined, isLoading: true });
       let item = await fetchDetailItem(this.props.itemID);
+      this.props.onFetchItem(item);
       setTimeout(() => {
         this.setState({
           item: item,
@@ -225,7 +226,7 @@ export default class ItemDetailPage extends Component<Props, State> {
           {title}
           <Label.Detail>{label}</Label.Detail>
         </Label>
-        <Card fluid link>
+        <Card fluid>
           <CardContent>
             <p>{value}</p>
           </CardContent>
@@ -242,32 +243,31 @@ export default class ItemDetailPage extends Component<Props, State> {
         unmountOnExit
         className="pb-3"
       >
-        <GridList cellHeight={"auto"} cols={2} spacing={20} className="pt-2">
+        <Card.Group itemsPerRow="3" className="pt-2">
           {files.map((file, index) => {
             return (
-              <GridListTile key={`file-${index}`}>
-                <Card>
-                  <CardContent className="row mx-2">
-                    {getIcon(file.file)}
-                    <div>{file.file}</div>
-                  </CardContent>
-                  <CardActions>
-                    <IconButton
-                      onClick={() => {
-                        let confirm = window.confirm("确定要删除吗？");
-                        if (file.id && confirm) {
-                          this.deleteFile(file.id, index);
-                        }
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </GridListTile>
+              <Card key={`file-${index}`}>
+                <Card.Content>
+                  {getIcon(file.file)}
+                  <div>{file.file}</div>
+                </Card.Content>
+                <Card.Content extra>
+                  <Button
+                    icon
+                    onClick={() => {
+                      let confirm = window.confirm("确定要删除吗？");
+                      if (file.id && confirm) {
+                        this.deleteFile(file.id, index);
+                      }
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Card.Content>
+              </Card>
             );
           })}
-        </GridList>
+        </Card.Group>
       </Collapse>
     );
   }
@@ -295,7 +295,7 @@ export default class ItemDetailPage extends Component<Props, State> {
       const i = [
         {
           label: "价格",
-          value: item.price
+          value: `${item.price}${item.unit}`
         },
         {
           label: "Column",
@@ -317,11 +317,25 @@ export default class ItemDetailPage extends Component<Props, State> {
             />
             <Divider />
             <div className="pt-3">
-              <h1>照片</h1>
+              <h1>照片 </h1>
+              <Button
+                size="mini"
+                icon="add"
+                onClick={() => {
+                  this.setState({ openAddFile: true });
+                }}
+              />
               {this.renderImages()}
-              {/* <Card.Group itemsPerRow={3} className="pb-3" items={i} /> */}
               <Statistic.Group size="small" widths="3" items={i} color="teal" />
-              <Card header="QR Code" fluid description={item.qr_code} />
+              <Card fluid>
+                <Card.Content>
+                  <Image floated="left" size="mini">
+                    <QRBackground />
+                  </Image>
+                  <Card.Header>QR Code</Card.Header>
+                  <Card.Meta>{item.qr_code}</Card.Meta>
+                </Card.Content>
+              </Card>
               {this.renderTextField(
                 "简介",
                 item.description !== null ? item.description : "",

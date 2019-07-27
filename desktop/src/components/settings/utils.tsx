@@ -15,6 +15,18 @@ export interface EditMessage {
   item?: any;
 }
 
+enum Currency {
+  "CNY",
+  "HKD",
+  "JPY",
+  "USD",
+  "AUD",
+  "GBP",
+  "RUB",
+  "INR",
+  "EUR"
+}
+
 export function computeDownloadProgress(progressEvent: any, callback?: any) {
   const totalLength = progressEvent.lengthComputable
     ? progressEvent.total
@@ -102,4 +114,27 @@ export function getIcon(filename: string): any {
     return <PersonalVideoIcon />;
   }
   return <FolderIcon />;
+}
+
+export async function getCurrencyRate(
+  base = "CNY"
+): Promise<Map<string, number>> {
+  let url = "https://api.exchangeratesapi.io/latest?base=" + base;
+  let response = await axios.get(url);
+  let currency: Map<string, number> = response.data.rates;
+  return currency;
+}
+
+export function convertCurrency(
+  amount: number,
+  from: Currency | string,
+  to: Currency | string,
+  currency: any
+): number {
+  const originalRate = currency[from];
+  const convertRate = currency[to];
+  if (originalRate && convertRate) {
+    return (amount / originalRate) * convertRate;
+  }
+  return 0;
 }

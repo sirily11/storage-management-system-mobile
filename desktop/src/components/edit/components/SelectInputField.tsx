@@ -32,6 +32,7 @@ export default function SelectInputField(props: Props) {
         selection
         placeholder={props.label}
         options={options}
+        value={context.getForm(props.label)}
         onChange={(e, { value }) => {
           context.setForm(props.label, value);
         }}

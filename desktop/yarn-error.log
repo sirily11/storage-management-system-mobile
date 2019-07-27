@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /Users/liqiwei/.yarn/bin/yarn.js add @tpes/react-select
+  /usr/local/bin/node /Users/liqiwei/.yarn/bin/yarn.js add @types/money
 
 PATH: 
   /Users/liqiwei/.yarn/bin:/Users/liqiwei/.config/yarn/global/node_modules/.bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Wireshark.app/Contents/MacOS:/Users/liqiwei/.yarn/bin:/Users/liqiwei/.config/yarn/global/node_modules/.bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/liqiwei/Documents/flutter/bin:/Users/liqiwei/Documents/flutter/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@tpes%2freact-select: Not found
+  Error: https://registry.yarnpkg.com/@types%2fmoney: Not found
       at Request.params.callback [as _callback] (/Users/liqiwei/.yarn/lib/cli.js:66091:18)
       at Request.self.callback (/Users/liqiwei/.yarn/lib/cli.js:129590:22)
       at Request.emit (events.js:182:13)
@@ -50,6 +50,7 @@ npm manifest:
       "@types/qrcode.react": "^0.8.2",
       "@types/react-redux": "^7.1.0",
       "@types/react-router-dom": "^4.3.4",
+      "@types/react-select": "^3.0.0",
       "@types/react-virtualized-auto-sizer": "^1.0.0",
       "@types/react-window": "^1.8.0",
       "axios": "^0.19.0",
@@ -58,6 +59,7 @@ npm manifest:
       "electron-context-menu": "^0.13.0",
       "electron-is-dev": "^1.1.0",
       "jquery": "^3.4.1",
+      "money": "^0.2.0",
       "node-notifier": "^5.4.0",
       "print-js": "^1.0.61",
       "printjs": "^1.1.0",
@@ -65,6 +67,7 @@ npm manifest:
       "react": "^16.8.6",
       "react-dom": "^16.8.6",
       "react-dropzone": "^10.1.5",
+      "react-image-lightbox": "^5.1.0",
       "react-jsonschema-form": "^1.6.1",
       "react-redux": "^7.1.0",
       "react-router-dom": "^5.0.1",
@@ -1804,6 +1807,13 @@ Lockfile:
     dependencies:
       "@types/react" "*"
   
+  "@types/react-dom@*":
+    version "16.8.5"
+    resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.8.5.tgz#3e3f4d99199391a7fb40aa3a155c8dd99b899cbd"
+    integrity sha512-idCEjROZ2cqh29+trmTmZhsBAUNQuYrF92JHKzZ5+aiFM1mlSk3bb23CK7HhYuOY75Apgap5y2jTyHzaM2AJGA==
+    dependencies:
+      "@types/react" "*"
+  
   "@types/react-redux@^7.1.0":
     version "7.1.1"
     resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.1.tgz#eb01e89cf71cad77df9f442b819d5db692b997cb"
@@ -1829,6 +1839,22 @@ Lockfile:
     integrity sha512-j2Gge5cvxca+5lK9wxovmGPgpVJMwjyu5lTA/Cd6fLGoPq7FXcUE1jFkEdxeyqGGz8VfHYSHCn5Lcn24BzaNKA==
     dependencies:
       "@types/history" "*"
+      "@types/react" "*"
+  
+  "@types/react-select@^3.0.0":
+    version "3.0.0"
+    resolved "https://registry.yarnpkg.com/@types/react-select/-/react-select-3.0.0.tgz#d8e2fa078099963d2f33bea20b735a962799015a"
+    integrity sha512-eu+4qdByhx1Szqtpqke/7Bwhl5B1cWm47ojlYKp+PR2x9eVnzoytRoi2FNthQxCTQor4t81xgqY/8X4Naf2rKQ==
+    dependencies:
+      "@types/react" "*"
+      "@types/react-dom" "*"
+      "@types/react-transition-group" "*"
+  
+  "@types/react-transition-group@*":
+    version "4.2.0"
+    resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.2.0.tgz#86ddb509ce3de27341c7cb7797abb99b1c4676bf"
+    integrity sha512-8KkpFRwqS9U1dtVVw1kt/MmWgLmbd5iK5TgqsaeC7fAm74J4j/HiBiRC8eETvwjGGju48RAwyZ3l5iv1H1x93Q==
+    dependencies:
       "@types/react" "*"
   
   "@types/react-transition-group@^2.0.16":
@@ -4967,7 +4993,7 @@ Lockfile:
       signal-exit "^3.0.0"
       strip-eof "^1.0.0"
   
-  exenv@^1.2.2:
+  exenv@^1.2.0, exenv@^1.2.2:
     version "1.2.2"
     resolved "https://registry.yarnpkg.com/exenv/-/exenv-1.2.2.tgz#2ae78e85d9894158670b03d47bec1f03bd91bb9d"
     integrity sha1-KueOhdmJQVhnCwPUe+wfA72Ru50=
@@ -8032,6 +8058,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/modify-filename/-/modify-filename-1.1.0.tgz#9a2dec83806fbb2d975f22beec859ca26b393aa1"
     integrity sha1-mi3sg4Bvuy2XXyK+7IWcoms5OqE=
   
+  money@^0.2.0:
+    version "0.2.0"
+    resolved "https://registry.yarnpkg.com/money/-/money-0.2.0.tgz#7eada2df1009df935fa18d4fb1d620ddacce02c2"
+    integrity sha1-fq2i3xAJ35NfoY1PsdYg3azOAsI=
+  
   move-concurrently@^1.0.1:
     version "1.0.1"
     resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -9991,6 +10022,14 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.6.tgz#0cd73407c5d141f9638ae1e0c63e7b2bf7e9929d"
     integrity sha512-X1Y+0jR47ImDVr54Ab6V9eGk0Hnu7fVWGeHQSOXHf/C2pF9c6uy3gef8QUeuUiWlNb0i08InPSE5a/KJzNzw1Q==
   
+  react-image-lightbox@^5.1.0:
+    version "5.1.0"
+    resolved "https://registry.yarnpkg.com/react-image-lightbox/-/react-image-lightbox-5.1.0.tgz#b47b904b027c918acdd9efa94dc0a0ddd8125c86"
+    integrity sha512-R46QvffoDBscLQgTl4s3kFxVbnP7a+nIh7AXJNS0EXVeDaa6zKDKtIT+jFeEvs+F9oUHtZfenG1NHhTkO4hEOA==
+    dependencies:
+      prop-types "^15.6.2"
+      react-modal "^3.6.1"
+  
   react-input-autosize@^2.2.1:
     version "2.2.1"
     resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-2.2.1.tgz#ec428fa15b1592994fb5f9aa15bb1eb6baf420f8"
@@ -10015,10 +10054,20 @@ Lockfile:
       prop-types "^15.5.8"
       react-is "^16.8.4"
   
-  react-lifecycles-compat@^3.0.4:
+  react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
     version "3.0.4"
     resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
     integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+  
+  react-modal@^3.6.1:
+    version "3.9.1"
+    resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-3.9.1.tgz#82ce53d110eea0d8f028f3315ef336d0baffa9b9"
+    integrity sha512-k+TUkhGWpIVHLsEyjNmlyOYL0Uz03fNZvlkhCImd1h+6fhNgTi6H6jexVXPVhD2LMMDzJyfugxMN+APN/em+eQ==
+    dependencies:
+      exenv "^1.2.0"
+      prop-types "^15.5.10"
+      react-lifecycles-compat "^3.0.0"
+      warning "^4.0.3"
   
   react-motion@^0.5.0:
     version "0.5.2"
@@ -12224,7 +12273,7 @@ Lockfile:
     dependencies:
       makeerror "1.0.x"
   
-  warning@^4.0.1, warning@^4.0.2:
+  warning@^4.0.1, warning@^4.0.2, warning@^4.0.3:
     version "4.0.3"
     resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"
     integrity sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==
