@@ -1,7 +1,7 @@
 {
   "name": "storage_manager",
   "author": "Qiwei Li",
-  "version": "0.7.0",
+  "version": "0.7.9",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.4.5",

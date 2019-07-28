@@ -7,6 +7,8 @@ import * as  contextMenu from "electron-context-menu"
 const isDev = require("electron-is-dev");
 
 let mainWindow: Electron.BrowserWindow | undefined;
+let settingWindow: Electron.BrowserWindow | undefined;
+
 
 contextMenu({
   prepend: (actions, params, browserWindow) => (
@@ -20,13 +22,11 @@ var menu = Menu.buildFromTemplate([
   {
     label: 'Menu',
   }, {
-    label: "File",
+    label: "设置",
     submenu: [
       {
-        label: 'Log out', click: () => {
-          if (mainWindow) {
-            mainWindow.webContents.send('logout')
-          }
+        label: '打开设置页面', click: () => {
+          settingWindow.show()
         }
       }, {
         label: "Reload", click: () => {
@@ -57,10 +57,22 @@ function createWindow() {
     },
   });
 
+  settingWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    titleBarStyle: "hidden",
+    show: false
+  });
+
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000#/"
       : `file://${path.join(__dirname, "../build/index.html")}`
+  );
+  settingWindow.loadURL(
+    isDev
+      ? "http://localhost:3000#/setting"
+      : `file://${path.join(__dirname, "../build/index.html#/setting")}`
   );
   mainWindow.once("ready-to-show", () => {
     if (mainWindow) {
@@ -81,6 +93,11 @@ function createWindow() {
   mainWindow.on("close", e => {
     mainWindow = undefined
   })
+
+  settingWindow.on("close", (e) => {
+    e.preventDefault()
+    settingWindow.hide()
+  })
 }
 
 app.on("ready", () => {
@@ -100,6 +117,10 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+if (settingWindow) {
+
+}
 
 
 ipcMain.on("notification", (event: any, message: string) => {

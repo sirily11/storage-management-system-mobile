@@ -8,11 +8,8 @@ import {
   Divider,
   List,
   Avatar,
-  GridList,
-  GridListTile,
   CardContent,
   IconButton,
-  CardActions,
   Collapse,
   Chip,
   Fade
@@ -35,6 +32,7 @@ import {
 } from "semantic-ui-react";
 import { CreateAndupdater } from "../../settings/UpdateAndCreate";
 import { ReactComponent as QRBackground } from "../../remoteScanner/qr-code.svg";
+import Pagination from "../../settings/pagination";
 
 interface State {
   item?: DetailStorageItem;
@@ -43,6 +41,7 @@ interface State {
   isLoading: boolean;
   openLightbox: boolean;
   currentShowingImage: number;
+  currentFilePage: number;
 }
 
 interface Props {
@@ -59,7 +58,8 @@ export default class ItemDetailPage extends Component<Props, State> {
       showFile: false,
       isLoading: false,
       openLightbox: false,
-      currentShowingImage: 0
+      currentShowingImage: 0,
+      currentFilePage: 0
     };
   }
 
@@ -236,6 +236,8 @@ export default class ItemDetailPage extends Component<Props, State> {
   }
 
   renderFiles(files: FileObject[]) {
+    const page = new Pagination<FileObject>(files, 12);
+    const pagedItem = page.getCurrentPage(this.state.currentFilePage);
     return (
       <Collapse
         in={this.state.showFile}
@@ -243,31 +245,57 @@ export default class ItemDetailPage extends Component<Props, State> {
         unmountOnExit
         className="pb-3"
       >
-        <Card.Group itemsPerRow="3" className="pt-2">
-          {files.map((file, index) => {
-            return (
-              <Card key={`file-${index}`}>
-                <Card.Content>
-                  {getIcon(file.file)}
-                  <div>{file.file}</div>
-                </Card.Content>
-                <Card.Content extra>
-                  <Button
-                    icon
-                    onClick={() => {
-                      let confirm = window.confirm("确定要删除吗？");
-                      if (file.id && confirm) {
-                        this.deleteFile(file.id, index);
-                      }
-                    }}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </Card.Content>
-              </Card>
-            );
-          })}
-        </Card.Group>
+        <div>
+          <Button.Group>
+            <Button
+              content="Prev"
+              icon="left arrow"
+              color="red"
+              labelPosition="left"
+              disabled={page.getCurrentPageNum() === 0}
+              onClick={() => {
+                let next = page.prev();
+                this.setState({ currentFilePage: next });
+              }}
+            />
+            <Button
+              content="Next"
+              color="blue"
+              icon="right arrow"
+              labelPosition="right"
+              disabled={page.getCurrentPageNum() === page.totalPage - 1}
+              onClick={() => {
+                let next = page.next();
+                this.setState({ currentFilePage: next });
+              }}
+            />
+          </Button.Group>
+          <Card.Group itemsPerRow="3" className="pt-2">
+            {pagedItem.map((file, index) => {
+              return (
+                <Card key={`file-${index}`}>
+                  <Card.Content>
+                    {getIcon(file.file)}
+                    <div>{file.file}</div>
+                  </Card.Content>
+                  <Card.Content extra>
+                    <Button
+                      icon
+                      onClick={() => {
+                        let confirm = window.confirm("确定要删除吗？");
+                        if (file.id && confirm) {
+                          this.deleteFile(file.id, index);
+                        }
+                      }}
+                    >
+                      <DeleteIcon />
+                    </Button>
+                  </Card.Content>
+                </Card>
+              );
+            })}
+          </Card.Group>
+        </div>
       </Collapse>
     );
   }

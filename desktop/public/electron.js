@@ -6,6 +6,7 @@ var notifier = require("node-notifier");
 var contextMenu = require("electron-context-menu");
 var isDev = require("electron-is-dev");
 var mainWindow;
+var settingWindow;
 contextMenu({
     prepend: function (actions, params, browserWindow) { return ([]); }
 });
@@ -13,13 +14,11 @@ var menu = electron_1.Menu.buildFromTemplate([
     {
         label: 'Menu'
     }, {
-        label: "File",
+        label: "设置",
         submenu: [
             {
-                label: 'Log out', click: function () {
-                    if (mainWindow) {
-                        mainWindow.webContents.send('logout');
-                    }
+                label: '打开设置页面', click: function () {
+                    settingWindow.show();
                 }
             }, {
                 label: "Reload", click: function () {
@@ -48,9 +47,18 @@ function createWindow() {
             webSecurity: false
         }
     });
+    settingWindow = new electron_1.BrowserWindow({
+        width: 400,
+        height: 300,
+        titleBarStyle: "hidden",
+        show: false
+    });
     mainWindow.loadURL(isDev
         ? "http://localhost:3000#/"
         : "file://" + path.join(__dirname, "../build/index.html"));
+    settingWindow.loadURL(isDev
+        ? "http://localhost:3000#/setting"
+        : "file://" + path.join(__dirname, "../build/index.html#/setting"));
     mainWindow.once("ready-to-show", function () {
         if (mainWindow) {
             mainWindow.show();
@@ -68,6 +76,10 @@ function createWindow() {
     mainWindow.on("close", function (e) {
         mainWindow = undefined;
     });
+    settingWindow.on("close", function (e) {
+        e.preventDefault();
+        settingWindow.hide();
+    });
 }
 electron_1.app.on("ready", function () {
     createWindow();
@@ -83,6 +95,8 @@ electron_1.app.on("activate", function () {
         createWindow();
     }
 });
+if (settingWindow) {
+}
 electron_1.ipcMain.on("notification", function (event, message) {
     console.log(message);
     notifier.notify({

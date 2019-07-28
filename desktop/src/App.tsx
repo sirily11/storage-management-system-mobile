@@ -14,6 +14,7 @@ import HomepageProvider from "./components/Datamodel/HomepageContext";
 import EditorPage from "./components/edit/Editpage";
 import FormProvider from "./components/Datamodel/FormContext";
 import QRWindow from "./components/QRDownload/QRWindow";
+import SettingPage from "./components/settings/SettingPage";
 
 class App extends Component {
   onDone = (qrcode: string) => {
@@ -33,7 +34,7 @@ class App extends Component {
             >
               <Route exact path="/" component={(props: any) => <Homepage />} />
               <Route exact path="/edit/:id?" component={EditorPage} />
-              <Route exact path="/qr" component={QRWindow} />
+              <Route exact path="/setting" component={SettingPage} />
             </AnimatedSwitch>
           </Router>
         </HomepageProvider>
