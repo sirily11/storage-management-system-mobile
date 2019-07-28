@@ -66,6 +66,7 @@ class EditPageState extends State<EditPage> {
   @override
   void initState() {
     super.initState();
+
     if (item != null) {
       priceController.text = item.price.toString();
       itemNameController.text = item.name;
@@ -363,6 +364,35 @@ class EditPageState extends State<EditPage> {
     );
   }
 
+  Widget unitSelector() {
+    ItemDetailEditPageState settingsState =
+        Provider.of<ItemDetailEditPageState>(context);
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: DropdownButtonFormField(
+            validator: isSelected,
+            decoration: InputDecoration(labelText: "Select Unit"),
+            value: settingsState.unit,
+            onChanged: (value) {
+              settingsState.unit = value;
+              settingsState.update();
+            },
+            items: currencyUnit.map<DropdownMenuItem>((c) {
+              return DropdownMenuItem(
+                value: c,
+                child: SizedBox(
+                  child: Text(c.toString()),
+                  width: 140,
+                ),
+              );
+            }).toList(),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget submitButton() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
@@ -400,6 +430,7 @@ class EditPageState extends State<EditPage> {
           column: int.parse(columnController.text),
           row: int.parse(rowController.text),
           qrCode: qrController.text,
+          unit: settings.unit,
           author: Author(id: settings.selectedAuthor),
           series: Series(id: settings.selectedSeries),
           category: Category(id: settings.selectedCategory),
@@ -434,6 +465,7 @@ class EditPageState extends State<EditPage> {
           series: Series(id: settings.selectedSeries),
           category: Category(id: settings.selectedCategory),
           position: Position(id: settings.selectedPosition),
+          unit: settings.unit,
           location: Location(id: settings.selectedLocation)));
       updateDetailPageItem(item);
       Navigator.of(context).pop();
@@ -510,6 +542,7 @@ class EditPageState extends State<EditPage> {
             maxLines: 3),
         qrField(),
         priceColRowWidget(),
+        unitSelector(),
         authorSelector(),
         categorySelector(),
         seriesSelector(),

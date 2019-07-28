@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:image/image.dart';
 
 import 'Decodeable.dart';
 
@@ -173,6 +174,24 @@ class Position implements Decodeable {
   }
 }
 
+class ImageObject implements Decodeable {
+  int id;
+  String image;
+
+  ImageObject({this.id, this.image});
+
+  factory ImageObject.fromJson(Map<String, dynamic> json) {
+    if (json != null) {
+      return ImageObject(id: json['id'], image: json['image']);
+    }
+    return null;
+  }
+
+  Map toJson() {
+    return {"image": image};
+  }
+}
+
 class StorageItemDetail {
   int id;
   String name;
@@ -182,10 +201,11 @@ class StorageItemDetail {
   Category category;
   Location location;
   Position position;
+  String unit;
   int column;
   int row;
   double price;
-  List<String> images;
+  List<ImageObject> images;
   List<String> files;
   String qrCode;
 
@@ -203,9 +223,15 @@ class StorageItemDetail {
       this.price,
       this.images,
       this.qrCode,
-      this.files});
+      this.files,
+      this.unit});
 
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
+    List<ImageObject> images = [];
+
+    json['images_objects'].forEach((data) {
+      images.add(ImageObject.fromJson(data));
+    });
     return StorageItemDetail(
         id: json['id'],
         name: json['name'],
@@ -219,7 +245,8 @@ class StorageItemDetail {
         price: json['price'],
         position: Position.fromJson(json['position_name']),
         qrCode: json['qr_code'],
-        images: json['images'].cast<String>(),
+        images: images,
+        unit: json['unit'],
         files: json['files'].cast<String>());
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/Home/Homepage.dart';
 import 'package:mobile/Scanner/ScannerPage.dart';
+import 'package:mobile/Setting/SettingPage.dart';
 
 class HomepageDrawer extends StatelessWidget {
   const HomepageDrawer({
@@ -33,6 +34,14 @@ class HomepageDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return ScannerPage();
+              }));
+            },
+          ),
+          ListTile(
+            title: Text("Settings"),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return SettingPage();
               }));
             },
           )

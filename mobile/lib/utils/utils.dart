@@ -8,14 +8,16 @@ import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import '../DataObj/StorageItem.dart';
 
+List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
+
 String getURL(String path) {
-  String base = "http://192.168.43.21/storage_management";
+  String base = "http://192.168.31.19:8080/storage_management";
   // String base = "https://serverless.sirileepage.com/storage_management";
   return "$base/$path";
 }
 
 String getWebSocket({String path}) {
-  String base = "ws://192.168.31.91:8000/?type=scanner";
+  String base = "ws://192.168.31.19:4000/?type=scanner";
   return base;
 }
 
@@ -74,7 +76,8 @@ Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
     "author_id": item.author.id,
     "series_id": item.series.id,
     "location_id": item.location.id,
-    "position_id": item.position.id
+    "position_id": item.position.id,
+    "unit": item.unit
   };
   var jsonBody = json.encode(body);
   final response = await http.post(url,
@@ -129,7 +132,8 @@ Future<StorageItemDetail> UpdateItem(StorageItemDetail item) async {
     "author_id": item.author.id,
     "series_id": item.series.id,
     "location_id": item.location.id,
-    "position_id": item.position.id
+    "position_id": item.position.id,
+    "unit": item.unit
   };
   var jsonBody = json.encode(body);
   final response = await http.patch("$url${item.id}/",

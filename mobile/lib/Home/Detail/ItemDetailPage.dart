@@ -141,7 +141,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               ? itemRow(item.description, "简介", null)
               : Container(),
           item.price != null
-              ? itemRow(item.price.toString(), "价格", null)
+              ? itemRow("${item.price.toString()} ${item.unit}", "价格", null)
               : Container(),
           item.location != null
               ? itemRow(item.location.toString(), "地址",
@@ -154,7 +154,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           item.column != null
               ? itemRow("Column: ${item.column}\nRow:${item.row}", "坐标", null)
               : Container(),
-          HorizontalImage(item.images),
+          HorizontalImage(item.images.map((i) => (i.image)).toList()),
           FileView(item.files)
         ],
       ),
@@ -199,6 +199,14 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         child: Icon(Icons.edit),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
+            ItemDetailEditPageState settingsState =
+                Provider.of<ItemDetailEditPageState>(context);
+            settingsState.selectedAuthor = item.author.id;
+            settingsState.selectedCategory = item.category.id;
+            settingsState.selectedLocation = item.location.id;
+            settingsState.selectedSeries = item.series.id;
+            settingsState.selectedPosition = item.position.id;
+            settingsState.unit = item.unit;
             return EditPage(
               isEditMode: true,
               id: _id,

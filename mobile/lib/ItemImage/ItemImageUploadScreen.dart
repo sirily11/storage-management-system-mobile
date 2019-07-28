@@ -35,9 +35,8 @@ class ItemImageUploadScreen extends StatelessWidget {
     for (var path in imageState.imagePath) {
       var file = File(path);
       final bytes = await compute(_resizeImage, file);
-      print("File Size: ${bytes.length}, Orginal: ${file.lengthSync()}");
       FormData formData = new FormData.from(
-          {"item": this._id, "image": UploadFileInfo.fromBytes(bytes, path)});
+          {"item": this._id, "image": UploadFileInfo(file, path)});
       var response = await dio.post(url, data: formData);
       done = done + 1;
       imageState.progress = done / imageState.imagePath.length;

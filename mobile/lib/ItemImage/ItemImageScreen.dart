@@ -45,7 +45,7 @@ class ItemImageScreenState extends State<ItemImageScreen> {
   Future init() async {
     final cameras = await availableCameras();
     this._camera = cameras[0];
-    this._controller = CameraController(_camera, ResolutionPreset.medium);
+    this._controller = CameraController(_camera, ResolutionPreset.high);
     await _controller.initialize();
     setState(() {});
   }

@@ -110,8 +110,10 @@ class HomePageState extends State<Homepage> {
   Widget build(BuildContext context) {
     Widget body = ItemDisplay(items, _scaffoldKey, remove);
     return Scaffold(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         title: errorMessage == null
             ? Text("Storage Management")
             : Text(errorMessage),
@@ -127,14 +129,6 @@ class HomePageState extends State<Homepage> {
             icon: Icon(Icons.camera_alt),
             onPressed: scanQR,
           ),
-//          IconButton(
-//            icon: Icon(Icons.camera),
-//            onPressed: (){
-//              Navigator.push(context, MaterialPageRoute(builder: (context){
-//                return ItemImageScreen();
-//              }));
-//            },
-//          )
         ],
       ),
       drawer: new HomepageDrawer(),

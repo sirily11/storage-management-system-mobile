@@ -49,6 +49,8 @@ class ItemDetailEditPageState with ChangeNotifier {
 
   double price = 0;
 
+  String unit = null;
+
   /**
    * Init setting page
    */
@@ -64,6 +66,7 @@ class ItemDetailEditPageState with ChangeNotifier {
     qrCode = item.qrCode;
     row = item.row;
     price = item.price;
+    unit = item.unit;
   }
 
   updateAll(
