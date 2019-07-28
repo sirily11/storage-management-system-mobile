@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -53,7 +53,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
   Future<StorageItemDetail> fetchItem() async {
     try {
-      var url = getURL("item/$_id");
+      var url = await getURL("item/$_id");
       final response = await http.get(url);
       if (response.statusCode == 200) {
         Utf8Decoder decode = Utf8Decoder();
@@ -100,18 +100,31 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   Widget itemRow(String value, String label, Function onTab) {
     return Column(
       children: <Widget>[
-        ListTile(
-          title: Text(label),
-          subtitle: Text(
-            value,
-            overflow: TextOverflow.ellipsis,
-            softWrap: true,
-            maxLines: 3,
+        Card(
+          child: Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+            child: ListTile(
+              title: Text(
+                label,
+                style: TextStyle(color: Colors.white),
+              ),
+              subtitle: Text(
+                value,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                maxLines: 3,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: onTab,
+              trailing: onTab == null
+                  ? null
+                  : Icon(
+                      Icons.more_horiz,
+                      color: Colors.white,
+                    ),
+            ),
           ),
-          onTap: onTab,
-          trailing: onTab == null ? null : Icon(Icons.more_horiz),
         ),
-        Divider()
       ],
     );
   }
@@ -154,7 +167,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           item.column != null
               ? itemRow("Column: ${item.column}\nRow:${item.row}", "坐标", null)
               : Container(),
-          HorizontalImage(item.images.map((i) => (i.image)).toList()),
+          // HorizontalImage(item.images.map((i) => (i.image)).toList()),
           FileView(item.files)
         ],
       ),
@@ -177,25 +190,41 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     }
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(name),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.camera_alt),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) {
-                return ItemImageScreen(_id, this.name);
-              }));
-            },
-          )
-        ],
-      ),
-      body: GestureDetector(
-        child: body,
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, _) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 200,
+              pinned: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.camera_alt),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) {
+                      return ItemImageScreen(_id, this.name);
+                    }));
+                  },
+                )
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(name),
+                background: item != null && item.images.length > 0
+                    ? ImageCard(item.images.map((i) => i.image).toList())
+                    : Container(),
+              ),
+            )
+          ];
+        },
+        body: GestureDetector(
+          child: body,
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         child: Icon(Icons.edit),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -216,6 +245,31 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           }));
         },
       ),
+    );
+  }
+}
+
+class ImageCard extends StatelessWidget {
+  final List<String> imageSrc;
+
+  ImageCard(this.imageSrc);
+
+  @override
+  Widget build(BuildContext context) {
+    return CarouselSlider(
+      height: 300,
+      items: imageSrc.map((i) {
+        return Container(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(0.0)),
+            child: Image.network(
+              i,
+              fit: BoxFit.cover,
+              width: 1000,
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

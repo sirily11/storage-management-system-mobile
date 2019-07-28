@@ -11,17 +11,17 @@ class Uploader<T> {
 
   Uploader({this.client});
 
-  String getAPIURL(Decodeable object) {
+  Future<String> getAPIURL(Decodeable object) async {
     if (object is Category) {
-      return getURL("category/");
+      return await getURL("category/");
     } else if (object is Series) {
-      return getURL("series/");
+      return await getURL("series/");
     } else if (object is Author) {
-      return getURL("author/");
+      return await getURL("author/");
     } else if (object is Location) {
-      return getURL("location/");
+      return await getURL("location/");
     } else if (object is Position) {
-      return getURL("detail-position/");
+      return await getURL("detail-position/");
     }
   }
 
@@ -43,7 +43,7 @@ class Uploader<T> {
     if (client == null) {
       throw Exception("Client should not be null");
     }
-    String url = getAPIURL(object);
+    String url = await getAPIURL(object);
     var jsonBody = json.encode(object);
     final response = await client.post(url,
         body: jsonBody,
@@ -61,7 +61,7 @@ class Uploader<T> {
     if (client == null) {
       throw Exception("Client should not be null");
     }
-    String url = getAPIURL(object);
+    String url = await getAPIURL(object);
     var jsonBody = json.encode(object);
     final response = await client.patch("$url${object.id}/",
         body: jsonBody,

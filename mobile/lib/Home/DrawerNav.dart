@@ -19,7 +19,9 @@ class HomepageDrawer extends StatelessWidget {
               "Settings",
               style: TextStyle(fontSize: 20, color: Colors.white),
             )),
-            decoration: BoxDecoration(color: Colors.blue),
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(58, 66, 86, 1.0),
+            ),
           ),
           ListTile(
             title: Text("Home"),

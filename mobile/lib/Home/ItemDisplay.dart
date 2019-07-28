@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
@@ -91,7 +92,7 @@ class ItemDisplay extends StatelessWidget {
         style: TextStyle(color: Colors.white),
       ),
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
           return ItemDetailPage(
             item.id,
             name: item.name,

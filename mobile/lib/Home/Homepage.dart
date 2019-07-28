@@ -19,8 +19,10 @@ class Homepage extends StatefulWidget {
   }
 }
 
-class HomePageState extends State<Homepage> {
+class HomePageState extends State<Homepage>
+    with SingleTickerProviderStateMixin {
   List<StorageItemAbstract> items = [];
+  TabController _tabController;
   String errorMessage;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -46,6 +48,11 @@ class HomePageState extends State<Homepage> {
         this.items = items;
       });
       final settings = await fetchSetting();
+      setState(() {
+        _tabController =
+            new TabController(length: settings.categories.length, vsync: this);
+      });
+
       ItemDetailEditPageState settingsState =
           Provider.of<ItemDetailEditPageState>(context);
       settingsState.updateAll(
@@ -108,10 +115,25 @@ class HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = ItemDisplay(items, _scaffoldKey, remove);
+    ItemDetailEditPageState settingsState =
+        Provider.of<ItemDetailEditPageState>(context);
+
+    if (_tabController == null) {
+      return Scaffold(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        body: Center(
+          child: Icon(
+            Icons.pages,
+            color: Colors.white,
+            size: 100,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-      key: _scaffoldKey,
+      // key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         title: errorMessage == null
@@ -130,17 +152,34 @@ class HomePageState extends State<Homepage> {
             onPressed: scanQR,
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: settingsState.categories
+              .map((c) => Tab(
+                    text: c.name,
+                  ))
+              .toList(),
+        ),
       ),
-      drawer: new HomepageDrawer(),
       body: Container(
         child: RefreshIndicator(
-          child: body,
           onRefresh: () async {
             await fetchData();
           },
+          child: TabBarView(
+            controller: _tabController,
+            children: settingsState.categories.map((c) {
+              var fItems =
+                  items.where((i) => i.categoryName == c.name).toList();
+              return ItemDisplay(fItems, _scaffoldKey, remove);
+            }).toList(),
+          ),
         ),
       ),
+      drawer: new HomepageDrawer(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {

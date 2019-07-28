@@ -27,7 +27,7 @@ class ItemImageUploadScreen extends StatelessWidget {
 
   Future upload(context) async {
     var imageState = Provider.of<CameraState>(context);
-    var url = getURL("item-image/");
+    var url = await getURL("item-image/");
     var dio = Dio();
     var done = 0;
     imageState.progress = 0;

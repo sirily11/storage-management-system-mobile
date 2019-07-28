@@ -6,19 +6,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../DataObj/StorageItem.dart';
 
 List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
 
-String getURL(String path) {
+Future<String> getURL(String path) async {
+  final prefs = await SharedPreferences.getInstance();
   String base = "http://192.168.31.19:8080/storage_management";
-  // String base = "https://serverless.sirileepage.com/storage_management";
-  return "$base/$path";
+  String url = prefs.getString("server") ?? base;
+  return "$url/$path";
 }
 
-String getWebSocket({String path}) {
-  String base = "ws://192.168.31.19:4000/?type=scanner";
-  return base;
+Future<String> getWebSocket({String path}) async {
+  String base = "ws://192.168.31.19:4000";
+  final prefs = await SharedPreferences.getInstance();
+  String url = prefs.getString("websocket") ?? base;
+  return "$base/?type=scanner";
 }
 
 showErrorMessageSnackBar(BuildContext context, String message) {
@@ -28,7 +32,7 @@ showErrorMessageSnackBar(BuildContext context, String message) {
 }
 
 Future<List<StorageItemAbstract>> fetchItems() async {
-  var url = getURL("item/");
+  var url = await getURL("item/");
   final response = await http.get(url);
   if (response.statusCode == 200) {
     Utf8Decoder decode = Utf8Decoder();
@@ -44,7 +48,7 @@ Future<List<StorageItemAbstract>> fetchItems() async {
 }
 
 Future<SettingObj> fetchSetting() async {
-  var url = getURL("settings");
+  var url = await getURL("settings");
   final response = await http.get(url);
   if (response.statusCode == 200) {
     Utf8Decoder decode = Utf8Decoder();
@@ -64,7 +68,7 @@ Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
   if (item == null) {
     throw Exception("Item should not be null");
   }
-  var url = getURL("item/");
+  var url = await getURL("item/");
   var body = {
     "name": item.name,
     "category_id": item.category.id,
@@ -103,7 +107,7 @@ Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
 }
 
 Future<bool> removeItem(StorageItemAbstract item) async {
-  var url = getURL("item/${item.id}/");
+  var url = await getURL("item/${item.id}/");
   final response = await http.delete(url);
   if (response.statusCode == 204) {
     Utf8Decoder decode = Utf8Decoder();
@@ -120,7 +124,7 @@ Future<StorageItemDetail> UpdateItem(StorageItemDetail item) async {
   if (item == null) {
     throw Exception("Item should not be null");
   }
-  var url = getURL("item/");
+  var url = await getURL("item/");
   var body = {
     "name": item.name,
     "category_id": item.category.id,
@@ -151,7 +155,7 @@ Future<StorageItemDetail> UpdateItem(StorageItemDetail item) async {
 }
 
 Future<StorageItemAbstract> searchByQR(String qrCode) async {
-  var url = getURL("searchByQR?qr=$qrCode");
+  var url = await getURL("searchByQR?qr=$qrCode");
   final response = await http.get(url);
 
   if (response.statusCode == 200) {

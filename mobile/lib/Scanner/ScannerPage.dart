@@ -42,7 +42,7 @@ class _ScannerState extends State<ScannerPage> {
 
   connectToWebsocket() async {
     try {
-      _socket = await WebSocket.connect(getWebSocket());
+      _socket = await WebSocket.connect(await getWebSocket());
       _socket.listen((dynamic data) async {
         Message message = await _onMessage(data);
         print("Message: ${message.type} ${message.from}");

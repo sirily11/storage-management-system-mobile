@@ -273,7 +273,7 @@ class EditPageState extends State<EditPage> {
             items: settingsState.series.map<DropdownMenuItem>((s) {
               return DropdownMenuItem(
                 value: s.id,
-                child: Text(s.name),
+                child: SizedBox(width: 160, child: Text(s.name)),
               );
             }).toList(),
           ),
