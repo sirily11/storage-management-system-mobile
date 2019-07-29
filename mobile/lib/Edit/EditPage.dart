@@ -331,6 +331,9 @@ class EditPageState extends State<EditPage>
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
                     tabController.index = 1;
+                    setState(() {
+                      canSave = true;
+                    });
                   }
                 },
                 splashColor: Colors.red, // inkwell color

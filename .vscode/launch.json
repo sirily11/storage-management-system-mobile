@@ -28,6 +28,13 @@
       "program": "bin/main.dart",
       "request": "launch",
       "type": "dart"
+    },
+    {
+      "name": "Flutter profile",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "mobile/lib/main.dart"
     }
   ]
 }

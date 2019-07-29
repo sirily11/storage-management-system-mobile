@@ -20,7 +20,7 @@ class _ScannerState extends State<ScannerPage> {
   String qrCode;
   //Websocket
   WebSocket _socket;
-  final double width = 150;
+  final double width = 200;
   final double height = 150;
 
   @override
@@ -121,6 +121,7 @@ class _ScannerState extends State<ScannerPage> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
+        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         key: _scaffoldKey,
         appBar: AppBar(
           actions: <Widget>[
@@ -141,36 +142,56 @@ class _ScannerState extends State<ScannerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Stack(children: <Widget>[
-                  SizedBox(
-                    width: width,
-                    height: height,
-                    child: FloatingActionButton(
-                      onPressed: () async {
-                        if (_status == 0) {
-                          return null;
-                        }
-                        return await scanQR();
-                      },
-                      backgroundColor: renderColor(),
-                      child: Image.asset(
-                        "assets/barcode.png",
-                        height: height / 1.7,
+                Card(
+                  child: Container(
+                    decoration:
+                        BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                    child: Stack(children: <Widget>[
+                      SizedBox(
                         width: width,
-                        color: Colors.white,
+                        height: height,
+                        child: RaisedButton(
+                          onPressed: () async {
+                            if (_status == 0) {
+                              return null;
+                            }
+                            return await scanQR();
+                          },
+                          color: renderColor(),
+                          child: Image.asset(
+                            "assets/barcode.png",
+                            height: height / 1.7,
+                            width: width,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
+                      this._status == 0
+                          ? SizedBox(
+                              width: width, child: LinearProgressIndicator())
+                          : SizedBox(height: 58, width: 58, child: Container())
+                    ]),
                   ),
-                  this._status == 0
-                      ? SizedBox(
-                          height: height,
-                          width: width,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 7,
-                          ))
-                      : SizedBox(height: 58, width: 58, child: Container())
-                ]),
-                this.qrCode != null ? Text(qrCode) : Container()
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  child: Card(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Color.fromRGBO(64, 75, 96, .9)),
+                          child: this.qrCode != null
+                              ? ListTile(
+                                  title: Text(
+                                    "QR Code:",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  subtitle: Text(
+                                    qrCode,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
+                              : Container())),
+                )
               ],
             ),
           ),

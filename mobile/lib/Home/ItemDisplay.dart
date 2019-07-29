@@ -64,7 +64,6 @@ class ItemDisplay extends StatelessWidget {
                           BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
                       child: buildListTile(item, context),
                     )),
-                Divider()
               ],
             ),
           );
