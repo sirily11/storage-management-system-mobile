@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 
+import 'DetailedCard.dart';
+
 class PositionDetail extends StatelessWidget {
   final Position position;
 
@@ -17,13 +19,17 @@ class PositionDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
         title: Text("Location"),
       ),
       body: ListView(
         children: <Widget>[
-          item("Position", position.name),
-          item("Description", position.description),
+          DetailedCard(
+            title: "位置",
+            subtitle: position.name,
+          ),
+          DetailedCard(title: "位置简介", subtitle: position.description),
         ],
       ),
     );

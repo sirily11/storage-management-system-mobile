@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/CardRow.dart';
+import 'package:mobile/Edit/CardTheme.dart';
+import 'package:mobile/Edit/EditPage2.dart';
 import 'package:mobile/Edit/details/AuthorDetail.dart';
 import 'package:mobile/Edit/details/CategoryDetail.dart';
 import 'package:mobile/Edit/details/DetailPositionDetail.dart';
@@ -39,7 +42,8 @@ class EditPage extends StatefulWidget {
   }
 }
 
-class EditPageState extends State<EditPage> {
+class EditPageState extends State<EditPage>
+    with SingleTickerProviderStateMixin {
   final bool isEditMode;
   final int id;
   Function addItemToHome;
@@ -51,6 +55,9 @@ class EditPageState extends State<EditPage> {
   final columnController = TextEditingController();
   final rowController = TextEditingController();
   final qrController = TextEditingController();
+  TabController tabController;
+  bool canSave = false;
+
   final StorageItemDetail item;
   final Function updateDetailPageItem;
 
@@ -66,7 +73,7 @@ class EditPageState extends State<EditPage> {
   @override
   void initState() {
     super.initState();
-
+    tabController = TabController(length: 2, vsync: this);
     if (item != null) {
       priceController.text = item.price.toString();
       itemNameController.text = item.name;
@@ -83,283 +90,33 @@ class EditPageState extends State<EditPage> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
-            child: TextFormField(
+            child: CardRow(
               controller: priceController,
-              validator: isEmpty,
-              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Price"),
+              label: "Price",
+              isNumber: true,
             ),
           ),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-            child: TextFormField(
+            child: CardRow(
               controller: columnController,
-              validator: isEmpty,
-              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Column"),
+              isNumber: true,
+              label: "Column",
             ),
           ),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-            child: TextFormField(
+            child: CardRow(
+              label: "Row",
               controller: rowController,
-              validator: isEmpty,
-              inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "Row"),
+              isNumber: true,
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget dropdownActions(
-      {Function add, Function edit, Function remove, int editValue}) {
-    return Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-          child: IconButton(
-            disabledColor: Colors.grey,
-            color: Colors.blue,
-            icon: Icon(
-              Icons.edit,
-            ),
-            onPressed: editValue != null ? edit : null,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-          child: IconButton(
-            color: Colors.blueGrey,
-            icon: Icon(
-              Icons.add_circle,
-            ),
-            onPressed: add,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-          child: IconButton(
-            color: Colors.blueGrey,
-            icon: Icon(
-              Icons.remove_circle,
-            ),
-            onPressed: remove,
-          ),
-        )
-      ],
-    );
-  }
-
-  onAddSelection(String page, {bool isEdit = false}) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      switch (page) {
-        case "author":
-          return AuthorDetail(
-            isEdit: isEdit,
-          );
-        case "category":
-          return CategoryDetail(
-            isEdit: isEdit,
-          );
-        case "series":
-          return SeriesEditDetail(
-            isEdit: isEdit,
-          );
-        case "position":
-          return PositionDetail(
-            isEdit: isEdit,
-          );
-        case "location":
-          return LocationDetailEditPage(
-            isEdit: isEdit,
-          );
-      }
-    }));
-  }
-
-  Widget authorSelector() {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select author"),
-            value: settingsState.selectedAuthor,
-            onChanged: (value) {
-              settingsState.selectedAuthor = value;
-              settingsState.update();
-            },
-            items: settingsState.authors.map<DropdownMenuItem>((author) {
-              return DropdownMenuItem(
-                value: author.id,
-                child: Text(author.name),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-            child: dropdownActions(
-                editValue: settingsState.selectedAuthor,
-                add: () => onAddSelection("author"),
-                edit: () => onAddSelection("author", isEdit: true),
-                remove: () {
-                  settingsState.selectedAuthor = null;
-                  settingsState.update();
-                }))
-      ],
-    );
-  }
-
-  Widget categorySelector() {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select categories"),
-            value: settingsState.selectedCategory,
-            onChanged: (value) {
-              settingsState.selectedCategory = value;
-              settingsState.update();
-            },
-            items: settingsState.categories.map<DropdownMenuItem>((category) {
-              return DropdownMenuItem(
-                value: category.id,
-                child: Text(category.name),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-            child: dropdownActions(
-                editValue: settingsState.selectedCategory,
-                add: () => onAddSelection("category"),
-                edit: () => onAddSelection("category", isEdit: true),
-                remove: () {
-                  settingsState.selectedCategory = null;
-                  settingsState.update();
-                }))
-      ],
-    );
-  }
-
-  Widget seriesSelector() {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select Series"),
-            value: settingsState.selectedSeries,
-            onChanged: (value) {
-              settingsState.selectedSeries = value;
-              settingsState.update();
-            },
-            items: settingsState.series.map<DropdownMenuItem>((s) {
-              return DropdownMenuItem(
-                value: s.id,
-                child: SizedBox(width: 160, child: Text(s.name)),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-            child: dropdownActions(
-                editValue: settingsState.selectedSeries,
-                add: () => onAddSelection("series"),
-                edit: () => onAddSelection("series", isEdit: true),
-                remove: () {
-                  settingsState.selectedSeries = null;
-                  settingsState.update();
-                }))
-      ],
-    );
-  }
-
-  Widget positionSelector() {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select Detail Position"),
-            value: settingsState.selectedPosition,
-            onChanged: (value) {
-              settingsState.selectedPosition = value;
-              settingsState.update();
-            },
-            items: settingsState.positions.map<DropdownMenuItem>((position) {
-              return DropdownMenuItem(
-                value: position.id,
-                child: Text(position.name),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-            child: dropdownActions(
-                editValue: settingsState.selectedPosition,
-                add: () => onAddSelection("position"),
-                edit: () => onAddSelection("position", isEdit: true),
-                remove: () {
-                  settingsState.selectedPosition = null;
-                  settingsState.update();
-                }))
-      ],
-    );
-  }
-
-  Widget locationSelector() {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select Location"),
-            value: settingsState.selectedLocation,
-            onChanged: (value) {
-              settingsState.selectedLocation = value;
-              settingsState.update();
-            },
-            items: settingsState.locations.map<DropdownMenuItem>((location) {
-              return DropdownMenuItem(
-                value: location.id,
-                child: SizedBox(
-                  child: Text(location.toString()),
-                  width: 140,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-            child: dropdownActions(
-                editValue: settingsState.selectedLocation,
-                add: () => onAddSelection("location"),
-                edit: () => onAddSelection("location", isEdit: true),
-                remove: () {
-                  settingsState.selectedLocation = null;
-                  settingsState.update();
-                }))
       ],
     );
   }
@@ -370,23 +127,35 @@ class EditPageState extends State<EditPage> {
     return Row(
       children: <Widget>[
         Expanded(
-          child: DropdownButtonFormField(
-            validator: isSelected,
-            decoration: InputDecoration(labelText: "Select Unit"),
-            value: settingsState.unit,
-            onChanged: (value) {
-              settingsState.unit = value;
-              settingsState.update();
-            },
-            items: currencyUnit.map<DropdownMenuItem>((c) {
-              return DropdownMenuItem(
-                value: c,
-                child: SizedBox(
-                  child: Text(c.toString()),
-                  width: 140,
+          child: CardSelectorTheme(
+            child: DropdownButtonFormField(
+              validator: isSelected,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Color.fromRGBO(64, 75, 90, .8),
+                labelText: "Select unit",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              );
-            }).toList(),
+              ),
+              value: settingsState.unit,
+              onChanged: (value) {
+                settingsState.unit = value;
+                settingsState.update();
+              },
+              items: currencyUnit.map<DropdownMenuItem>((c) {
+                return DropdownMenuItem(
+                  value: c,
+                  child: SizedBox(
+                    child: Text(
+                      c.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    width: 140,
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         )
       ],
@@ -402,16 +171,17 @@ class EditPageState extends State<EditPage> {
           isEditMode ? "Update item" : "Add item",
           style: TextStyle(color: Colors.white),
         ),
-        onPressed: () async {
-          if (_formKey.currentState.validate()) {
-            _formKey.currentState.save();
-            if (this.isEditMode) {
-              await update();
-            } else {
-              await addNewItem();
-            }
-          }
-        },
+        onPressed: !canSave
+            ? null
+            : () async {
+                if (canSave) {
+                  if (this.isEditMode) {
+                    await update();
+                  } else {
+                    await addNewItem();
+                  }
+                }
+              },
       ),
     );
   }
@@ -506,16 +276,16 @@ class EditPageState extends State<EditPage> {
     return Row(
       children: <Widget>[
         Expanded(
-          flex: 7,
-          child: TextField(
-            controller: qrController,
-            decoration: InputDecoration(labelText: "QR Code"),
-          ),
+          flex: 8,
+          child: CardRow(label: "QRField", controller: qrController),
         ),
         Expanded(
-          flex: 3,
+          flex: 2,
           child: IconButton(
-            icon: Icon(Icons.camera_alt),
+            icon: Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+            ),
             onPressed: () async {
               await scan();
             },
@@ -530,32 +300,67 @@ class EditPageState extends State<EditPage> {
         Provider.of<ItemDetailEditPageState>(context);
     return ListView(
       children: <Widget>[
-        TextFormField(
-            controller: itemNameController,
-            validator: isEmpty,
-            decoration: InputDecoration(labelText: "Item Name")),
-        TextFormField(
-            controller: itemDescriptionController,
-            validator: isEmpty,
-            decoration: InputDecoration(labelText: "Item Description"),
-            minLines: 3,
-            maxLines: 3),
+        CardRow(
+          controller: itemNameController,
+          label: "Item Name",
+        ),
+        CardRow(
+          controller: itemDescriptionController,
+          label: "Item Description",
+          isMultiline: true,
+        ),
         qrField(),
         priceColRowWidget(),
         unitSelector(),
-        authorSelector(),
-        categorySelector(),
-        seriesSelector(),
-        positionSelector(),
-        locationSelector(),
-        submitButton()
+        nextPageBtn()
       ],
     );
   }
 
-  tempSave() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("itemName", itemNameController.text);
+  Widget nextPageBtn() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(1, 1, 20, 1),
+          child: ClipOval(
+            child: Material(
+              color: Colors.blue, // button color
+              child: InkWell(
+                onTapDown: (e) {
+                  if (_formKey.currentState.validate()) {
+                    _formKey.currentState.save();
+                    tabController.index = 1;
+                  }
+                },
+                splashColor: Colors.red, // inkwell color
+                child: SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    )),
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+    // return Padding(
+    //   padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+    // child: IconButton(
+    //   color: Colors.white,
+    //   icon: Icon(Icons.arrow_forward),
+    //   onPressed: () async {
+    //     if (_formKey.currentState.validate()) {
+    //       _formKey.currentState.save();
+    //       tabController.index = 1;
+    //     }
+    //   },
+    // ),
+    // );
   }
 
   @override
@@ -563,23 +368,36 @@ class EditPageState extends State<EditPage> {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(isEditMode ? "Update item" : "Add new item"),
-        ),
-        body: Container(
-          child: Form(
-            key: _formKey,
-            child: Scrollbar(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  child: formList()),
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Scaffold(
+            backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: Text(isEditMode ? "Update item" : "Add new item"),
+              bottom: TabBar(
+                controller: tabController,
+                tabs: <Widget>[
+                  Tab(
+                    text: "设置商品信息",
+                  ),
+                  Tab(
+                    text: "选择商品种类",
+                  )
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+            body: Form(
+              key: _formKey,
+              child: TabBarView(
+                controller: tabController,
+                children: <Widget>[
+                  formList(),
+                  EditPageTwo(
+                    canSave: canSave,
+                    submitBtn: this.submitButton(),
+                  )
+                ],
+              ),
+            )));
   }
 }

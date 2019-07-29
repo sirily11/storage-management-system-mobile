@@ -19,8 +19,8 @@ class ItemImageUploadScreen extends StatelessWidget {
   static Future<List<int>> _resizeImage(File file) async {
     final bytes = await file.readAsBytes();
     final img.Image image = img.decodeImage(bytes);
-    final img.Image resized = img.copyResize(image, width: 800);
-    final List<int> resizedBytes = img.encodeJpg(resized, quality: 90);
+    final img.Image resized = img.copyResize(image, width: 1080);
+    final List<int> resizedBytes = img.encodeJpg(resized, quality: 100);
 
     return resizedBytes;
   }
@@ -36,7 +36,7 @@ class ItemImageUploadScreen extends StatelessWidget {
       var file = File(path);
       final bytes = await compute(_resizeImage, file);
       FormData formData = new FormData.from(
-          {"item": this._id, "image": UploadFileInfo(file, path)});
+          {"item": this._id, "image": UploadFileInfo.fromBytes(bytes, path)});
       var response = await dio.post(url, data: formData);
       done = done + 1;
       imageState.progress = done / imageState.imagePath.length;
@@ -56,6 +56,7 @@ class ItemImageUploadScreen extends StatelessWidget {
 
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
         title: Text("Upload image"),
         actions: <Widget>[
@@ -67,9 +68,18 @@ class ItemImageUploadScreen extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          ListTile(
-            title: Text("Item Name"),
-            subtitle: Text(this._name),
+          Card(
+            child: Container(
+              decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+              child: ListTile(
+                title: Text(
+                  "Item Name",
+                  style: TextStyle(color: Colors.white),
+                ),
+                subtitle:
+                    Text(this._name, style: TextStyle(color: Colors.white)),
+              ),
+            ),
           ),
           HorizontalImage(
             imageState.imagePath,

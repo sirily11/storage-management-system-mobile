@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 
+import 'DetailedCard.dart';
+
 class SeriesDetail extends StatelessWidget {
   final Series series;
 
@@ -10,20 +12,20 @@ class SeriesDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
         title: Text(series.name),
       ),
       body: ListView(
         children: <Widget>[
-          ListTile(
-            title: Text("Series name"),
-            subtitle: Text(series.name),
+          DetailedCard(
+            title: "系列名",
+            subtitle: series.name,
           ),
-          ListTile(
-            title: Text("Series Description"),
-            subtitle:
-                Text(series.description == null ? "No content now" : series.description),
-          )
+          DetailedCard(
+            title: "系列简介",
+            subtitle: series.description,
+          ),
         ],
       ),
     );

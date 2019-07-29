@@ -120,7 +120,14 @@ class HomePageState extends State<Homepage>
 
     if (_tabController == null) {
       return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+          title: errorMessage == null
+              ? Text("Storage Management")
+              : Text(errorMessage),
+        ),
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+        drawer: new HomepageDrawer(),
         body: Center(
           child: Icon(
             Icons.pages,
