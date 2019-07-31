@@ -25,22 +25,29 @@ class ItemImageUploadScreen extends StatelessWidget {
     return resizedBytes;
   }
 
+  void updateProgress(BuildContext context, num current, num total) {
+    var imageState = Provider.of<CameraState>(context);
+    imageState.progress = current / total;
+    imageState.update();
+  }
+
   Future upload(context) async {
     var imageState = Provider.of<CameraState>(context);
     var url = await getURL("item-image/");
     var dio = Dio();
-    var done = 0;
+    num done = 0;
     imageState.progress = 0;
     imageState.update();
     for (var path in imageState.imagePath) {
       var file = File(path);
       final bytes = await compute(_resizeImage, file);
+      done = done + 0.5;
+      updateProgress(context, done, imageState.imagePath.length);
       FormData formData = new FormData.from(
           {"item": this._id, "image": UploadFileInfo.fromBytes(bytes, path)});
-      var response = await dio.post(url, data: formData);
-      done = done + 1;
-      imageState.progress = done / imageState.imagePath.length;
-      imageState.update();
+      await dio.post(url, data: formData);
+      done = done + 0.5;
+      updateProgress(context, done, imageState.imagePath.length);
     }
     if (done == imageState.imagePath.length) {
       await Future.delayed(Duration(seconds: 2), () {

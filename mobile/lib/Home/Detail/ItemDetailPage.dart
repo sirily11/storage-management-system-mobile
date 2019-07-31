@@ -196,7 +196,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         headerSliverBuilder: (context, _) {
           return <Widget>[
             SliverAppBar(
-              expandedHeight: 200,
+              expandedHeight: 250,
               pinned: true,
               actions: <Widget>[
                 IconButton(

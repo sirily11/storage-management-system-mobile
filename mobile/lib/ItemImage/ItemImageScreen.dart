@@ -25,6 +25,7 @@ class ItemImageScreenState extends State<ItemImageScreen> {
   CameraController _controller;
   CameraDescription _camera;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final int itemId;
   final String itemName;
 
@@ -57,9 +58,8 @@ class ItemImageScreenState extends State<ItemImageScreen> {
       '${DateTime.now()}.jpg',
     );
     await _controller.takePicture(path);
-    imageState.imagePath.add(path);
-    imageState.update();
-//    print(imageState.imagePath);
+    imageState.addItem(path);
+
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text("Image has been taken"),
       duration: Duration(seconds: 1),
@@ -69,7 +69,7 @@ class ItemImageScreenState extends State<ItemImageScreen> {
   onClear(context) async {
     var imageState = Provider.of<CameraState>(context);
     await imageState.clear();
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
   }
 
   Widget cameraPreview() {
@@ -93,11 +93,15 @@ class ItemImageScreenState extends State<ItemImageScreen> {
     if (_controller == null) {
       body = Container();
     } else {
-      body = cameraPreview();
+      body = AspectRatio(
+        child: cameraPreview(),
+        aspectRatio: _controller.value.aspectRatio,
+      );
     }
 
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
         title: Text("Add Item Image"),
         leading: IconButton(
@@ -130,53 +134,65 @@ class ImageCard extends StatelessWidget {
   final double _mb = 140;
   final double _height = 100;
 
+  Widget _ImageCard(Function remove, String imagePath) {
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.file(
+              File(imagePath),
+              width: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+          right: 3,
+          height: 40,
+          child: IconButton(
+            onPressed: () async {
+              await remove(imagePath);
+            },
+            icon: CircleAvatar(
+              child: Icon(
+                Icons.clear,
+                size: 20,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.grey,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var imageState = Provider.of<CameraState>(context);
-    print(imageState.imagePath);
     return Positioned(
       bottom: _mb,
       height: _height,
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView.builder(
+        child: AnimatedList(
             scrollDirection: Axis.horizontal,
-            itemCount: imageState.imagePath.length,
-            itemBuilder: (context, index) {
-              return Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
-                        File(imageState.imagePath[index]),
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 3,
-                    height: 40,
-                    child: IconButton(
-                      onPressed: () async {
-                        await imageState
-                            .removeImage(imageState.imagePath[index]);
-                      },
-                      icon: CircleAvatar(
-                        child: Icon(
-                          Icons.clear,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        backgroundColor: Colors.grey,
-                      ),
-                    ),
-                  )
-                ],
-              );
+            key: imageState.listKey,
+            initialItemCount: imageState.imagePath.length,
+            itemBuilder: (context, index, animation) {
+              return ScaleTransition(
+                  scale: animation,
+                  child: _ImageCard((String path) async {
+                    var index = await imageState.removeImage(path);
+                    imageState.listKey.currentState.removeItem(index,
+                        (context, animation) {
+                      return ScaleTransition(
+                          scale: animation, child: _ImageCard(null, path));
+                    });
+                  }, imageState.imagePath[index]));
             }),
       ),
     );
@@ -207,17 +223,19 @@ class FormButtons extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              // child: FloatingActionButton(
-              //   heroTag: "Clear photos",
-              //   backgroundColor: Colors.red,
-              //   elevation: 0,
-              //   child: Icon(Icons.clear),
-              //   onPressed: () => onClear(context),
-              // ),
-              child: FloatingActionButton(
-                heroTag: "Take photo",
-                child: Icon(Icons.camera_alt),
-                onPressed: takePhoto,
+              child: SizedBox(
+                width: 70,
+                height: 70,
+                child: RawMaterialButton(
+                  child: Icon(
+                    Icons.camera_alt,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                  shape: new CircleBorder(),
+                  fillColor: Colors.blue,
+                  onPressed: takePhoto,
+                ),
               ),
             ),
           )

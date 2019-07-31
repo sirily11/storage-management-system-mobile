@@ -37,6 +37,11 @@ class StorageItemAbstract {
         row: json['row'],
         position: json['position']);
   }
+
+  @override
+  String toString() {
+    return "${this.name} ${this.seriesName}";
+  }
 }
 
 class Location implements Decodeable {

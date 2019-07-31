@@ -8,6 +8,8 @@ class CameraState with ChangeNotifier {
   List<String> _imagePath = [];
   double progress;
 
+  final GlobalKey<AnimatedListState> listKey = GlobalKey();
+
   List<String> get imagePath => _imagePath;
 
   set imagePath(List<String> value) {
@@ -15,13 +17,21 @@ class CameraState with ChangeNotifier {
     notifyListeners();
   }
 
-  removeImage(String image) async {
-    _imagePath.remove(image);
-    await File(image).delete();
+  addItem(String image) async {
+    _imagePath.add(image);
+    listKey.currentState.insertItem(this._imagePath.length - 1);
     notifyListeners();
   }
 
-  Future<void> clear() async{
+  removeImage(String image) async {
+    var index = _imagePath.indexOf(image);
+    _imagePath.remove(image);
+    await File(image).delete();
+    notifyListeners();
+    return index;
+  }
+
+  Future<void> clear() async {
     _imagePath.forEach((path) async {
       await File(path).delete();
     });

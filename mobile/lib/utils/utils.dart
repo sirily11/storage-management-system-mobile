@@ -96,6 +96,7 @@ Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
         id: detailItem.id,
         name: detailItem.name,
         seriesName: detailItem.series.name,
+        categoryName: detailItem.category.name,
         description: detailItem.description,
         authorName: detailItem.author.name,
         position: detailItem.position.name,

@@ -7,6 +7,7 @@ import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
+import 'package:mobile/utils/utils.dart' as prefix0;
 import 'package:provider/provider.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 
@@ -19,8 +20,7 @@ class Homepage extends StatefulWidget {
   }
 }
 
-class HomePageState extends State<Homepage>
-    with SingleTickerProviderStateMixin {
+class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   List<StorageItemAbstract> items = [];
   TabController _tabController;
   String errorMessage;
@@ -33,6 +33,7 @@ class HomePageState extends State<Homepage>
   }
 
   addItem(StorageItemAbstract item) {
+    print(item);
     setState(() {
       items.add(item);
     });
@@ -52,7 +53,10 @@ class HomePageState extends State<Homepage>
         _tabController =
             new TabController(length: settings.categories.length, vsync: this);
       });
-
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("数据已获取"),
+        duration: Duration(seconds: 2),
+      ));
       ItemDetailEditPageState settingsState =
           Provider.of<ItemDetailEditPageState>(context);
       settingsState.updateAll(
@@ -111,6 +115,9 @@ class HomePageState extends State<Homepage>
     setState(() {
       items.remove(item);
     });
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text("物品已经删除"),
+    ));
   }
 
   @override
@@ -120,6 +127,7 @@ class HomePageState extends State<Homepage>
 
     if (_tabController == null) {
       return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
           title: errorMessage == null
@@ -140,7 +148,7 @@ class HomePageState extends State<Homepage>
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-      // key: _scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         title: errorMessage == null
@@ -170,30 +178,62 @@ class HomePageState extends State<Homepage>
         ),
       ),
       body: Container(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            await fetchData();
-          },
-          child: TabBarView(
-            controller: _tabController,
-            children: settingsState.categories.map((c) {
-              var fItems =
-                  items.where((i) => i.categoryName == c.name).toList();
-              return ItemDisplay(fItems, _scaffoldKey, remove);
-            }).toList(),
-          ),
+        child: TabBarView(
+          controller: _tabController,
+          children: settingsState.categories.map((c) {
+            var fItems = items.where((i) => i.categoryName == c.name).toList();
+            return RefreshIndicator(
+              onRefresh: () async {
+                await this.fetchData();
+              },
+              child: ItemDisplay(
+                fItems,
+                _scaffoldKey,
+                remove
+              ),
+            );
+          }).toList(),
         ),
       ),
       drawer: new HomepageDrawer(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-        child: Icon(Icons.add),
+        child: Icon(Icons.edit),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return EditPage(
-              addItem: addItem,
-            );
-          }));
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                    child: new Wrap(
+                  children: <Widget>[
+                    ListTile(
+                        leading: new Icon(Icons.refresh),
+                        title: new Text('刷新'),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await fetchData();
+                        }),
+                    ListTile(
+                      leading: Icon(Icons.add),
+                      title: Text("添加新的物品"),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return EditPage(
+                            addItem: addItem,
+                          );
+                        }));
+                      },
+                    ),
+                    ListTile(
+                      leading: new Icon(Icons.clear),
+                      title: new Text('Cancel'),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ],
+                ));
+              });
         },
       ),
     );
