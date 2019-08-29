@@ -30,8 +30,10 @@
             </intent-filter>
         </activity>
         <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
-
+         <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyDUAWWgUB15KKr56hyHhKivMCPaURrI_qg"/>
     </application>
     <uses-permission android:name="android.permission.CAMERA"/>
+    
 
 </manifest>

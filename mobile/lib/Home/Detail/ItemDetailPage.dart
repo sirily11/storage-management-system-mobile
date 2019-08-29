@@ -6,16 +6,17 @@ import 'package:http/http.dart' as http;
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Home/Detail/FileView.dart';
-import 'package:mobile/Home/Detail/ItemDescription.dart';
+import 'package:mobile/Home/Detail/ItemCard.dart';
 import 'package:mobile/Home/Detail/SubDetail/AuthorDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
-import 'package:mobile/ItemImage/ItemImageScreen.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
-import 'package:mobile/Home/Detail/HorizontalImage.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+enum Path { author, location, position, series }
 
 class ItemDetailPage extends StatefulWidget {
   final int _id;
@@ -43,11 +44,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   ItemDetailPageState(this._id, {this.name, this.series, this.author});
 
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    var item = await fetchItem();
-    setState(() {
-      this.item = item;
+  void initState() {
+    super.initState();
+    fetchItem().then((item) {
+      setState(() {
+        this.item = item;
+      });
     });
   }
 
@@ -70,108 +72,19 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     }
   }
 
-  Widget itemLabel(String label, String value) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: TextFormField(
-          decoration: InputDecoration(labelText: label),
-          initialValue: value,
-        ),
-      ),
-    );
-  }
-
-  navigationTo(String navTo) {
+  navigationTo(Path navTo) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       switch (navTo) {
-        case "author":
+        case Path.author:
           return AuthorDetail(item.author);
-        case "series":
+        case Path.series:
           return SeriesDetail(item.series);
-        case "location":
+        case Path.location:
           return LocationDetail(item.location);
-        case "position":
+        case Path.position:
           return PositionDetail(item.position);
       }
     }));
-  }
-
-  Widget itemRow(String value, String label, Function onTab) {
-    return Column(
-      children: <Widget>[
-        Card(
-          child: Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
-            child: ListTile(
-              title: Text(
-                label,
-                style: TextStyle(color: Colors.white),
-              ),
-              subtitle: Text(
-                value,
-                overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                maxLines: 3,
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: onTab,
-              trailing: onTab == null
-                  ? null
-                  : Icon(
-                      Icons.more_horiz,
-                      color: Colors.white,
-                    ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget bodyWidget() {
-    return RefreshIndicator(
-      onRefresh: () async {
-        var item = await fetchItem();
-        setState(() {
-          this.item = item;
-        });
-      },
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          itemRow(item.name, "物品名", null),
-          item.category != null
-              ? itemRow(item.category.name, "种类", null)
-              : Container(),
-          item.series != null
-              ? itemRow(item.series.name, "系列名", () => navigationTo("series"))
-              : Container(),
-          item.author != null
-              ? itemRow(item.author.name, "作者", () => navigationTo("author"))
-              : Container(),
-          item.description != null
-              ? itemRow(item.description, "简介", null)
-              : Container(),
-          item.price != null
-              ? itemRow("${item.price.toString()} ${item.unit}", "价格", null)
-              : Container(),
-          item.location != null
-              ? itemRow(item.location.toString(), "地址",
-                  () => navigationTo("location"))
-              : Container(),
-          item.position != null
-              ? itemRow(
-                  item.position.name, "详细地址", () => navigationTo("position"))
-              : Container(),
-          item.column != null
-              ? itemRow("Column: ${item.column}\nRow:${item.row}", "坐标", null)
-              : Container(),
-          // HorizontalImage(item.images.map((i) => (i.image)).toList()),
-          FileView(item.files)
-        ],
-      ),
-    );
   }
 
   updateDetailPageItem(StorageItemDetail item) {
@@ -180,71 +93,230 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     });
   }
 
+  Widget _panel() {
+    return Theme(
+      data: ThemeData(primaryColor: Colors.white),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 12.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 30,
+                height: 5,
+                decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 18.0,
+          ),
+          Text(
+            item.name,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 24.0,
+            ),
+          ),
+          _bodypanel(),
+        ],
+      ),
+    );
+  }
+
+  Widget _bodypanel() {
+    return Expanded(
+      child: Container(
+        child: ListView(
+          children: <Widget>[
+            Card(
+              child: Container(
+                decoration:
+                    BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      ButtonInfo(
+                        label: "Price",
+                        icon: Icons.label,
+                        color: Colors.blue,
+                        value: '${item.price} ${item.unit}',
+                      ),
+                      ButtonInfo(
+                        label: "Column",
+                        icon: Icons.view_column,
+                        color: Colors.orange,
+                        value: item.column.toString(),
+                      ),
+                      ButtonInfo(
+                        label: "Row",
+                        icon: Icons.reorder,
+                        color: Colors.green,
+                        value: item.row.toString(),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            CardInfo(
+              info: [Info(title: "Description", subtitle: item.description)],
+            ),
+            CardInfo(
+              info: [
+                Info(
+                    title: "Author",
+                    subtitle: item?.author?.name,
+                    onPress: () {
+                      navigationTo(Path.author);
+                    }),
+                Info(title: "Category", subtitle: item?.category?.name),
+                Info(
+                    title: "Series",
+                    subtitle: item?.series?.name,
+                    onPress: () {
+                      navigationTo(Path.series);
+                    }),
+              ],
+            ),
+            CardInfo(
+              info: [
+                Info(
+                    title: "Position",
+                    subtitle: item?.position?.name,
+                    onPress: () {
+                      navigationTo(Path.position);
+                    }),
+                Info(
+                    title: "Location",
+                    subtitle: item?.location?.toString(),
+                    onPress: () {
+                      navigationTo(Path.location);
+                    }),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var body;
     if (item == null) {
-      body = Center(child: CircularProgressIndicator());
-    } else {
-      body = bodyWidget();
+      return CircularProgressIndicator();
     }
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-      key: _scaffoldKey,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, _) {
-          return <Widget>[
-            SliverAppBar(
-              expandedHeight: 250,
-              pinned: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.camera_alt),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      return ItemImageScreen(_id, this.name);
-                    }));
-                  },
-                )
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(name),
-                background: item != null && item.images.length > 0
-                    ? ImageCard(item.images.map((i) => i.image).toList())
-                    : Container(),
-              ),
-            )
-          ];
-        },
-        body: GestureDetector(
-          child: body,
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
       ),
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         child: Icon(Icons.edit),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            ItemDetailEditPageState settingsState =
-                Provider.of<ItemDetailEditPageState>(context);
-            settingsState.selectedAuthor = item.author.id;
-            settingsState.selectedCategory = item.category.id;
-            settingsState.selectedLocation = item.location.id;
-            settingsState.selectedSeries = item.series.id;
-            settingsState.selectedPosition = item.position.id;
-            settingsState.unit = item.unit;
-            return EditPage(
-              isEditMode: true,
-              id: _id,
-              item: item,
-              updateItem: updateDetailPageItem,
-            );
-          }));
+          _edit(context);
         },
       ),
+      body: Stack(
+        children: <Widget>[
+          item.images != null && item.images.length > 0
+              ? ImageCard(
+                  imageSrc: item.images.map((i) => i.image).toList(),
+                )
+              : Center(
+                  child: Image.asset(
+                    "assets/database.png",
+                    height: 240,
+                    color: Colors.white,
+                  ),
+                ),
+          SlidingUpPanel(
+            backdropEnabled: true,
+            minHeight: 100,
+            color: Color.fromRGBO(58, 66, 86, 1.0),
+            parallaxEnabled: true,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(18.0),
+                topRight: Radius.circular(18.0)),
+            panel: _panel(),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _edit(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      ItemDetailEditPageState settingsState =
+          Provider.of<ItemDetailEditPageState>(context);
+      settingsState.selectedAuthor = item.author.id;
+      settingsState.selectedCategory = item.category.id;
+      settingsState.selectedLocation = item.location.id;
+      settingsState.selectedSeries = item.series.id;
+      settingsState.selectedPosition = item.position.id;
+      settingsState.unit = item.unit;
+      return EditPage(
+        isEditMode: true,
+        id: _id,
+        item: item,
+        updateItem: updateDetailPageItem,
+      );
+    }));
+  }
+}
+
+class ButtonInfo extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  ButtonInfo(
+      {@required this.label,
+      @required this.icon,
+      @required this.color,
+      @required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Icon(
+            icon,
+            color: Colors.white,
+          ),
+          decoration:
+              BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.15),
+              blurRadius: 8.0,
+            )
+          ]),
+        ),
+        SizedBox(
+          height: 12.0,
+        ),
+        Text(
+          label,
+          style: TextStyle(color: Colors.white),
+        ),
+        Text(
+          value,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        )
+      ],
     );
   }
 }
@@ -252,19 +324,19 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 class ImageCard extends StatelessWidget {
   final List<String> imageSrc;
 
-  ImageCard(this.imageSrc);
+  ImageCard({@required this.imageSrc});
 
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
-      height: 300,
+      height: 800,
       items: imageSrc.map((i) {
         return Container(
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(0.0)),
             child: Image.network(
               i,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitHeight,
               width: 1000,
             ),
           ),

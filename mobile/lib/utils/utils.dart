@@ -13,7 +13,7 @@ List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
 
 Future<String> getURL(String path) async {
   final prefs = await SharedPreferences.getInstance();
-  String base = "http://192.168.31.19:8080/storage_management";
+  String base = "http://0.0.0.0:80/storage_management";
   String url = prefs.getString("server") ?? base;
   return "$url/$path";
 }
