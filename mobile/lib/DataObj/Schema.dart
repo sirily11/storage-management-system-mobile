@@ -2,6 +2,9 @@ class SchemaValue {
   dynamic value;
   dynamic label;
   SchemaValue({this.value, this.label});
+  factory SchemaValue.fromJSON(Map<String, dynamic> json) {
+    return SchemaValue(value: json['id'], label: json['name']);
+  }
 }
 
 class Schema {
@@ -19,8 +22,11 @@ class Schema {
   SchemaValue value;
   int maxLength;
 
-  /// only works in nested objecy
+  /// only works in nested object
   List<Schema> childern;
+
+  /// only works in nested object
+  List<SchemaValue> selections;
 
   Schema(
       {this.key,
@@ -37,12 +43,25 @@ class Schema {
   }
 
   factory Schema.fromJson(Map<String, dynamic> json) {
+    List<Schema> childrenList = [];
+    if (json['children'] != null) {
+      Map<String, dynamic> children = json['children'];
+      for (String key in children.keys) {
+        if (key != 'id') {
+          Schema s = Schema.fromJson(children[key]);
+          s.key = key;
+          childrenList.add(s);
+        }
+      }
+    }
+
     return Schema(
         type: json['type'],
         isReadOnly: json['read_only'],
         isRequired: json['required'],
         label: json['label'],
-        maxLength: json['max_length']);
+        maxLength: json['max_length'],
+        childern: childrenList);
   }
 }
 

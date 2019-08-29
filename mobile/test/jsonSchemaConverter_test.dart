@@ -31,7 +31,9 @@ void main() {
           "max_length": 1024
         }
       };
-      Map<String, dynamic> values = {"id": 1, "name": "test"};
+      Map<String, dynamic> values = {
+        "name": {"id": 1, "name": "test"}
+      };
       SchemaConverter converter =
           SchemaConverter(schema: jsonSchema, defaultValues: values);
       SchemaList result = converter.convert();
@@ -40,7 +42,7 @@ void main() {
       expect(result.schemaList[0].maxLength, 1024);
       expect(result.schemaList[0].label, "Book Name");
       expect(result.schemaList[0].type, "string");
-      expect(result.schemaList[0].value.value, "test");
+      expect(result.schemaList[0].value.label, "test");
     });
     test("Nested schema", () async {
       Map<String, dynamic> jsonSchema = {
@@ -88,6 +90,100 @@ void main() {
 
       var json = result.toJSON();
       expect(json['author_name'], 1);
+    });
+
+    test("Nested schema with children parse", () async {
+      Map<String, dynamic> jsonSchema = {
+        "author_name": {
+          "type": "nested object",
+          "required": false,
+          "read_only": true,
+          "label": "Author name",
+          "children": {
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "name": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Name",
+              "max_length": 128
+            },
+            "description": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Description",
+              "max_length": 1024
+            }
+          }
+        }
+      };
+      Map<String, dynamic> values = {
+        "id": 1,
+        "author_name": {"id": 1, "name": "Test3", "description": "Test"},
+      };
+      SchemaConverter converter =
+          SchemaConverter(schema: jsonSchema, defaultValues: values);
+      SchemaList result = converter.convert();
+      expect(result.schemaList[0].childern.length, 2);
+
+      var json = result.toJSON();
+      expect(json['author_name'], 1);
+    });
+
+    test("Nested schema with children and selection", () async {
+      Map<String, dynamic> jsonSchema = {
+        "author_name": {
+          "type": "nested object",
+          "required": false,
+          "read_only": true,
+          "label": "Author name",
+          "children": {
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "name": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Name",
+              "max_length": 128
+            },
+            "description": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Description",
+              "max_length": 1024
+            }
+          }
+        }
+      };
+      Map<String, dynamic> values = {
+        "id": 1,
+        "author_name": {"id": 1, "name": "Test3", "description": "Test"},
+      };
+
+      Map<String, dynamic> selections = {
+        "author_name": [
+          {"id": 1, "name": "Test3", "description": "Test"},
+          {"id": 2, "name": "Test4"}
+        ]
+      };
+      SchemaConverter converter = SchemaConverter(
+          schema: jsonSchema, defaultValues: values, selections: selections);
+      SchemaList result = converter.convert();
+      expect(result.schemaList[0].selections.length, 2);
+      expect(result.schemaList[0].selections[1].value, 2);
+      expect(result.schemaList[0].selections[1].label, "Test4");
     });
   });
 }
