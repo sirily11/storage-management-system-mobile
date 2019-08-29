@@ -11,39 +11,45 @@ class Uploader<T> {
 
   Uploader({this.client});
 
-  Future<String> getAPIURL(Decodeable object) async {
-    if (object is Category) {
+  Future<String> getAPIURL() async {
+    if (T == Category) {
       return await getURL("category/");
-    } else if (object is Series) {
+    } else if (T == Series) {
       return await getURL("series/");
-    } else if (object is Author) {
+    } else if (T == Author) {
       return await getURL("author/");
-    } else if (object is Location) {
+    } else if (T == Location) {
       return await getURL("location/");
-    } else if (object is Position) {
+    } else if (T == Position) {
       return await getURL("detail-position/");
+    } else {
+      throw Exception("No such url");
     }
   }
 
-  Decodeable _castObject(dynamic json, Decodeable object) {
-    if (object is Category) {
+  /// Convert json to object
+  Decodeable _castObject(dynamic json) {
+    if (T == Category) {
       return Category.fromJson(json);
-    } else if (object is Series) {
+    } else if (T == Series) {
       return Series.fromJson(json);
-    } else if (object is Author) {
+    } else if (T == Author) {
       return Author.fromJson(json);
-    } else if (object is Location) {
+    } else if (T == Location) {
       return Location.fromJson(json);
-    } else if (object is Position) {
+    } else if (T == Position) {
       return Position.fromJson(json);
+    } else {
+      throw Exception("Cannot convert object");
     }
   }
 
-  Future<T> create(Decodeable object) async {
+  /// Create new entry
+  Future create(Map<String, dynamic> object) async {
     if (client == null) {
       throw Exception("Client should not be null");
     }
-    String url = await getAPIURL(object);
+    String url = await getAPIURL();
     var jsonBody = json.encode(object);
     final response = await client.post(url,
         body: jsonBody,
@@ -52,26 +58,40 @@ class Uploader<T> {
     if (response.statusCode == 201) {
       Utf8Decoder decode = Utf8Decoder();
       var data = json.decode(decode.convert(response.bodyBytes));
-      return _castObject(data, object) as T;
+      return _castObject(data) as T;
     }
     return null;
   }
 
-  Future<T> update(Decodeable object) async {
+
+  /// update current entry
+  Future update(Map<String, dynamic> object) async {
     if (client == null) {
       throw Exception("Client should not be null");
     }
-    String url = await getAPIURL(object);
+    String url = await getAPIURL();
     var jsonBody = json.encode(object);
-    final response = await client.patch("$url${object.id}/",
+    final response = await client.patch("$url${object['id']}/",
         body: jsonBody,
         headers: {HttpHeaders.contentTypeHeader: "application/json"});
 
     if (response.statusCode == 200) {
       Utf8Decoder decode = Utf8Decoder();
       var data = json.decode(decode.convert(response.bodyBytes));
-      return _castObject(data, object) as T;
+      return _castObject(data) as T;
     }
     return null;
+  }
+
+  /// update current entry
+  Future delete(int id) async {
+    if (client == null) {
+      throw Exception("Client should not be null");
+    }
+    String url = await getAPIURL();
+    final response = await client.delete("$url$id/",
+        headers: {HttpHeaders.contentTypeHeader: "application/json"});
+
+    return;
   }
 }

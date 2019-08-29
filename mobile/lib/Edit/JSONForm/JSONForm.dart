@@ -114,22 +114,6 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
     );
   }
 
-  Decodeable _submit(Map<String, dynamic> json) {
-    if (T == Category) {
-      return Category.fromJson(json);
-    } else if (T == Series) {
-      return Series.fromJson(json);
-    } else if (T == Author) {
-      return Author.fromJson(json);
-    } else if (T == Location) {
-      return Location.fromJson(json);
-    } else if (T == Position) {
-      return Position.fromJson(json);
-    } else {
-      throw Exception("No such type");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget body;
@@ -153,11 +137,10 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  Decodeable object = _submit(_values);
                   if (isEdit) {
-                    this.update(context, object);
+                    this.update(context, _values);
                   } else {
-                    this.add(context, object);
+                    this.add(context, _values);
                   }
                 }
               },

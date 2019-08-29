@@ -14,20 +14,19 @@ import 'package:http/http.dart' as http;
 class CreateAndUpdate<T> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  /// add updated/added objects to the setting
   void settingAdder(Decodeable object, ItemDetailEditPageState settings) {
-    if (object is Category) {
+    if (T == Category) {
       settings.categories.add(object);
-    } else if (object is Series) {
+    } else if (T == Series) {
       settings.series.add(object);
-    } else if (object is Author) {
+    } else if (T == Author) {
       settings.authors.add(object);
-    } else if (object is Location) {
+    } else if (T == Location) {
       settings.locations.add(object);
-    } else if (object is Position) {
+    } else if (T == Position) {
       settings.positions.add(object);
     }
-    settings.isLoading = false;
-    settings.update();
   }
 
   void settingUpdater(Decodeable object, ItemDetailEditPageState settings) {
@@ -72,19 +71,16 @@ class CreateAndUpdate<T> {
   }
 
   /// Add new item
-  add<T>(BuildContext context, Decodeable object) async {
+  add(BuildContext context, Map<String, dynamic> object) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
-
-    var uploader = Uploader<Decodeable>(client: http.Client());
+    var uploader = Uploader<T>(client: http.Client());
     try {
       var newObject = await uploader.create(object);
       settingAdder(newObject, settings);
-      settings.isLoading = false;
       settings.update();
       Navigator.pop(context);
     } on Exception catch (err) {
-      settings.isLoading = false;
       settings.update();
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
@@ -94,18 +90,15 @@ class CreateAndUpdate<T> {
   }
 
   /// Update current item
-  update<T>(BuildContext context, Decodeable object) async {
+  update<T>(BuildContext context, Map<String, dynamic> object) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
-    var uploader = Uploader<Decodeable>(client: http.Client());
+    var uploader = Uploader<T>(client: http.Client());
     try {
       var newObject = await uploader.update(object);
       settingUpdater(newObject, settings);
-      settings.isLoading = false;
-      settings.update();
       Navigator.pop(context);
     } on Exception catch (err) {
-      settings.isLoading = false;
       settings.update();
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
@@ -114,4 +107,3 @@ class CreateAndUpdate<T> {
     }
   }
 }
-

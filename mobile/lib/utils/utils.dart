@@ -12,10 +12,15 @@ import '../DataObj/StorageItem.dart';
 List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
 
 Future<String> getURL(String path) async {
-  final prefs = await SharedPreferences.getInstance();
   String base = "http://0.0.0.0:80/storage_management";
-  String url = prefs.getString("server") ?? base;
-  return "$url/$path";
+  try {
+    final prefs = await SharedPreferences.getInstance();
+
+    String url = prefs.getString("server") ?? base;
+    return "$url/$path";
+  } on Exception catch (err) {
+    return "$base/$path";
+  }
 }
 
 Future<String> getWebSocket({String path}) async {
