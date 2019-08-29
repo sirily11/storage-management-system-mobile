@@ -82,14 +82,15 @@ class Location implements Decodeable {
   }
 
   @override
-  Map toJson() {
+  Map<String, dynamic> toJson() {
     return {
       "country": country,
       "city": city,
       "street": street,
       "building": building,
       "unit": unit,
-      "room_number": room_number
+      "room_number": room_number,
+      "id": id
     };
   }
 }
@@ -109,8 +110,8 @@ class Series implements Decodeable {
     return null;
   }
 
-  Map toJson() {
-    return {"name": name, "description": description};
+  Map<String, dynamic> toJson() {
+    return {"name": name, "description": description, "id": id};
   }
 }
 
@@ -134,8 +135,8 @@ class Author implements Decodeable {
     return null;
   }
 
-  Map toJson() {
-    return {"name": name, "description": description};
+  Map<String, dynamic> toJson() {
+    return {"name": name, "description": description, "id": id};
   }
 }
 
@@ -152,8 +153,8 @@ class Category implements Decodeable {
     return null;
   }
 
-  Map toJson() {
-    return {"name": name};
+  Map<String, dynamic> toJson() {
+    return {"name": name, "id": id};
   }
 }
 
@@ -174,8 +175,8 @@ class Position implements Decodeable {
     return null;
   }
 
-  Map toJson() {
-    return {"position": name, "description": description};
+  Map<String, dynamic> toJson() {
+    return {"position": name, "description": description, "id": id};
   }
 }
 

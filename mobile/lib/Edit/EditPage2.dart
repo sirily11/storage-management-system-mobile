@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'CardTheme.dart';
+import 'JSONForm/JSONForm.dart';
 import 'details/AuthorDetail.dart';
 import 'details/CategoryDetail.dart';
 import 'details/DetailPositionDetail.dart';
@@ -67,27 +70,54 @@ class _EditPageTwoState extends State<EditPageTwo> {
   }
 
   onAddSelection(String page, {bool isEdit = false}) {
+    ItemDetailEditPageState settingsState =
+        Provider.of<ItemDetailEditPageState>(context);
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       switch (page) {
         case "author":
-          return AuthorDetail(
+          Author author = settingsState.authors.firstWhere(
+              (author) => author.id == settingsState.selectedAuthor);
+          return JsonForm<Author>(
             isEdit: isEdit,
+            title: "Author",
+            path: "author/",
+            data: author.toJson(),
           );
         case "category":
-          return CategoryDetail(
+          Category category = settingsState.categories
+              .firstWhere((c) => c.id == settingsState.selectedCategory);
+          return JsonForm<Category>(
             isEdit: isEdit,
+            title: "Category",
+            path: "category/",
+            data: category.toJson(),
           );
         case "series":
-          return SeriesEditDetail(
+          Series series = settingsState.series
+              .firstWhere((s) => s.id == settingsState.selectedSeries);
+          return JsonForm<Series>(
             isEdit: isEdit,
+            title: "Series",
+            path: "series/",
+            data: series.toJson(),
           );
         case "position":
-          return PositionDetail(
+          Position position = settingsState.positions
+              .firstWhere((p) => p.id == settingsState.selectedPosition);
+          return JsonForm<Position>(
             isEdit: isEdit,
+            title: "Position",
+            path: "detail-position/",
+            data: position.toJson(),
           );
         case "location":
-          return LocationDetailEditPage(
+          Location location = settingsState.locations
+              .firstWhere((l) => l.id == settingsState.selectedLocation);
+          return JsonForm<Location>(
             isEdit: isEdit,
+            title: "Location",
+            path: "location/",
+            data: location.toJson(),
           );
       }
     }));

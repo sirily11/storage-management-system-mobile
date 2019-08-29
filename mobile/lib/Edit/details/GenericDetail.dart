@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/DataObj/Decodeable.dart';
+import 'package:mobile/DataObj/Schema.dart';
 import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/Uploader.dart';
+import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 class CreateAndUpdate<T> {
@@ -48,9 +51,31 @@ class CreateAndUpdate<T> {
     settings.update();
   }
 
-  add(BuildContext context, Decodeable object) async {
+  PersistentBottomSheetController showProgressBar() {
+    return _scaffoldKey.currentState.showBottomSheet((context) {
+      return Container(
+        height: 80,
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              title: Center(
+                child: Text(
+                  "Loading...",
+                ),
+              ),
+              subtitle: LinearProgressIndicator(),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
+  /// Add new item
+  add<T>(BuildContext context, Decodeable object) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
+
     var uploader = Uploader<Decodeable>(client: http.Client());
     try {
       var newObject = await uploader.create(object);
@@ -68,7 +93,8 @@ class CreateAndUpdate<T> {
     }
   }
 
-  update(BuildContext context, Decodeable object) async {
+  /// Update current item
+  update<T>(BuildContext context, Decodeable object) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
     var uploader = Uploader<Decodeable>(client: http.Client());
@@ -88,3 +114,4 @@ class CreateAndUpdate<T> {
     }
   }
 }
+

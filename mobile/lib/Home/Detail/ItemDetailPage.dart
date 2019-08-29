@@ -242,7 +242,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 ),
           SlidingUpPanel(
             backdropEnabled: true,
-            minHeight: 100,
+            minHeight: 70,
             color: Color.fromRGBO(58, 66, 86, 1.0),
             parallaxEnabled: true,
             borderRadius: BorderRadius.only(

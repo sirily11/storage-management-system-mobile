@@ -28,8 +28,10 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    fetchData();
     super.initState();
+    Future.delayed(Duration(milliseconds: 100), () async {
+      await fetchData();
+    });
   }
 
   addItem(StorageItemAbstract item) {
@@ -39,24 +41,51 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     });
   }
 
+  PersistentBottomSheetController _sheetController() {
+    return _scaffoldKey.currentState.showBottomSheet((context) {
+      return Container(
+        color: Color.fromRGBO(64, 75, 96, .9),
+        height: 80,
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              title: Center(
+                child: Text(
+                  "Loading...",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              subtitle: LinearProgressIndicator(),
+            )
+          ],
+        ),
+      );
+    });
+  }
+
   Future fetchData() async {
+    PersistentBottomSheetController controller = _sheetController();
     try {
       setState(() {
         errorMessage = null;
       });
       List<StorageItemAbstract> items = await fetchItems();
-      setState(() {
-        this.items = items;
-      });
       final settings = await fetchSetting();
       setState(() {
         _tabController =
             new TabController(length: settings.categories.length, vsync: this);
       });
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("数据已获取"),
-        duration: Duration(seconds: 2),
-      ));
+      Future.delayed(Duration(milliseconds: 500), () {
+        setState(() {
+          controller.close();
+          this.items = items;
+        });
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("数据已获取"),
+          duration: Duration(seconds: 2),
+        ));
+      });
+
       ItemDetailEditPageState settingsState =
           Provider.of<ItemDetailEditPageState>(context);
       settingsState.updateAll(
@@ -186,11 +215,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
               onRefresh: () async {
                 await this.fetchData();
               },
-              child: ItemDisplay(
-                fItems,
-                _scaffoldKey,
-                remove
-              ),
+              child: ItemDisplay(fItems, _scaffoldKey, remove),
             );
           }).toList(),
         ),
