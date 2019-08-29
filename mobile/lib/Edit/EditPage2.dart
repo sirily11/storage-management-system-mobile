@@ -4,14 +4,8 @@ import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
-
 import 'CardTheme.dart';
 import 'JSONForm/JSONForm.dart';
-import 'details/AuthorDetail.dart';
-import 'details/CategoryDetail.dart';
-import 'details/DetailPositionDetail.dart';
-import 'details/LocationDetail.dart';
-import 'details/SeriesDetail.dart';
 
 class EditPageTwo extends StatefulWidget {
   final Widget submitBtn;
@@ -143,7 +137,6 @@ class _EditPageTwoState extends State<EditPageTwo> {
               value: settingsState.selectedAuthor,
               onChanged: (value) {
                 settingsState.selectedAuthor = value;
-                settingsState.update();
               },
               items: settingsState.authors.map<DropdownMenuItem>((author) {
                 return DropdownMenuItem(

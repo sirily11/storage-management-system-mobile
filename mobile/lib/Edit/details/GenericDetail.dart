@@ -90,7 +90,7 @@ class CreateAndUpdate<T> {
   }
 
   /// Update current item
-  update<T>(BuildContext context, Map<String, dynamic> object) async {
+  update(BuildContext context, Map<String, dynamic> object) async {
     ItemDetailEditPageState settings =
         Provider.of<ItemDetailEditPageState>(context);
     var uploader = Uploader<T>(client: http.Client());

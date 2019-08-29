@@ -6,11 +6,6 @@ import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/CardRow.dart';
 import 'package:mobile/Edit/CardTheme.dart';
 import 'package:mobile/Edit/EditPage2.dart';
-import 'package:mobile/Edit/details/AuthorDetail.dart';
-import 'package:mobile/Edit/details/CategoryDetail.dart';
-import 'package:mobile/Edit/details/DetailPositionDetail.dart';
-import 'package:mobile/Edit/details/LocationDetail.dart';
-import 'package:mobile/Edit/details/SeriesDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +69,7 @@ class EditPageState extends State<EditPage>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+
     if (item != null) {
       priceController.text = item.price.toString();
       itemNameController.text = item.name;
@@ -163,6 +159,8 @@ class EditPageState extends State<EditPage>
   }
 
   Widget submitButton() {
+    ItemDetailEditPageState settings =
+        Provider.of<ItemDetailEditPageState>(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
       child: RaisedButton(
@@ -180,6 +178,7 @@ class EditPageState extends State<EditPage>
                   } else {
                     await addNewItem();
                   }
+                  settings.clear();
                 }
               },
       ),

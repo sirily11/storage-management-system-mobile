@@ -23,19 +23,19 @@ class ItemDetailEditPageState with ChangeNotifier {
   List<String> images = [];
 
   // Selected author's id
-  int selectedAuthor;
+  int _selectedAuthor;
 
   // Selected category
-  int selectedCategory;
+  int _selectedCategory;
 
   // Selected position
-  int selectedPosition;
+  int _selectedPosition;
 
   // Selected series
-  int selectedSeries;
+  int _selectedSeries;
 
   // Selected location
-  int selectedLocation;
+  int _selectedLocation;
 
   String itemName = "";
 
@@ -49,7 +49,7 @@ class ItemDetailEditPageState with ChangeNotifier {
 
   double price = 0;
 
-  String unit = null;
+  String unit;
 
   /**
    * Init setting page
@@ -88,6 +88,62 @@ class ItemDetailEditPageState with ChangeNotifier {
     this.selectedPosition = null;
     this.qrCode = null;
 //    notifyListeners();
+  }
+
+  set selectedAuthor(int author) {
+    this._selectedAuthor = author;
+    notifyListeners();
+  }
+
+  get selectedAuthor => this._selectedAuthor;
+
+  set selectedSeries(int series) {
+    this._selectedSeries = series;
+    notifyListeners();
+  }
+
+  get selectedSeries => this._selectedSeries;
+
+  set selectedCategory(int category) {
+    this._selectedCategory = category;
+    notifyListeners();
+  }
+
+  get selectedCategory => this._selectedCategory;
+
+  set selectedLocation(int location) {
+    this._selectedLocation = location;
+    notifyListeners();
+  }
+
+  get selectedLocation => this._selectedLocation;
+
+  set selectedPosition(int position) {
+    this._selectedPosition = position;
+    notifyListeners();
+  }
+
+  get selectedPosition => this._selectedPosition;
+
+  edit(int selectedAuthor, int selectedSeries, int selectedCategory,
+      int selectedLocation, int selectedPosition, String unit) {
+    this._selectedPosition = selectedPosition;
+    this._selectedSeries = selectedSeries;
+    this._selectedLocation = selectedLocation;
+    this._selectedAuthor = selectedAuthor;
+    this.selectedCategory = selectedCategory;
+    this.unit = unit;
+    notifyListeners();
+  }
+
+  clear() {
+    this._selectedPosition = null;
+    this._selectedSeries = null;
+    this._selectedLocation = null;
+    this._selectedAuthor = null;
+    this.selectedCategory = null;
+    this.unit = null;
+    notifyListeners();
   }
 
   update() {

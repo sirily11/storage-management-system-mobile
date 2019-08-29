@@ -224,6 +224,10 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         child: Icon(Icons.edit),
         onPressed: () {
+          ItemDetailEditPageState settings =
+              Provider.of<ItemDetailEditPageState>(context);
+          settings.edit(item.author.id, item.series.id, item.category.id,
+              item.location.id, item.position.id, item.unit);
           _edit(context);
         },
       ),
@@ -255,16 +259,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-  void _edit(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      ItemDetailEditPageState settingsState =
-          Provider.of<ItemDetailEditPageState>(context);
-      settingsState.selectedAuthor = item.author.id;
-      settingsState.selectedCategory = item.category.id;
-      settingsState.selectedLocation = item.location.id;
-      settingsState.selectedSeries = item.series.id;
-      settingsState.selectedPosition = item.position.id;
-      settingsState.unit = item.unit;
+  _edit(BuildContext context) {
+    return Navigator.push(context, MaterialPageRoute(builder: (context) {
       return EditPage(
         isEditMode: true,
         id: _id,
