@@ -93,7 +93,7 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
-                initialValue: s.value,
+                initialValue: s.value.value,
                 maxLines: s.maxLength > 128 ? 8 : 1,
                 minLines: s.maxLength > 128 ? 8 : 1,
                 style: TextStyle(color: Colors.white),

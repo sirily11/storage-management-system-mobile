@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Home/Detail/FileView.dart';
@@ -12,88 +11,65 @@ import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
-import 'package:mobile/utils/utils.dart';
+import 'package:mobile/States/ItemDetailState.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 enum Path { author, location, position, series }
 
 class ItemDetailPage extends StatefulWidget {
-  final int _id;
+  final int id;
   final String name;
   final String author;
   final String series;
 
-  ItemDetailPage(this._id, {this.author, this.name, this.series});
+  ItemDetailPage({@required this.id, this.author, this.name, this.series});
 
   @override
   State<StatefulWidget> createState() {
-    return ItemDetailPageState(this._id,
-        name: this.name, author: this.author, series: this.series);
+    return ItemDetailPageState(
+        id: this.id, name: this.name, author: this.author, series: this.series);
   }
 }
 
 class ItemDetailPageState extends State<ItemDetailPage> {
-  final int _id;
+  final int id;
   final String name;
   final String author;
   final String series;
-  StorageItemDetail item;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final double _panelMinHeight = 200;
+  final double _panelMaxHeight = 800;
 
-  ItemDetailPageState(this._id, {this.name, this.series, this.author});
+  ItemDetailPageState({this.id, this.name, this.series, this.author});
 
   @override
   void initState() {
     super.initState();
-    fetchItem().then((item) {
-      setState(() {
-        this.item = item;
-      });
+    Future.delayed(Duration(milliseconds: 20), () async {
+      ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+      await detailState.fetchData(id: this.id);
     });
   }
 
-  Future<StorageItemDetail> fetchItem() async {
-    try {
-      var url = await getURL("item/$_id");
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        Utf8Decoder decode = Utf8Decoder();
-        var data = json.decode(decode.convert(response.bodyBytes));
-        var item = StorageItemDetail.fromJson(data);
-        return item;
-      } else {
-        throw ("Error");
-      }
-    } on Exception catch (err) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Failed to fetch item details"),
-      ));
-    }
-  }
-
   navigationTo(Path navTo) {
+    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       switch (navTo) {
         case Path.author:
-          return AuthorDetail(item.author);
+          return AuthorDetail(detailState.item.author);
         case Path.series:
-          return SeriesDetail(item.series);
+          return SeriesDetail(detailState.item.series);
         case Path.location:
-          return LocationDetail(item.location);
+          return LocationDetail(detailState.item.location);
         case Path.position:
-          return PositionDetail(item.position);
+          return PositionDetail(detailState.item.position);
       }
     }));
   }
 
-  updateDetailPageItem(StorageItemDetail item) {
-    setState(() {
-      this.item = item;
-    });
-  }
-
   Widget _panel() {
+    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    StorageItemDetail item = detailState.item;
     return Theme(
       data: ThemeData(primaryColor: Colors.white),
       child: Column(
@@ -131,6 +107,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   }
 
   Widget _bodypanel() {
+    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    StorageItemDetail item = detailState.item;
     return Expanded(
       child: Container(
         child: ListView(
@@ -211,11 +189,10 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (item == null) {
-      return CircularProgressIndicator();
-    }
-
+    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    var item = detailState.item;
     return Scaffold(
+      key: detailState.scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
@@ -226,46 +203,52 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         onPressed: () {
           ItemDetailEditPageState settings =
               Provider.of<ItemDetailEditPageState>(context);
+          // init edit info
+          // put current author, series info into the setting state
           settings.edit(item.author.id, item.series.id, item.category.id,
               item.location.id, item.position.id, item.unit);
           _edit(context);
         },
       ),
-      body: Stack(
-        children: <Widget>[
-          item.images != null && item.images.length > 0
-              ? ImageCard(
-                  imageSrc: item.images.map((i) => i.image).toList(),
+      body: item == null
+          ? Container()
+          : Stack(
+              children: <Widget>[
+                item.images != null && item.images.length > 0
+                    ? ImageCard(
+                        imageSrc: item.images.map((i) => i.image).toList(),
+                      )
+                    : Center(
+                        child: Image.asset(
+                          "assets/database.png",
+                          height: 240,
+                          color: Colors.white,
+                        ),
+                      ),
+                SlidingUpPanel(
+                  backdropEnabled: true,
+                  minHeight: _panelMinHeight,
+                  color: Color.fromRGBO(58, 66, 86, 1.0),
+                  parallaxEnabled: true,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18.0),
+                      topRight: Radius.circular(18.0)),
+                  panel: _panel(),
                 )
-              : Center(
-                  child: Image.asset(
-                    "assets/database.png",
-                    height: 240,
-                    color: Colors.white,
-                  ),
-                ),
-          SlidingUpPanel(
-            backdropEnabled: true,
-            minHeight: 70,
-            color: Color.fromRGBO(58, 66, 86, 1.0),
-            parallaxEnabled: true,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
-            panel: _panel(),
-          )
-        ],
-      ),
+              ],
+            ),
     );
   }
 
+  /// Clicked when user do the editing stuff
   _edit(BuildContext context) {
+    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
     return Navigator.push(context, MaterialPageRoute(builder: (context) {
       return EditPage(
         isEditMode: true,
-        id: _id,
-        item: item,
-        updateItem: updateDetailPageItem,
+        id: id,
+        item: detailState.item,
+        updateItem: detailState.updateItem,
       );
     }));
   }

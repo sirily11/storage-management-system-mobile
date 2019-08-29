@@ -112,7 +112,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
       if (item.id != null) {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
           return ItemDetailPage(
-            item.id,
+            id: item.id,
             name: item.name,
             author: item.authorName,
             series: item.seriesName,
@@ -325,7 +325,7 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return ItemDetailPage(
-                  result[i].id,
+                  id: result[i].id,
                   name: result[i].name,
                   author: result[i].authorName,
                   series: result[i].seriesName,

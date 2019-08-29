@@ -93,7 +93,7 @@ class ItemDisplay extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {
           return ItemDetailPage(
-            item.id,
+            id: item.id,
             name: item.name,
             series: item.seriesName,
             author: item.authorName,

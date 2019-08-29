@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/Homepage.dart';
 import 'package:mobile/States/CameraState.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:provider/provider.dart';
+
+import 'States/ItemDetailState.dart';
 
 Future<void> main() async {
   runApp(StorageManagement());
@@ -19,6 +22,9 @@ class StorageManagement extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           builder: (_) => CameraState(),
+        ),
+         ChangeNotifierProvider(
+          builder: (_) => ItemDetailState(),
         )
       ],
       child: MaterialApp(

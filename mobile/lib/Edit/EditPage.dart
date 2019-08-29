@@ -222,6 +222,7 @@ class EditPageState extends State<EditPage>
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Updating item"),
       ));
+
       StorageItemDetail item = await UpdateItem(StorageItemDetail(
           id: id,
           name: itemNameController.text,
@@ -236,7 +237,7 @@ class EditPageState extends State<EditPage>
           position: Position(id: settings.selectedPosition),
           unit: settings.unit,
           location: Location(id: settings.selectedLocation)));
-      updateDetailPageItem(item);
+      // updateDetailPageItem(item);
       Navigator.of(context).pop();
     } on Exception catch (err) {
       print(err);
