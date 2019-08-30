@@ -23,7 +23,7 @@ class Schema {
   int maxLength;
 
   /// only works in nested object
-  List<Schema> childern;
+  SchemaList childern;
 
   /// only works in nested object
   List<SchemaValue> selections;
@@ -44,6 +44,7 @@ class Schema {
 
   factory Schema.fromJson(Map<String, dynamic> json) {
     List<Schema> childrenList = [];
+    SchemaList list = SchemaList();
     if (json['children'] != null) {
       Map<String, dynamic> children = json['children'];
       for (String key in children.keys) {
@@ -53,6 +54,7 @@ class Schema {
           childrenList.add(s);
         }
       }
+      list.schemaList = childrenList;
     }
 
     return Schema(
@@ -61,7 +63,7 @@ class Schema {
         isRequired: json['required'],
         label: json['label'],
         maxLength: json['max_length'],
-        childern: childrenList);
+        childern: list);
   }
 }
 

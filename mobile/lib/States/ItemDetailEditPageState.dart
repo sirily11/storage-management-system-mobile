@@ -146,6 +146,22 @@ class ItemDetailEditPageState with ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String, dynamic> toSchemaValues() {
+    return {
+      "author_name": {
+        "name": this.authors.firstWhere((a) => a.id == this.selectedAuthor),
+        "id": this.selectedAuthor
+      },
+    };
+  }
+
+  Map<String, dynamic> toSchemaSelections() {
+    return {
+      "author_name":
+          this.authors.map((a) => {"name": a.name, "id": a.id}).toList()
+    };
+  }
+
   update() {
     notifyListeners();
   }

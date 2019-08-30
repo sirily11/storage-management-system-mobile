@@ -130,7 +130,7 @@ void main() {
       SchemaConverter converter =
           SchemaConverter(schema: jsonSchema, defaultValues: values);
       SchemaList result = converter.convert();
-      expect(result.schemaList[0].childern.length, 2);
+      expect(result.schemaList[0].childern.schemaList.length, 2);
 
       var json = result.toJSON();
       expect(json['author_name'], 1);

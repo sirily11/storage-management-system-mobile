@@ -52,9 +52,12 @@ class SchemaConverter {
         s.key = key;
         if (s.type == "nested object") {
           // add selected value
-          s.value = SchemaValue(
-              label: defaultValues[key]['name'],
-              value: defaultValues[key]['id']);
+          if (defaultValues[key] != null) {
+            s.value = SchemaValue(
+                label: defaultValues[key]['name'],
+                value: defaultValues[key]['id']);
+            s.childern.id = defaultValues[key]['id'];
+          }
           // add selection
           if (selections != null && selections[key] != null) {
             List<SchemaValue> selectionList = [];

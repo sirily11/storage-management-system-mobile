@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/DataObj/Decodeable.dart';
-import 'package:mobile/DataObj/Schema.dart';
-import 'package:mobile/DataObj/Setting.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/Uploader.dart';
-import 'package:mobile/utils/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 class CreateAndUpdate<T> {

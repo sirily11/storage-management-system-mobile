@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/DataObj/Decodeable.dart';
 import 'package:mobile/DataObj/Schema.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
+import 'package:mobile/Edit/JSONForm/JSONTextFormField.dart';
 import 'package:mobile/Edit/details/GenericDetail.dart';
 import 'package:mobile/utils/utils.dart';
 
@@ -24,18 +25,13 @@ class JsonForm<T> extends StatefulWidget {
 }
 
 class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
-  final String path;
   final bool isEdit;
   final String title;
   final Map<String, dynamic> data;
   final _formKey = GlobalKey<FormState>();
   Map<String, dynamic> _values = {};
 
-  _JsonFormState(
-      {@required this.isEdit,
-      @required this.path,
-      @required this.title,
-      this.data});
+  _JsonFormState({@required this.isEdit, @required this.title, this.data});
 
   List<Schema> schema = [];
 
@@ -64,7 +60,7 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
           Schema s = Schema.fromJson(schema[key]);
           s.key = key;
           if (isEdit) {
-            s.value = data[key];
+            s.value = SchemaValue(value: data[key]);
           }
           schemaList.add(s);
           _values.putIfAbsent(key, () => null);
@@ -77,40 +73,29 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
     }
   }
 
-  Widget _bodyWidget() {
-    return Form(
-      key: _formKey,
-      child: ListView(
-          children: this.schema.map((s) {
-        return Theme(
-          data: ThemeData(
-            hintColor: Colors.white,
-            focusColor: Colors.white,
-            accentColor: Colors.white,
-            primaryColor: Colors.orange[300],
-            primaryColorDark: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-                initialValue: s.value.value,
-                maxLines: s.maxLength > 128 ? 8 : 1,
-                minLines: s.maxLength > 128 ? 8 : 1,
-                style: TextStyle(color: Colors.white),
-                onSaved: (value) {
-                  _values[s.key] = value;
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromRGBO(64, 75, 90, .8),
-                  labelText: s.label,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: Colors.white, width: 0.0)),
-                )),
-          ),
+  Widget _bodyField(Schema schema) {
+    switch (schema.type) {
+      default:
+        return JSONTextFormField(
+          jsonSchema: schema,
         );
-      }).toList()),
+    }
+  }
+
+  Widget _bodyWidget() {
+    return Theme(
+      data: ThemeData(
+        hintColor: Colors.white,
+        focusColor: Colors.white,
+        accentColor: Colors.white,
+        primaryColor: Colors.orange[300],
+        primaryColorDark: Colors.white,
+      ),
+      child: Form(
+        key: _formKey,
+        child:
+            ListView(children: this.schema.map((s) => _bodyField(s)).toList()),
+      ),
     );
   }
 
