@@ -21,7 +21,7 @@ class JsonForm<T> extends StatefulWidget {
 
   @override
   _JsonFormState createState() => _JsonFormState<T>(
-      isEdit: this.isEdit, data: this.data, title: this.title, path: this.path);
+      isEdit: this.isEdit, data: this.data, title: this.title);
 }
 
 class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
@@ -47,7 +47,7 @@ class _JsonFormState<T> extends State<JsonForm> with CreateAndUpdate<T> {
 
   Future<List<Schema>> getForm() async {
     try {
-      String url = await getURL(this.path);
+      String url = await getURL("a");
       Dio dio = Dio();
 
       List<Schema> schemaList = [];

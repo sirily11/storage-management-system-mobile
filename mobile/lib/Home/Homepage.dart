@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:mobile/Edit/EditPage.dart';
+import 'package:mobile/Edit/NewEditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
 import 'package:mobile/States/ItemDetailEditPageState.dart';
@@ -176,7 +177,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     }
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
@@ -245,9 +245,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
                         Navigator.pop(context);
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
-                          return EditPage(
-                            addItem: addItem,
-                          );
+                          return NewEditPage();
                         }));
                       },
                     ),

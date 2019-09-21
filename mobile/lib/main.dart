@@ -23,13 +23,14 @@ class StorageManagement extends StatelessWidget {
         ChangeNotifierProvider(
           builder: (_) => CameraState(),
         ),
-         ChangeNotifierProvider(
+        ChangeNotifierProvider(
           builder: (_) => ItemDetailState(),
         )
       ],
       child: MaterialApp(
           title: 'Flutter Demo',
           theme: new ThemeData(
+              scaffoldBackgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
               primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
               primaryColorDark: Colors.red,
               textTheme: TextTheme(body1: TextStyle(color: Colors.white))),
