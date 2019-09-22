@@ -52,6 +52,7 @@ class Location implements Decodeable {
   String building;
   String unit;
   String room_number;
+  String name;
 
   @override
   String toString() {
@@ -65,6 +66,7 @@ class Location implements Decodeable {
       this.country,
       this.city,
       this.room_number,
+      this.name,
       this.unit});
 
   factory Location.fromJson(Map<String, dynamic> json) {
@@ -76,6 +78,7 @@ class Location implements Decodeable {
           street: json['street'],
           country: json['country'],
           room_number: json['room_number'],
+          name: json['name'],
           unit: json['unit']);
     }
     return null;
@@ -241,11 +244,11 @@ class StorageItemDetail {
       "row": this.row.toString(),
       "qr_code": this.qrCode.toString(),
       "unit": this.unit,
-      "author_id": this.author.id,
-      "series_id": this.series.id,
-      "category_id": this.category.id,
-      "location_id": this.location.id,
-      "position_id": this.position.id
+      "author_id": {"label": this.author.name, "value": this.author.id},
+      "series_id": {"label": this.series.name, "value": this.series.id},
+      "category_id": {"label": this.category.name, "value": this.category.id},
+      "location_id": {"label": this.location.name, "value": this.location.id},
+      "position_id": {"label": this.position.name, "value": this.position.id}
     };
   }
 

@@ -38,6 +38,24 @@ class _NewEditPageState extends State<NewEditPage> {
     try {
       String url = await getURL("item/");
       Response response = await Dio().post(url, data: data);
+      Navigator.pop(context);
+      if (response.statusCode == 201) {
+        print("ok");
+      }
+    } on DioError catch (e) {
+      key.currentState.showSnackBar(
+        SnackBar(
+          content: Text("Network issue:$e"),
+        ),
+      );
+    }
+  }
+
+  Future _updateItem(Map<String, dynamic> data) async {
+    try {
+      String url = await getURL("item/${widget.id}/");
+      Response response = await Dio().patch(url, data: data);
+      Navigator.pop(context);
       if (response.statusCode == 201) {
         print("ok");
       }
@@ -96,11 +114,15 @@ class _NewEditPageState extends State<NewEditPage> {
                       actionDone: ActionDone.getInput)
                 ],
                 onSubmit: (data) async {
-                  if (widget.id == null) {
-                    await _postItem(data);
-                  }
-
-                  Navigator.pop(context);
+                  data.removeWhere((k, v) => v == null);
+                  print(data);
+                  try {
+                    if (widget.id == null) {
+                      await _postItem(data);
+                    } else {
+                      await _updateItem(data);
+                    }
+                  } catch (err) {}
                 },
               );
             }

@@ -195,8 +195,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (ctx) {
                   return ImageScreen(
@@ -204,6 +204,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                   );
                 }),
               );
+              ItemDetailState detailState =
+                  Provider.of<ItemDetailState>(context);
+              await detailState.fetchData(id: this.id);
             },
           )
         ],
@@ -232,13 +235,13 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                     ListTile(
                       leading: Icon(Icons.add),
                       title: Text("编辑新的物品"),
-                      onTap: () {
+                      onTap: () async {
                         ItemDetailState detailState =
                             Provider.of<ItemDetailState>(context);
                         Map<String, dynamic> values = detailState.item.toJSON();
                         // init edit info
                         // put current author, series info into the setting state
-                        return Navigator.push(
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
@@ -249,6 +252,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                             },
                           ),
                         );
+
+                        await detailState.fetchData(id: this.id);
+                        Navigator.pop(context);
                       },
                     ),
                     ListTile(

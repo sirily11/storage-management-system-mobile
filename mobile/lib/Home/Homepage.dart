@@ -237,12 +237,13 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
                     ListTile(
                       leading: Icon(Icons.add),
                       title: Text("添加新的物品"),
-                      onTap: () {
+                      onTap: () async {
                         Navigator.pop(context);
-                        Navigator.of(context)
+                        await Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           return NewEditPage();
                         }));
+                        fetchData();
                       },
                     ),
                     ListTile(
