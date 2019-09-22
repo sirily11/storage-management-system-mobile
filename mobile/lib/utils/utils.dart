@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:core';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:convert';
@@ -52,13 +53,13 @@ Future<List<StorageItemAbstract>> fetchItems() async {
   }
 }
 
-Future<SettingObj> fetchSetting() async {
-  var url = await getURL("settings");
-  final response = await http.get(url);
+Future<List<Category>> fetchCategories() async {
+  var url = await getURL("category");
+  final response = await Dio().get<List<dynamic>>(url);
   if (response.statusCode == 200) {
-    Utf8Decoder decode = Utf8Decoder();
-    var data = jsonDecode(decode.convert(response.bodyBytes));
-    return SettingObj.fromJson(data);
+    return response.data
+        .map((d) => Category.fromJson((d as Map<String, dynamic>)))
+        .toList();
   } else {
     throw ("Failed to fetch");
   }

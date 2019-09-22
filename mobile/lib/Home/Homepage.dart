@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/Edit/EditPage.dart';
 import 'package:mobile/Edit/NewEditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
-import 'package:mobile/States/ItemDetailEditPageState.dart';
 import 'package:mobile/utils/utils.dart';
-import 'package:mobile/utils/utils.dart' as prefix0;
 import 'package:provider/provider.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 
@@ -26,6 +23,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   TabController _tabController;
   String errorMessage;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<Category> categories = [];
 
   @override
   void initState() {
@@ -71,10 +69,10 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
         errorMessage = null;
       });
       List<StorageItemAbstract> items = await fetchItems();
-      final settings = await fetchSetting();
+      final c = await fetchCategories();
       setState(() {
-        _tabController =
-            new TabController(length: settings.categories.length, vsync: this);
+        _tabController = new TabController(length: c.length, vsync: this);
+        categories = c;
       });
       Future.delayed(Duration(milliseconds: 500), () {
         setState(() {
@@ -86,16 +84,8 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
           duration: Duration(seconds: 2),
         ));
       });
-
-      ItemDetailEditPageState settingsState =
-          Provider.of<ItemDetailEditPageState>(context);
-      settingsState.updateAll(
-          positions: settings.positions,
-          locations: settings.locations,
-          series: settings.series,
-          authors: settings.authors,
-          categories: settings.categories);
     } on Exception catch (err) {
+      print(err);
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));
@@ -152,9 +142,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    ItemDetailEditPageState settingsState =
-        Provider.of<ItemDetailEditPageState>(context);
-
     if (_tabController == null) {
       return Scaffold(
         key: _scaffoldKey,
@@ -173,6 +160,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             size: 100,
           ),
         ),
+        floatingActionButton: buildFloatingActionButton(context),
       );
     }
 
@@ -199,7 +187,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: settingsState.categories
+          tabs: categories
               .map((c) => Tab(
                     text: c.name,
                   ))
@@ -209,7 +197,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
       body: Container(
         child: TabBarView(
           controller: _tabController,
-          children: settingsState.categories.map((c) {
+          children: categories.map((c) {
             var fItems = items.where((i) => i.categoryName == c.name).toList();
             return RefreshIndicator(
               onRefresh: () async {
@@ -221,15 +209,23 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
         ),
       ),
       drawer: new HomepageDrawer(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-        child: Icon(Icons.edit),
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Container(
-                    child: new Wrap(
+      floatingActionButton: buildFloatingActionButton(context),
+    );
+  }
+
+  Widget buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      child: Icon(
+        Icons.edit,
+        color: Theme.of(context).iconTheme.color,
+      ),
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Container(
+                child: new Wrap(
                   children: <Widget>[
                     ListTile(
                         leading: new Icon(Icons.refresh),
@@ -255,10 +251,10 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
                       onTap: () => Navigator.pop(context),
                     ),
                   ],
-                ));
-              });
-        },
-      ),
+                ),
+              );
+            });
+      },
     );
   }
 }

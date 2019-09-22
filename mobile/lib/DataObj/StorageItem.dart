@@ -232,6 +232,23 @@ class StorageItemDetail {
       this.files,
       this.unit});
 
+  Map<String, dynamic> toJSON() {
+    return {
+      "name": this.name,
+      "description": this.description,
+      "price": this.price.toString(),
+      "column": this.column.toString(),
+      "row": this.row.toString(),
+      "qr_code": this.qrCode.toString(),
+      "unit": this.unit,
+      "author_id": this.author.id,
+      "series_id": this.series.id,
+      "category_id": this.category.id,
+      "location_id": this.location.id,
+      "position_id": this.position.id
+    };
+  }
+
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
     List<ImageObject> images = [];
 

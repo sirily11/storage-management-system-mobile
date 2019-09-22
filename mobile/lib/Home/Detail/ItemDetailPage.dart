@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/Edit/EditPage.dart';
-import 'package:mobile/Home/Detail/FileView.dart';
+import 'package:mobile/Edit/NewEditPage.dart';
 import 'package:mobile/Home/Detail/ItemCard.dart';
 import 'package:mobile/Home/Detail/SubDetail/AuthorDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
 import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
-import 'package:mobile/States/ItemDetailEditPageState.dart';
+import 'package:mobile/ItemImage/NewImageScreen.dart';
 import 'package:mobile/States/ItemDetailState.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -37,8 +35,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   final String name;
   final String author;
   final String series;
-  final double _panelMinHeight = 200;
-  final double _panelMaxHeight = 800;
 
   ItemDetailPageState({this.id, this.name, this.series, this.author});
 
@@ -194,20 +190,75 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       key: detailState.scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (ctx) {
+                  return ImageScreen(
+                    id: id,
+                  );
+                }),
+              );
+            },
+          )
+        ],
       ),
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-        child: Icon(Icons.edit),
+        child: Icon(
+          Icons.edit,
+          color: Colors.white,
+        ),
         onPressed: () {
-          ItemDetailEditPageState settings =
-              Provider.of<ItemDetailEditPageState>(context);
-          // init edit info
-          // put current author, series info into the setting state
-          settings.edit(item.author.id, item.series.id, item.category.id,
-              item.location.id, item.position.id, item.unit);
-          _edit(context);
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                    child: new Wrap(
+                  children: <Widget>[
+                    ListTile(
+                        leading: new Icon(Icons.refresh),
+                        title: new Text('刷新'),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await detailState.fetchData(id: this.id);
+                        }),
+                    ListTile(
+                      leading: Icon(Icons.add),
+                      title: Text("编辑新的物品"),
+                      onTap: () {
+                        ItemDetailState detailState =
+                            Provider.of<ItemDetailState>(context);
+                        Map<String, dynamic> values = detailState.item.toJSON();
+                        // init edit info
+                        // put current author, series info into the setting state
+                        return Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return NewEditPage(
+                                values: values,
+                                id: detailState.item.id,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: new Icon(Icons.clear),
+                      title: new Text('Cancel'),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ],
+                ));
+              });
         },
       ),
       body: item == null
@@ -227,7 +278,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                       ),
                 SlidingUpPanel(
                   backdropEnabled: true,
-                  minHeight: _panelMinHeight,
+                  minHeight: MediaQuery.of(context).size.height * 0.2,
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
                   color: Color.fromRGBO(58, 66, 86, 1.0),
                   parallaxEnabled: true,
                   borderRadius: BorderRadius.only(
@@ -238,19 +290,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               ],
             ),
     );
-  }
-
-  /// Clicked when user do the editing stuff
-  _edit(BuildContext context) {
-    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
-    return Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return EditPage(
-        isEditMode: true,
-        id: id,
-        item: detailState.item,
-        updateItem: detailState.updateItem,
-      );
-    }));
   }
 }
 
@@ -308,15 +347,15 @@ class ImageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
-      height: 800,
+      height: 600,
       items: imageSrc.map((i) {
         return Container(
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(0.0)),
             child: Image.network(
               i,
-              fit: BoxFit.fitHeight,
-              width: 1000,
+              fit: BoxFit.cover,
+              // width: 1000,
             ),
           ),
         );
