@@ -33,6 +33,7 @@ export interface Category extends Base {
 }
 
 export interface Location {
+    name: string;
     id: number;
     country?: string;
     city?: string;
@@ -43,6 +44,7 @@ export interface Location {
 }
 
 export interface Position {
+    name: string;
     id: number;
     position: string;
     description: string;

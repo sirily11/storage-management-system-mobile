@@ -6,7 +6,6 @@ import 'package:mobile/Edit/NewEditPage.dart';
 import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/Home/ItemDisplay.dart';
 import 'package:mobile/utils/utils.dart';
-import 'package:provider/provider.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 
 import 'DrawerNav.dart';
@@ -203,7 +202,11 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
               onRefresh: () async {
                 await this.fetchData();
               },
-              child: ItemDisplay(fItems, _scaffoldKey, remove),
+              child: ItemDisplay(
+                items: fItems,
+                removeItemById: remove,
+                key: _scaffoldKey,
+              ),
             );
           }).toList(),
         ),

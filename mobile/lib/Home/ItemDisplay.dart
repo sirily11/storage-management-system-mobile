@@ -7,11 +7,14 @@ import 'package:mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:mobile/utils/utils.dart';
 
 class ItemDisplay extends StatelessWidget {
-  final List<StorageItemAbstract> _items;
-  final GlobalKey<ScaffoldState> _key;
+  final List<StorageItemAbstract> items;
+  final GlobalKey<ScaffoldState> key;
   final Function removeItemById;
 
-  ItemDisplay(this._items, this._key, this.removeItemById);
+  ItemDisplay(
+      {@required this.items,
+      @required this.key,
+      @required this.removeItemById});
 
   Widget itemIcon(String type) {
     switch (type) {
@@ -25,15 +28,15 @@ class ItemDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_items == null) {
+    if (items == null) {
       return CircularProgressIndicator();
     }
 
     return ListView.builder(
-        itemCount: _items.length,
+        itemCount: items.length,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int i) {
-          var item = _items[i];
+          var item = items[i];
           return Slidable(
             key: Key(item.id.toString()),
             actionPane: SlidableDrawerActionPane(),
@@ -47,7 +50,7 @@ class ItemDisplay extends StatelessWidget {
                     await removeItemById(item);
                     await removeItem(item);
                   } on Exception catch (err) {
-                    _key.currentState.showSnackBar(SnackBar(
+                    key.currentState.showSnackBar(SnackBar(
                       content: Text("Failed to delete"),
                     ));
                   }

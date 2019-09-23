@@ -1,5 +1,5 @@
 export function getURL(path: string): string {
-    var base = "http://192.168.31.19:8080/storage_management"
+    var base = "http://0.0.0.0/storage_management"
     let store = localStorage.getItem("address")
     if (store) {
         base = store
