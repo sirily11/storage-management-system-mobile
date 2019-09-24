@@ -26,7 +26,7 @@ interface Validation {
 
 }
 
-interface Choice {
+export interface Choice {
     label: string;
     value: any;
 }
@@ -91,7 +91,7 @@ export class SchemaList {
                 } else if (s.widget == Widget.foreignkey) {
                     let choice: Choice = value;
                     s.choice = choice;
-                    s.value = value;
+                    s.value = value.value;
                 } else {
                     s.value = value;
                 }
@@ -101,8 +101,10 @@ export class SchemaList {
     }
 
     onSubmit(): { [key: string]: any } {
+        console.log(this.schemaList)
         let maps: { [key: string]: any } = {};
         this.schemaList.filter(s => !s.readonly && s.widget !== Widget.tomanyTable).forEach((s) => maps[s.name] = s.value);
+        console.log(maps)
         return maps;
 
     }

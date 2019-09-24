@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, Redirect } from "react-router";
 import { Schema } from "./JSONSchema/model/Schema";
 import axios from "axios";
 import { getURL } from "../settings/settings";
@@ -34,6 +34,7 @@ interface State {
   isLoading: boolean;
   isEdit: boolean;
   schema?: Schema[];
+  redirect: boolean;
   values?: { [key: string]: any };
 }
 
@@ -42,7 +43,8 @@ export default class ItemEditPage extends Component<Props, State> {
     super(props);
     this.state = {
       isEdit: false,
-      isLoading: true
+      isLoading: true,
+      redirect: false
     };
   }
 
@@ -94,8 +96,21 @@ export default class ItemEditPage extends Component<Props, State> {
     });
   }
 
+  create = async (data: { [key: string]: any }) => {
+    let url = getURL("item/");
+    let response = await axios.post(url, data);
+  };
+
+  update = async (data: { [key: string]: any }) => {
+    let url = getURL(`item/${this.props.match.params.id}/`);
+    let response = await axios.patch(url, data);
+  };
+
   render() {
-    const { values, schema, isEdit, isLoading } = this.state;
+    const { values, schema, isEdit, isLoading, redirect } = this.state;
+    if (redirect) {
+      return <Redirect to="/"> </Redirect>;
+    }
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -128,6 +143,14 @@ export default class ItemEditPage extends Component<Props, State> {
               schemas={schema}
               url={"http://0.0.0.0/"}
               values={values}
+              onSubmit={async data => {
+                if (isEdit) {
+                  await this.update(data);
+                } else {
+                  await this.create(data);
+                }
+                this.setState({ redirect: true });
+              }}
             ></JSONSchema>
           )}{" "}
         </Paper>

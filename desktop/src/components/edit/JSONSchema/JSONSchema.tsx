@@ -48,8 +48,15 @@ export default class JSONSchema extends Component<Props, State> {
     this.setState({ schemaList: schemaList });
   }
 
+  /**
+   * Onsave
+   */
   onSaved = (value: string, schema: Schema) => {
-    schema.value = value;
+    let v: any = value;
+    if (schema.widget === Widget.number) {
+      v = parseInt(value);
+    }
+    schema.value = v;
     this.setState({
       schemaList: this.state.schemaList
     });
@@ -71,6 +78,12 @@ export default class JSONSchema extends Component<Props, State> {
       case Widget.foreignkey:
         return (
           <JSONSchemaForignField
+            select={choice => {
+              schema.choice = choice;
+              this.setState({
+                schemaList: this.state.schemaList
+              });
+            }}
             schema={schema}
             onSaved={v => this.onSaved(v, schema)}
             url={this.props.url}

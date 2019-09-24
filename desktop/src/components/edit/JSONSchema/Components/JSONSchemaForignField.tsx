@@ -10,24 +10,32 @@ import {
   Header
 } from "semantic-ui-react";
 import axios from "axios";
-import { Schema } from "../model/Schema";
+import { Schema, Choice } from "../model/Schema";
 import JSONSchema from "../JSONSchema";
+import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 
 interface Props extends FieldProps {
   url: string;
+  select(choice: Choice): void;
 }
 
 export default function JSONSchemaForignField(props: Props) {
   const { schema, onSaved, url } = props;
   const [list, setList] = useState<any[]>();
   const [editSchema, setSchema] = useState<Schema[]>();
-  const [selected, setSelect] = useState<number>();
+  const [selected, setSelect] = useState<number>(
+    schema.choice && schema.choice.value
+  );
   const [loading, setLoading] = useState(false);
+  const [openDialogIndex, setOpen] = useState(-1);
 
   function getURL(path: string) {
     return `${url}${path}`;
   }
 
+  /**
+   * Fetch selection
+   */
   const fetchList = async () => {
     if (schema.extra) {
       let url = getURL(schema.extra.related_model.replace("-", "_") + "/");
@@ -37,6 +45,9 @@ export default function JSONSchemaForignField(props: Props) {
     }
   };
 
+  /**
+   * Fetch schema
+   */
   const fetchSchema = async () => {
     if (schema.extra) {
       let url = getURL(schema.extra.related_model.replace("-", "_") + "/");
@@ -45,6 +56,10 @@ export default function JSONSchemaForignField(props: Props) {
     }
   };
 
+  /**
+   * Update forign key
+   * @param data json data
+   */
   const update = async (data: any) => {
     setLoading(true);
     if (schema.extra) {
@@ -56,6 +71,10 @@ export default function JSONSchemaForignField(props: Props) {
     setLoading(false);
   };
 
+  /**
+   * Create forign key
+   * @param data JSon Data
+   */
   const create = async (data: any) => {
     setLoading(true);
     if (schema.extra) {
@@ -85,22 +104,12 @@ export default function JSONSchemaForignField(props: Props) {
     }
   };
 
-  const value = () => {
-    if (selected === undefined) {
-      if (schema.choice) {
-        return schema.choice.value;
-      }
-    } else {
-      return selected;
-    }
-  };
-
   return (
     <Grid>
       <Grid.Row columns="equal">
         <Grid.Column width={10}>
           <Dropdown
-            value={value()}
+            value={schema.choice && schema.choice.value}
             labeled
             placeholder={`Select ${schema.label}`}
             fluid
@@ -109,6 +118,10 @@ export default function JSONSchemaForignField(props: Props) {
             onChange={(e, { value }) => {
               setSelect(value as number);
               onSaved(value as string);
+              if (list) {
+                let selected = list.find(l => l.id === value);
+                props.select({ label: selected.name, value: selected.id });
+              }
             }}
             options={options()}
             onClick={async () => {
@@ -120,56 +133,60 @@ export default function JSONSchemaForignField(props: Props) {
           />
         </Grid.Column>
         <Grid.Column>
-          <Modal
-            trigger={
-              <Button
-                icon="add"
-                color="blue"
-                onClick={async () => await fetchSchema()}
-              ></Button>
-            }
+          <Button
+            icon="add"
+            color="blue"
+            onClick={async () => {
+              setOpen(0);
+              await fetchSchema();
+            }}
+          ></Button>
+          <Button
+            icon="edit"
+            color="blue"
+            disabled={schema.value === undefined}
+            onClick={async () => {
+              setOpen(1);
+              let list = await fetchList();
+              setList(list);
+              await fetchSchema();
+            }}
+          ></Button>
+          <Dialog
+            open={openDialogIndex === 0}
+            onClose={() => setOpen(-1)}
+            fullWidth
           >
-            <Modal.Content image>
-              <Modal.Description style={{ width: "100%" }}>
-                <Header>Add {schema.label}</Header>
-                {editSchema && (
-                  <JSONSchema
-                    schemas={editSchema}
-                    url={url}
-                    onSubmit={create}
-                  ></JSONSchema>
-                )}
-              </Modal.Description>
-            </Modal.Content>
-          </Modal>
+            <DialogTitle>Add {schema.label}</DialogTitle>
+            <DialogContent>
+              {editSchema && (
+                <JSONSchema
+                  schemas={editSchema}
+                  url={url}
+                  onSubmit={create}
+                ></JSONSchema>
+              )}
+            </DialogContent>
+          </Dialog>
 
-          <Modal
-            trigger={
-              <Button
-                icon="edit"
-                color="blue"
-                disabled={schema.value === undefined}
-                onClick={async () => {
-                  await fetchSchema();
-                }}
-              ></Button>
-            }
+          <Dialog
+            open={openDialogIndex === 1}
+            onClose={() => setOpen(-1)}
+            fullWidth
           >
-            <Modal.Content image>
-              <Modal.Description style={{ width: "100%" }}>
-                <Header>Add {schema.label}</Header>
-                {editSchema && (
-                  <JSONSchema
-                    schemas={editSchema}
-                    values={list && list.find(l => l.id === selected)}
-                    url={url}
-                    onSubmit={update}
-                    loading={loading}
-                  ></JSONSchema>
-                )}
-              </Modal.Description>
-            </Modal.Content>
-          </Modal>
+            <DialogTitle>Edit {schema.label}</DialogTitle>
+            <DialogContent>
+              {editSchema && (
+                <JSONSchema
+                  schemas={editSchema}
+                  values={list && list.find(l => l.id === selected)}
+                  url={url}
+                  onSubmit={update}
+                  loading={loading}
+                ></JSONSchema>
+              )}
+            </DialogContent>
+          </Dialog>
         </Grid.Column>
         {schema.required && !schema.value && (
           <Grid.Column>

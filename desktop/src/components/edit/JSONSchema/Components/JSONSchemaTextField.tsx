@@ -1,10 +1,10 @@
 import React from "react";
-import { Schema } from "../model/Schema";
+import { Schema, Widget } from "../model/Schema";
 import { Input, Form } from "semantic-ui-react";
 
 export interface FieldProps {
   schema: Schema;
-  onSaved(value: string): void;
+  onSaved(value: any): void;
 }
 
 export default function JSONSchemaTextField(props: FieldProps) {
@@ -23,10 +23,13 @@ export default function JSONSchemaTextField(props: FieldProps) {
       control={Input}
       label={schema.label}
       error={hasError()}
-      onChange={(e, { value }) => onSaved(value)}
-      defaultValue={
-        schema.value ? schema.value : schema.extra && schema.extra.default
-      }
+      onChange={(e, { value }) => {
+        onSaved(value);
+      }}
+      // defaultValue={
+      //   schema.value ? schema.value : schema.extra && schema.extra.default
+      // }
+      defaultValue={schema.value}
     ></Form.Input>
   );
 }

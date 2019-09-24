@@ -212,7 +212,7 @@ export default class Homepage extends Component<Props, State> {
         <div className="row h-100">
           <CheckoutPage item={this.state.fetchItem} />
           <div
-            className="col-5 col-lg-3 mt-4 mb-4"
+            className="col-6 col-lg-4 mt-4 mb-4"
             style={{ overflowY: "hidden" }}
           >
             <SearchField
@@ -257,7 +257,7 @@ export default class Homepage extends Component<Props, State> {
             </AutoSizer>
           </div>
           <div
-            className="col-7 col-lg-9"
+            className="col-6 col-lg-8"
             style={{
               position: "sticky",
               overflowY: "scroll"
