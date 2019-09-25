@@ -390,11 +390,7 @@ export default class ItemDetailPage extends Component<Props, State> {
               {this.renderTextField(
                 "地址",
                 "",
-                `${item.location_name.country}${item.location_name.city}${
-                  item.location_name.street
-                } ${item.location_name.building}${item.location_name.unit}${
-                  item.location_name.room_number
-                }`
+                `${item.location_name.country}${item.location_name.city}${item.location_name.street} ${item.location_name.building}${item.location_name.unit}${item.location_name.room_number}`
               )}
               <h1>文件</h1>
               <Button.Group size="mini" className="mb-5">

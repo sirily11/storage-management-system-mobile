@@ -11,12 +11,20 @@ import { CreateAndupdater } from "../../settings/UpdateAndCreate";
 
 interface Props {
   selected: number;
+  /**
+   * When Item is selected
+   * @param id
+   */
   onSelected(id: number): void;
   item: AbstractStorageItem;
   style: React.CSSProperties;
   onDeleted(id: number): void;
 }
 
+/**
+ *  Item row in left side of home screen
+ * @param props
+ */
 export default function ItemRow(props: Props) {
   const { openQR, setPrintQRItem } = useContext(HomepageContext);
   return (
@@ -34,7 +42,6 @@ export default function ItemRow(props: Props) {
       <ListItemText
         primary={props.item.name}
         secondary={`${props.item.description} -<${props.item.category_name}>`}
-       
       />
       {/* Buttons */}
       <Link to={`/edit/${props.item.id}`}>

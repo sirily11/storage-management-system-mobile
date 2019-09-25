@@ -73,6 +73,10 @@ export default class Homepage extends Component<Props, State> {
     document.addEventListener("keypress", this._handleScanner);
   }
 
+  /**
+   * This function will be called when component is mounted
+   * 0r doing some refresh
+   */
   _onmount = async () => {
     let categories = await fetchCategories();
     var items = await this.fetchItems();
@@ -156,6 +160,9 @@ export default class Homepage extends Component<Props, State> {
     this.setState({ qrCode: evt.target.value });
   };
 
+  /**
+   * Handle deletion
+   */
   _handleDeleted = (id: number) => {
     let { abstractItem } = this.state;
     let index = abstractItem.findIndex(v => v.id === id);
@@ -189,6 +196,9 @@ export default class Homepage extends Component<Props, State> {
     }
   };
 
+  /**
+   * Detail item
+   */
   _handleOnFetchItem = (item: DetailStorageItem) => {
     this.setState({ fetchItem: item });
   };

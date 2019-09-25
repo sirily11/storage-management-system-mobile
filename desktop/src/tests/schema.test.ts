@@ -1,4 +1,4 @@
-import { SchemaList, Schema, Widget } from "../model/Schema";
+import { SchemaList, Schema, Widget } from "../components/edit/JSONSchema/model/Schema"
 
 describe("Test schema submit", () => {
     let l: Schema[] = [{

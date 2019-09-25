@@ -59,18 +59,18 @@ export default class FileUploader extends Component<Props, State> {
   }
 
   openFile = async () => {
-    let paths = dialog.showOpenDialog({
+    let file = await dialog.showOpenDialog({
       properties: ["openFile", "multiSelections"],
       filters: [
-        { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
-        { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
-        { name: 'Custom File Type', extensions: ['as'] },
-        { name: 'All Files', extensions: ['*'] }
+        { name: "Images", extensions: ["jpg", "png", "gif"] },
+        { name: "Movies", extensions: ["mkv", "avi", "mp4"] },
+        { name: "Custom File Type", extensions: ["as"] },
+        { name: "All Files", extensions: ["*"] }
       ]
     });
 
-    if (paths) {
-      paths = paths.map(p => p.replace(/^.*[\\\/]/, ''));
+    if (file.filePaths) {
+      let paths = file.filePaths.map(p => p.replace(/^.*[\\\/]/, ""));
       for (let f of paths) {
         for (let f2 of this.props.existingFiles) {
           console.log(f2.file, f, f2.file === f);

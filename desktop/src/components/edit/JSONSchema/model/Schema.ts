@@ -37,7 +37,6 @@ interface Length {
 }
 
 export interface Schema {
-    id: any
     label: string;
     readonly: boolean;
     /// Could be null

@@ -34,33 +34,56 @@ export default class HomepageProvider extends Component<Props, State> {
     };
   }
 
+  /**
+   * Open QR Windows
+   */
   openQR = () => {
     this.setState({ openQRWindow: true });
   };
 
+  /**
+   * Close QR Windows
+   */
   closeQR = () => {
     this.setState({ openQRWindow: false });
   };
 
+  /**
+   * Open Remote Scanner
+   */
   openRemoteScanner = () => {
     this.setState({ openScannerWindow: true });
   };
 
+  /**
+   * Close remote scanner
+   */
   closeRemoteScanner = () => {
     this.setState({ openScannerWindow: false });
   };
 
+  /**
+   * Open local scanner
+   */
   openLocalScanner = () => {
     this.setState({ openLocalScannerWindow: true });
   };
 
+  /**
+   * Close Local Scanner
+   */
   closeLocalScanner = () => {
     this.setState({ openLocalScannerWindow: false });
   };
 
+  /**
+   * Set Qr's item
+   */
   setPrintQRItem = (item: AbstractStorageItem) => {
     this.setState({ qrWindowDetail: item });
   };
+
+  
 
   render() {
     return (
