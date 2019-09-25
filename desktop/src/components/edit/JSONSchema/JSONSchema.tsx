@@ -71,6 +71,7 @@ export default class JSONSchema extends Component<Props, State> {
       case Widget.select:
         return (
           <JSONSchemaSelectField
+            key={schema.name}
             schema={schema}
             onSaved={v => this.onSaved(v, schema)}
           ></JSONSchemaSelectField>
@@ -78,6 +79,7 @@ export default class JSONSchema extends Component<Props, State> {
       case Widget.foreignkey:
         return (
           <JSONSchemaForignField
+            key={schema.name}
             select={choice => {
               schema.choice = choice;
               this.setState({
@@ -89,13 +91,16 @@ export default class JSONSchema extends Component<Props, State> {
             url={this.props.url}
           ></JSONSchemaForignField>
         );
-      default:
+      case Widget.text || Widget.number:
         return (
           <JSONSchemaTextField
+            key={schema.name}
             schema={schema}
             onSaved={v => this.onSaved(v, schema)}
           />
         );
+      default:
+        return <div key={schema.name}></div>;
     }
   }
 

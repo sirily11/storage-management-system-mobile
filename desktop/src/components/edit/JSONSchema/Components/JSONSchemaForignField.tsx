@@ -29,7 +29,7 @@ export default function JSONSchemaForignField(props: Props) {
   const [loading, setLoading] = useState(false);
   const [openDialogIndex, setOpen] = useState(-1);
 
-  function getURL(path: string) {
+  function getURL(path?: string) {
     return `${url}${path}`;
   }
 
@@ -38,7 +38,10 @@ export default function JSONSchemaForignField(props: Props) {
    */
   const fetchList = async () => {
     if (schema.extra) {
-      let url = getURL(schema.extra.related_model.replace("-", "_") + "/");
+      let url = getURL(
+        schema.extra.related_model &&
+          schema.extra.related_model.replace("-", "_") + "/"
+      );
       let response = await axios.get<any[]>(url);
 
       return response.data;
@@ -50,7 +53,10 @@ export default function JSONSchemaForignField(props: Props) {
    */
   const fetchSchema = async () => {
     if (schema.extra) {
-      let url = getURL(schema.extra.related_model.replace("-", "_") + "/");
+      let url = getURL(
+        schema.extra.related_model &&
+          schema.extra.related_model.replace("-", "_") + "/"
+      );
       let response = await axios.request({ method: "OPTIONS", url: url });
       setSchema(response.data.fields);
     }
@@ -64,7 +70,8 @@ export default function JSONSchemaForignField(props: Props) {
     setLoading(true);
     if (schema.extra) {
       let url = getURL(
-        schema.extra.related_model.replace("-", "_") + "/" + selected + "/"
+        schema.extra.related_model &&
+          schema.extra.related_model.replace("-", "_") + "/" + selected + "/"
       );
       let response = await axios.patch(url, data);
     }
@@ -78,7 +85,10 @@ export default function JSONSchemaForignField(props: Props) {
   const create = async (data: any) => {
     setLoading(true);
     if (schema.extra) {
-      let url = getURL(schema.extra.related_model.replace("-", "_") + "/");
+      let url = getURL(
+        schema.extra.related_model &&
+          schema.extra.related_model.replace("-", "_") + "/"
+      );
       let response = await axios.post(url, data);
     }
     setLoading(false);

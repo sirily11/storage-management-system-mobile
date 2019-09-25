@@ -1,6 +1,6 @@
 import React from "react";
 import { Schema, Widget } from "../model/Schema";
-import { Input, Form } from "semantic-ui-react";
+import { Input, Form, Label } from "semantic-ui-react";
 
 export interface FieldProps {
   schema: Schema;
@@ -19,17 +19,23 @@ export default function JSONSchemaTextField(props: FieldProps) {
   }
 
   return (
-    <Form.Input
-      control={Input}
-      label={schema.label}
-      error={hasError()}
-      onChange={(e, { value }) => {
-        onSaved(value);
-      }}
-      // defaultValue={
-      //   schema.value ? schema.value : schema.extra && schema.extra.default
-      // }
-      defaultValue={schema.value}
-    ></Form.Input>
+    <div>
+      <Form.Input
+        data-testid="input-field"
+        control={Input}
+        label={schema.label}
+        error={hasError()}
+        onChange={(e, { value }) => {
+          onSaved(value);
+        }}
+        // defaultValue={
+        //   schema.value ? schema.value : schema.extra && schema.extra.default
+        // }
+        defaultValue={schema.value}
+      ></Form.Input>
+      {schema.extra && schema.extra.help && (
+        <Label color="blue">{schema.extra.help}</Label>
+      )}
+    </div>
   );
 }

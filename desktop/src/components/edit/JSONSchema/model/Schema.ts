@@ -4,9 +4,9 @@ import { string } from "prop-types";
 
 
 interface Extra {
-    default: any;
-    help: string;
-    related_model: string;
+    default?: any;
+    help?: string;
+    related_model?: string;
     choices?: Choice[]
 
 }
@@ -32,8 +32,8 @@ export interface Choice {
 }
 
 interface Length {
-    maximum: number;
-    minimum: number;
+    maximum?: number;
+    minimum?: number;
 }
 
 export interface Schema {
@@ -45,7 +45,7 @@ export interface Schema {
     name: string;
     /// If widget type is not defined in the enum, then
     /// return widgetType.unknown
-    widget: Widget;
+    widget: Widget | string;
     required: boolean;
     /// could be null
     validations?: Validation;
@@ -85,7 +85,7 @@ export class SchemaList {
                 if (s.widget == Widget.select) {
                     let choice: Choice | undefined = s.extra
                         && s.extra.choices
-                        && s.extra.choices.find((c) => c.value == value)
+                        && s.extra.choices.find((c) => c.value === value)
                     s.choice = choice;
                 } else if (s.widget == Widget.foreignkey) {
                     let choice: Choice = value;
