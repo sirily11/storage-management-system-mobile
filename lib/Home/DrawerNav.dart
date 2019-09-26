@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/Home/Homepage.dart';
-import 'package:mobile/Scanner/ScannerPage.dart';
-import 'package:mobile/Setting/SettingPage.dart';
+
+import '../Scanner/ScannerPage.dart';
+import '../Setting/SettingPage.dart';
+import 'Homepage.dart';
 
 class HomepageDrawer extends StatelessWidget {
   const HomepageDrawer({

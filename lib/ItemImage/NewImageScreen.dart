@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mobile/ItemImage/UploadDialog.dart';
+
+import 'UploadDialog.dart';
+
 
 class ImageScreen extends StatefulWidget {
   /// item's id

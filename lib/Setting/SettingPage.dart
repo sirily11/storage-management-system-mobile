@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/Edit/CardTheme.dart';
-import 'package:mobile/Home/DrawerNav.dart';
-import 'package:mobile/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Edit/CardTheme.dart';
+import '../Home/DrawerNav.dart';
 
 class SettingPage extends StatefulWidget {
   @override

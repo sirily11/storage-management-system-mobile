@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/utils/utils.dart';
 import 'package:http/http.dart' as http;
+
+import '../DataObj/StorageItem.dart';
+import '../utils/utils.dart';
 
 class ItemDetailState with ChangeNotifier {
   StorageItemDetail item;
@@ -56,11 +57,10 @@ class ItemDetailState with ChangeNotifier {
     }
   }
 
-
   /// Fetch data from  internet
   /// This will set up item
-  /// 
-  /// @param id required 
+  ///
+  /// @param id required
   Future fetchData({@required int id}) async {
     StorageItemDetail item = await _fetchItem(id);
     this.item = item;
@@ -68,7 +68,7 @@ class ItemDetailState with ChangeNotifier {
   }
 
   /// Update item
-  updateItem(StorageItemDetail item){
+  updateItem(StorageItemDetail item) {
     this.item = item;
     notifyListeners();
   }

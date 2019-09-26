@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
 
+
+import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';
 
 class PositionDetail extends StatelessWidget {

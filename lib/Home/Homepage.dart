@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/Edit/NewEditPage.dart';
-import 'package:mobile/Home/Detail/ItemDetailPage.dart';
-import 'package:mobile/Home/ItemDisplay.dart';
-import 'package:mobile/utils/utils.dart';
+
 import 'package:barcode_scan/barcode_scan.dart';
 
+import '../DataObj/StorageItem.dart';
+import '../Edit/NewEditPage.dart';
+import '../utils/utils.dart';
+import 'Detail/ItemDetailPage.dart';
 import 'DrawerNav.dart';
+import 'ItemDisplay.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -141,27 +142,32 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (_tabController == null) {
-      return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-          title: errorMessage == null
-              ? Text("Storage Management")
-              : Text(errorMessage),
-        ),
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-        drawer: new HomepageDrawer(),
-        body: Center(
-          child: Icon(
-            Icons.pages,
-            color: Colors.white,
-            size: 100,
-          ),
-        ),
-        floatingActionButton: buildFloatingActionButton(context),
-      );
-    }
+    Widget _body = _tabController == null
+        ? Center(
+            child: Icon(
+              Icons.pages,
+              color: Colors.white,
+              size: 100,
+            ),
+          )
+        : Container(
+            child: TabBarView(
+              controller: _tabController,
+              children: categories.map((c) {
+                var fItems =
+                    items.where((i) => i.categoryName == c.name).toList();
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await this.fetchData();
+                  },
+                  child: ItemDisplay(
+                    items: fItems,
+                    removeItemById: remove,
+                  ),
+                );
+              }).toList(),
+            ),
+          );
 
     return Scaffold(
       key: _scaffoldKey,
@@ -183,34 +189,19 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             onPressed: scanQR,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabs: categories
-              .map((c) => Tab(
-                    text: c.name,
-                  ))
-              .toList(),
-        ),
-      ),
-      body: Container(
-        child: TabBarView(
-          controller: _tabController,
-          children: categories.map((c) {
-            var fItems = items.where((i) => i.categoryName == c.name).toList();
-            return RefreshIndicator(
-              onRefresh: () async {
-                await this.fetchData();
-              },
-              child: ItemDisplay(
-                items: fItems,
-                removeItemById: remove,
-                key: _scaffoldKey,
+        bottom: _tabController == null
+            ? null
+            : TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabs: categories
+                    .map((c) => Tab(
+                          text: c.name,
+                        ))
+                    .toList(),
               ),
-            );
-          }).toList(),
-        ),
       ),
+      body: _body,
       drawer: new HomepageDrawer(),
       floatingActionButton: buildFloatingActionButton(context),
     );

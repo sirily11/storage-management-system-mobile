@@ -5,22 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobile/DataObj/Setting.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import '../DataObj/StorageItem.dart';
 
 List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
 
-Future<String> getURL(String path) async {
-  String base = "http://0.0.0.0:80/storage_management";
+Future<String> getURL(String path, {bool onlyBase = false}) async {
+  String base = "http://0.0.0.0:80";
   try {
     final prefs = await SharedPreferences.getInstance();
 
     String url = prefs.getString("server") ?? base;
-    return "$url/$path";
+    if (onlyBase) {
+      return url;
+    }
+    return "$url/storage_management/$path";
   } on Exception catch (err) {
-    return "$base/$path";
+    if (onlyBase) {
+      return base;
+    }
+    return "$base/storage_management/$path";
   }
 }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/Home/Detail/SubDetail/DetailedCard.dart';
+
+import '../../../DataObj/StorageItem.dart';
+import 'DetailedCard.dart';
+
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationDetail extends StatelessWidget {

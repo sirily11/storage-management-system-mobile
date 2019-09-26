@@ -1,17 +1,18 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:mobile/Edit/NewEditPage.dart';
-import 'package:mobile/Home/Detail/ItemCard.dart';
-import 'package:mobile/Home/Detail/SubDetail/AuthorDetail.dart';
-import 'package:mobile/Home/Detail/SubDetail/LocationDetail.dart';
-import 'package:mobile/Home/Detail/SubDetail/PositionDetail.dart';
-import 'package:mobile/Home/Detail/SubDetail/SeriesDetail.dart';
-import 'package:mobile/ItemImage/NewImageScreen.dart';
-import 'package:mobile/States/ItemDetailState.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../DataObj/StorageItem.dart';
+import '../../Edit/NewEditPage.dart';
+import '../../ItemImage/NewImageScreen.dart';
+import '../../States/ItemDetailState.dart';
+import 'ItemCard.dart';
+import 'SubDetail/AuthorDetail.dart';
+import 'SubDetail/LocationDetail.dart';
+import 'SubDetail/PositionDetail.dart';
+import 'SubDetail/SeriesDetail.dart';
 
 enum Path { author, location, position, series }
 

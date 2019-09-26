@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/Home/Detail/ItemDetailPage.dart';
-import 'package:mobile/Home/Homepage.dart';
-import 'package:mobile/States/CameraState.dart';
+
 import 'package:provider/provider.dart';
 
+import 'Home/Homepage.dart';
 import 'States/ItemDetailState.dart';
 
 Future<void> main() async {
@@ -16,9 +15,6 @@ class StorageManagement extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          builder: (_) => CameraState(),
-        ),
         ChangeNotifierProvider(
           builder: (_) => ItemDetailState(),
         )

@@ -1,5 +1,6 @@
-import 'package:mobile/DataObj/StorageItem.dart';
-import 'package:json_annotation/json_annotation.dart';
+
+
+import 'StorageItem.dart';
 
 class SettingObj {
   List<Category> categories;

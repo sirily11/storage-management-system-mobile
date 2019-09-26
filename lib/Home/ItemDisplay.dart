@@ -1,20 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobile/DataObj/StorageItem.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:mobile/Home/Detail/ItemDetailPage.dart';
-import 'package:mobile/utils/utils.dart';
+
+import '../DataObj/StorageItem.dart';
+import '../utils/utils.dart';
+import 'Detail/ItemDetailPage.dart';
 
 class ItemDisplay extends StatelessWidget {
   final List<StorageItemAbstract> items;
-  final GlobalKey<ScaffoldState> key;
   final Function removeItemById;
 
-  ItemDisplay(
-      {@required this.items,
-      @required this.key,
-      @required this.removeItemById});
+  ItemDisplay({@required this.items, @required this.removeItemById});
 
   Widget itemIcon(String type) {
     switch (type) {
@@ -49,11 +46,7 @@ class ItemDisplay extends StatelessWidget {
                   try {
                     await removeItemById(item);
                     await removeItem(item);
-                  } on Exception catch (err) {
-                    key.currentState.showSnackBar(SnackBar(
-                      content: Text("Failed to delete"),
-                    ));
-                  }
+                  } on Exception catch (err) {}
                 },
               )
             ],

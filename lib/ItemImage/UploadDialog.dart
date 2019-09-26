@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile/utils/utils.dart';
+
+import '../utils/utils.dart';
+
 
 class UploadDialog extends StatefulWidget {
   final File image;
