@@ -157,7 +157,9 @@ class _ImageScreenState extends State<ImageScreen> {
                                 'jpg',
                                 'jpeg',
                                 'JPG',
-                                'PNG'
+                                'PNG',
+                                "gif",
+                                "GIF"
                               ]);
 
                           if (!result.canceled) {

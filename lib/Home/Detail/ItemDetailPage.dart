@@ -6,6 +6,7 @@ import 'package:json_schema_form/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:storage_management_mobile/Home/ConfirmDialog.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
@@ -324,7 +325,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         Expanded(
           flex: 7,
           child: item.images != null && item.images.length > 0
-              ? ImageCard(
+              ? ImageGrid(
                   imageSrc: item.images,
                 )
               : Center(
@@ -463,32 +464,53 @@ class ImageGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(
       crossAxisCount: 2,
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
       itemCount: imageSrc.length,
-      staggeredTileBuilder: (index) => StaggeredTile.fit(2),
+      staggeredTileBuilder: (index) => StaggeredTile.fit(1),
       itemBuilder: (context, index) {
         var i = imageSrc[index];
-        return Container(
-          child: Stack(
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                child: Image.network(
-                  i.image,
-                  fit: BoxFit.cover,
-                  // width: 1000,
+        return GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (c) => Dialog(
+                child: Container(
+                  child: Image.network(i.image),
                 ),
               ),
-              Positioned(
-                right: 0,
-                child: IconButton(
-                  onPressed: () async {
-                    ItemDetailState pageState = Provider.of(context);
-                    await pageState.deleteImage(i.id);
-                  },
-                  icon: Icon(Icons.clear),
+            );
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(0.0)),
+            child: Stack(
+              children: <Widget>[
+                Image.network(
+                  i.image,
+                  fit: BoxFit.contain,
+                  // width: 1000,
                 ),
-              )
-            ],
+                Positioned(
+                  right: 0,
+                  child: IconButton(
+                    onPressed: () async {
+                      ItemDetailState pageState = Provider.of(context);
+                      showDialog(
+                        context: context,
+                        builder: (_) => ConfirmDialog(
+                          title: "Do you want to delete?",
+                          content: "Cannot undo this action",
+                          onConfirm: () async {
+                            await pageState.deleteImage(i.id);
+                          },
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.clear),
+                  ),
+                )
+              ],
+            ),
           ),
         );
       },
