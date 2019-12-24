@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../utils/utils.dart';
 
-
 class UploadDialog extends StatefulWidget {
   final File image;
   final int id;
@@ -32,11 +31,13 @@ class _UploadDialogState extends State<UploadDialog> {
               style: TextStyle(fontSize: 20),
             ),
             err != null ? Text(err) : Container(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.file(
-                widget.image,
-                fit: BoxFit.cover,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.file(
+                  widget.image,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             progress != null ? LinearProgressIndicator() : Container(),
@@ -70,7 +71,8 @@ class _UploadDialogState extends State<UploadDialog> {
 
                         Response response = await Dio().post(url, data: data);
                         if (response.statusCode == 201) {
-                          Navigator.of(context).pop();
+                          if (Navigator.canPop(context))
+                            Navigator.of(context).pop();
                         }
                       } on DioError catch (e) {
                         setState(() {

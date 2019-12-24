@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:json_schema_form/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
@@ -189,6 +191,38 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         elevation: 0,
         actions: <Widget>[
           IconButton(
+            onPressed: () async {
+              ItemDetailState itemDetailState = Provider.of(context);
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  content: Container(
+                    height: 200,
+                    width: 200,
+                    child: RepaintBoundary(
+                      key: itemDetailState.qrKey,
+                      child: QrImage(
+                        backgroundColor: Colors.white,
+                        data: itemDetailState.item.uuid,
+                        version: QrVersions.auto,
+                        gapless: false,
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () async {
+                        itemDetailState.printPDF();
+                      },
+                      child: Text("Print"),
+                    )
+                  ],
+                ),
+              );
+            },
+            icon: Icon(Icons.print),
+          ),
+          IconButton(
             icon: Icon(Icons.camera_alt),
             onPressed: () async {
               await Navigator.push(
@@ -291,7 +325,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           flex: 7,
           child: item.images != null && item.images.length > 0
               ? ImageCard(
-                  imageSrc: item.images.map((i) => i.image).toList(),
+                  imageSrc: item.images,
                 )
               : Center(
                   child: Image.asset(
@@ -310,7 +344,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
       children: <Widget>[
         item.images != null && item.images.length > 0
             ? ImageCard(
-                imageSrc: item.images.map((i) => i.image).toList(),
+                imageSrc: item.images,
               )
             : Center(
                 child: Image.asset(
@@ -381,26 +415,83 @@ class ButtonInfo extends StatelessWidget {
 }
 
 class ImageCard extends StatelessWidget {
-  final List<String> imageSrc;
+  final List<ImageObject> imageSrc;
 
   ImageCard({@required this.imageSrc});
 
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
+      enableInfiniteScroll: false,
       height: 600,
       items: imageSrc.map((i) {
         return Container(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(0.0)),
-            child: Image.network(
-              i,
-              fit: BoxFit.cover,
-              // width: 1000,
-            ),
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                child: Image.network(
+                  i.image,
+                  fit: BoxFit.cover,
+                  // width: 1000,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: IconButton(
+                  onPressed: () async {
+                    ItemDetailState pageState = Provider.of(context);
+                    await pageState.deleteImage(i.id);
+                  },
+                  icon: Icon(Icons.clear),
+                ),
+              )
+            ],
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class ImageGrid extends StatelessWidget {
+  final List<ImageObject> imageSrc;
+
+  ImageGrid({@required this.imageSrc});
+
+  @override
+  Widget build(BuildContext context) {
+    return StaggeredGridView.countBuilder(
+      crossAxisCount: 2,
+      itemCount: imageSrc.length,
+      staggeredTileBuilder: (index) => StaggeredTile.fit(2),
+      itemBuilder: (context, index) {
+        var i = imageSrc[index];
+        return Container(
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                child: Image.network(
+                  i.image,
+                  fit: BoxFit.cover,
+                  // width: 1000,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: IconButton(
+                  onPressed: () async {
+                    ItemDetailState pageState = Provider.of(context);
+                    await pageState.deleteImage(i.id);
+                  },
+                  icon: Icon(Icons.clear),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

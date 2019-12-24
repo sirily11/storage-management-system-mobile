@@ -1,5 +1,3 @@
-
-
 import 'Decodeable.dart';
 
 class StorageItemAbstract {
@@ -216,6 +214,7 @@ class StorageItemDetail {
   List<ImageObject> images;
   List<String> files;
   String qrCode;
+  String uuid;
 
   StorageItemDetail(
       {this.id,
@@ -232,7 +231,8 @@ class StorageItemDetail {
       this.images,
       this.qrCode,
       this.files,
-      this.unit});
+      this.unit,
+      this.uuid});
 
   Map<String, dynamic> toJSON() {
     return {
@@ -247,7 +247,8 @@ class StorageItemDetail {
       "series_id": {"label": this.series.name, "value": this.series.id},
       "category_id": {"label": this.category.name, "value": this.category.id},
       "location_id": {"label": this.location.name, "value": this.location.id},
-      "position_id": {"label": this.position.name, "value": this.position.id}
+      "position_id": {"label": this.position.name, "value": this.position.id},
+      "uuid": this.uuid
     };
   }
 
@@ -272,6 +273,7 @@ class StorageItemDetail {
         qrCode: json['qr_code'],
         images: images,
         unit: json['unit'],
+        uuid: json['uuid'],
         files: json['files'].cast<String>());
   }
 }
