@@ -13,7 +13,6 @@ class HomepageDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Color.fromRGBO(58, 66, 80, 9.0),
         child: ListView(
           children: <Widget>[
             DrawerHeader(
@@ -22,9 +21,7 @@ class HomepageDrawer extends StatelessWidget {
                 "Settings",
                 style: TextStyle(fontSize: 20, color: Colors.white),
               )),
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(58, 66, 86, 1.0),
-              ),
+              decoration: BoxDecoration(),
             ),
             ListTile(
               title: Text(

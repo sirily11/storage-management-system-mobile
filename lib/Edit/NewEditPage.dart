@@ -72,15 +72,7 @@ class _NewEditPageState extends State<NewEditPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
-        primaryColor: Color.fromRGBO(58, 66, 86, 1.0),
-        primaryTextTheme: TextTheme(),
-        accentColor: Colors.orange[300],
-        buttonTheme: ButtonThemeData(
-            buttonColor: Colors.deepPurple, textTheme: ButtonTextTheme.primary),
-        hintColor: Colors.white,
-      ),
+      data: Theme.of(context),
       child: Scaffold(
         key: key,
         appBar: AppBar(

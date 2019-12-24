@@ -1,4 +1,4 @@
-name: storage_management_system
+name: storage_management_mobile
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -26,7 +26,7 @@ dependencies:
   sliding_up_panel: ^0.3.4
   http: ^0.12.0+2
   json_annotation: ^2.0.0
-  shared_preferences: ^0.5.3+1
+  shared_preferences: ^0.5.6
   path_provider: 0.4.1
   qr_flutter: ^1.1.1
   camera:

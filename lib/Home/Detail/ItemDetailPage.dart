@@ -67,39 +67,36 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   Widget _panel() {
     ItemDetailState detailState = Provider.of<ItemDetailState>(context);
     StorageItemDetail item = detailState.item;
-    return Theme(
-      data: ThemeData(primaryColor: Colors.white),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: 12.0,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: 30,
-                height: 5,
-                decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.all(Radius.circular(12.0))),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 18.0,
-          ),
-          Text(
-            item.name,
-            style: TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 24.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 12.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: 30,
+              height: 5,
+              decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.all(Radius.circular(12.0))),
             ),
+          ],
+        ),
+        SizedBox(
+          height: 18.0,
+        ),
+        Text(
+          item.name,
+          style: TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 24.0,
           ),
-          _bodypanel(),
-        ],
-      ),
+        ),
+        _bodypanel(),
+      ],
     );
   }
 
@@ -112,8 +109,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           children: <Widget>[
             Card(
               child: Container(
-                decoration:
-                    BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -191,7 +186,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       key: detailState.scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         actions: <Widget>[
           IconButton(
@@ -212,7 +206,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           )
         ],
       ),
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         child: Icon(
@@ -270,32 +263,73 @@ class ItemDetailPageState extends State<ItemDetailPage> {
       ),
       body: item == null
           ? Container()
-          : Stack(
-              children: <Widget>[
-                item.images != null && item.images.length > 0
-                    ? ImageCard(
-                        imageSrc: item.images.map((i) => i.image).toList(),
-                      )
-                    : Center(
-                        child: Image.asset(
-                          "assets/database.png",
-                          height: 240,
-                          color: Colors.white,
-                        ),
-                      ),
-                SlidingUpPanel(
-                  backdropEnabled: true,
-                  minHeight: MediaQuery.of(context).size.height * 0.2,
-                  maxHeight: MediaQuery.of(context).size.height * 0.8,
-                  color: Color.fromRGBO(58, 66, 86, 1.0),
-                  parallaxEnabled: true,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18.0),
-                      topRight: Radius.circular(18.0)),
-                  panel: _panel(),
-                )
-              ],
+          : LayoutBuilder(
+              builder: (context, constrains) {
+                if (constrains.maxWidth > 760) {
+                  return buildLargeScreen(item, context);
+                }
+                return buildMobile(item, context);
+              },
             ),
+    );
+  }
+
+  Widget buildLargeScreen(StorageItemDetail item, BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 9,
+          child: Card(
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                  cardColor: Theme.of(context).scaffoldBackgroundColor),
+              child: _panel(),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 7,
+          child: item.images != null && item.images.length > 0
+              ? ImageCard(
+                  imageSrc: item.images.map((i) => i.image).toList(),
+                )
+              : Center(
+                  child: Image.asset(
+                    "assets/database.png",
+                    height: 240,
+                    color: Colors.white,
+                  ),
+                ),
+        )
+      ],
+    );
+  }
+
+  Widget buildMobile(StorageItemDetail item, BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        item.images != null && item.images.length > 0
+            ? ImageCard(
+                imageSrc: item.images.map((i) => i.image).toList(),
+              )
+            : Center(
+                child: Image.asset(
+                  "assets/database.png",
+                  height: 240,
+                  color: Colors.white,
+                ),
+              ),
+        SlidingUpPanel(
+          backdropEnabled: true,
+          minHeight: MediaQuery.of(context).size.height * 0.2,
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+          color: Theme.of(context).scaffoldBackgroundColor,
+          parallaxEnabled: true,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
+          panel: _panel(),
+        )
+      ],
     );
   }
 }

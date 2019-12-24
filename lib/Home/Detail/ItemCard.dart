@@ -26,7 +26,6 @@ class CardInfo extends StatelessWidget {
       flex: 1,
       child: Card(
         child: Container(
-          decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
           child: ListTile(
             title: Text(
               i.title ?? "",

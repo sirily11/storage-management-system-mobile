@@ -30,7 +30,6 @@ class _SettingPageState extends State<SettingPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         key: _scaffoldKey,
         drawer: HomepageDrawer(),
         appBar: AppBar(
@@ -54,15 +53,15 @@ class _SettingPageState extends State<SettingPage> {
                 _server,
                 serverPath,
                 onSaved: () => _scaffoldKey.currentState.showSnackBar(SnackBar(
-                      content: Text("已经保存"),
-                    )),
+                  content: Text("已经保存"),
+                )),
               ),
               AddressForm(
                 _websocket,
                 wsPath,
                 onSaved: () => _scaffoldKey.currentState.showSnackBar(SnackBar(
-                      content: Text("已经保存"),
-                    )),
+                  content: Text("已经保存"),
+                )),
               )
             ],
           ),

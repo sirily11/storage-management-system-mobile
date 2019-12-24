@@ -43,7 +43,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   PersistentBottomSheetController _sheetController() {
     return _scaffoldKey.currentState.showBottomSheet((context) {
       return Container(
-        color: Color.fromRGBO(64, 75, 96, .9),
         height: 80,
         child: Column(
           children: <Widget>[
@@ -172,7 +171,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
         title: errorMessage == null
             ? Text("Storage Management")
             : Text(errorMessage),
@@ -258,6 +256,17 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
   final List<StorageItemAbstract> items;
 
   CustomSearchDelegate(this.items);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      primaryColor: theme.appBarTheme.color,
+      primaryIconTheme: theme.primaryIconTheme,
+      primaryColorBrightness: theme.primaryColorBrightness,
+      primaryTextTheme: theme.primaryTextTheme,
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {

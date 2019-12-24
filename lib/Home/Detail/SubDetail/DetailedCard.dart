@@ -10,7 +10,6 @@ class DetailedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
             child: ListTile(
                 title: Text(
                   this.title,

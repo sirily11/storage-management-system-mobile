@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-
 import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';
 
@@ -13,7 +12,6 @@ class SeriesDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       appBar: AppBar(
         title: Text(series.name),
       ),

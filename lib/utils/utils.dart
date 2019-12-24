@@ -44,16 +44,14 @@ showErrorMessageSnackBar(BuildContext context, String message) {
 
 Future<List<StorageItemAbstract>> fetchItems() async {
   var url = await getURL("item/");
-  final response = await http.get(url);
-  if (response.statusCode == 200) {
-    Utf8Decoder decode = Utf8Decoder();
-    List<dynamic> data = json.decode(decode.convert(response.bodyBytes));
+  try {
+    final response = await Dio().get(url);
     List<StorageItemAbstract> list = [];
-    data.forEach((data) {
+    response.data.forEach((data) {
       list.add(StorageItemAbstract.fromJson(data));
     });
     return list;
-  } else {
+  } catch (err) {
     throw ("Failed to fetch");
   }
 }
