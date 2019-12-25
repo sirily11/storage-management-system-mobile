@@ -11,6 +11,8 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
+import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../utils/utils.dart';
@@ -113,6 +115,39 @@ class ItemDetailState with ChangeNotifier {
     StorageItemDetail item = await _fetchItem(id);
     this.item = item;
     notifyListeners();
+  }
+
+  Future fetchItemByQR(BuildContext context, {String qrCode}) async {
+    try {
+      var url = await getURL("searchByQR?qr=$qrCode");
+      final response = await Dio().get(url);
+      if (response.data is List) {
+        List<StorageItemAbstract> items = (response.data as List)
+            .map((i) => StorageItemAbstract.fromJson(i))
+            .toList();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (c) => SearchListPage(
+              items: items,
+            ),
+          ),
+        );
+      } else {
+        StorageItemAbstract item = StorageItemAbstract.fromJson(response.data);
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) {
+            return ItemDetailPage(
+              id: item.id,
+              name: item.name,
+              author: item.authorName,
+              series: item.seriesName,
+            );
+          }),
+        );
+      }
+    } catch (err) {
+      throw Exception("No item");
+    }
   }
 
   /// Update item

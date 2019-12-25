@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/States/ItemDetailState.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../Edit/NewEditPage.dart';
@@ -95,20 +97,10 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Future scanQR() async {
+    ItemDetailState state = Provider.of(context);
     try {
       String barcode = await BarcodeScanner.scan();
-      StorageItemAbstract item = await searchByQR(barcode);
-      print("QR: $barcode, id:${item.id}");
-      if (item.id != null) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return ItemDetailPage(
-            id: item.id,
-            name: item.name,
-            author: item.authorName,
-            series: item.seriesName,
-          );
-        }));
-      }
+      await state.fetchItemByQR(context, qrCode: barcode);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(

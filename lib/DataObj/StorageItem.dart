@@ -162,15 +162,17 @@ class Position implements Decodeable {
   int id;
   String name;
   String description;
+  String uuid;
 
-  Position({this.id, this.name, this.description});
+  Position({this.id, this.name, this.description, this.uuid});
 
   factory Position.fromJson(Map<String, dynamic> json) {
     if (json != null) {
       return Position(
           id: json['id'],
           name: json['position'],
-          description: json['description']);
+          description: json['description'],
+          uuid: json['uuid']);
     }
     return null;
   }

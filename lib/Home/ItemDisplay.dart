@@ -53,11 +53,12 @@ class ItemDisplay extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Card(
-                    margin: new EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 6.0),
-                    child: Container(
-                      child: buildListTile(item, context),
-                    )),
+                  margin:
+                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child: Container(
+                    child: buildListTile(item, context),
+                  ),
+                ),
               ],
             ),
           );
