@@ -29,16 +29,13 @@ class CardInfo extends StatelessWidget {
           child: ListTile(
             title: Text(
               i.title ?? "",
-              style: TextStyle(color: Colors.white),
             ),
             subtitle: Text(
               i.subtitle ?? "",
-              style: TextStyle(color: Colors.white),
             ),
             trailing: i.onPress != null
                 ? Icon(
                     Icons.more_horiz,
-                    color: Colors.white,
                   )
                 : null,
             onTap: i.onPress,

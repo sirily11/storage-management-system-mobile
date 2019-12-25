@@ -19,14 +19,13 @@ class HomepageDrawer extends StatelessWidget {
               child: Center(
                   child: Text(
                 "Settings",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20),
               )),
-              decoration: BoxDecoration(),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
             ),
             ListTile(
               title: Text(
                 "Home",
-                style: TextStyle(color: Colors.white),
               ),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -35,7 +34,7 @@ class HomepageDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text("Scanner", style: TextStyle(color: Colors.white)),
+              title: Text("Scanner"),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return ScannerPage();
@@ -43,7 +42,7 @@ class HomepageDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text("Settings", style: TextStyle(color: Colors.white)),
+              title: Text("Settings"),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return SettingPage();

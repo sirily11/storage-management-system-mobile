@@ -202,7 +202,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       child: Icon(
         Icons.edit,
-        color: Theme.of(context).iconTheme.color,
       ),
       onPressed: () {
         showModalBottomSheet(

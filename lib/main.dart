@@ -22,6 +22,7 @@ class StorageManagement extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         themeMode: ThemeMode.system,
+        theme: Theme.of(context).copyWith(accentColor: Colors.black),
         darkTheme: ThemeData.dark(),
         home: Homepage(),
       ),

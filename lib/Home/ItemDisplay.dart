@@ -72,18 +72,16 @@ class ItemDisplay extends StatelessWidget {
             border: Border(right: BorderSide(width: 1, color: Colors.white24))),
         child: Icon(
           Icons.book,
-          color: Colors.white,
         ),
       ),
       title: Text(
         "${item.name}",
-        style: TextStyle(color: Colors.white),
       ),
-      subtitle: Text("${item.authorName} - ${item.seriesName}",
-          style: TextStyle(color: Colors.white)),
+      subtitle: Text(
+        "${item.authorName} - ${item.seriesName}",
+      ),
       trailing: Text(
         "${item.position}\nRow:${item.row}: Col:${item.column}",
-        style: TextStyle(color: Colors.white),
       ),
       onTap: () {
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) {

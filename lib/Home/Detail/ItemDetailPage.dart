@@ -83,8 +83,11 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               width: 30,
               height: 5,
               decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.all(
+                  Radius.circular(12.0),
+                ),
+              ),
             ),
           ],
         ),
@@ -134,6 +137,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                         icon: Icons.reorder,
                         color: Colors.green,
                         value: item.row.toString(),
+                      ),
+                      ButtonInfo(
+                        label: "Quantity",
+                        icon: Icons.shopping_cart,
+                        color: Colors.red,
+                        value: item.quantity.toString(),
                       )
                     ],
                   ),
@@ -332,7 +341,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                   child: Image.asset(
                     "assets/database.png",
                     height: 240,
-                    color: Colors.white,
+                    color: Theme.of(context).accentColor,
                   ),
                 ),
         )
@@ -351,7 +360,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 child: Image.asset(
                   "assets/database.png",
                   height: 240,
-                  color: Colors.white,
+                  color: Theme.of(context).accentColor,
                 ),
               ),
         SlidingUpPanel(
@@ -404,11 +413,10 @@ class ButtonInfo extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(color: Colors.white),
         ),
         Text(
           value,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         )
       ],
     );

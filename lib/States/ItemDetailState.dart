@@ -98,8 +98,8 @@ class ItemDetailState with ChangeNotifier {
       pdf.Page(
         pageFormat: PdfPageFormat.a4,
         build: (c) => pdf.Container(
-          height: 240,
-          width: 240,
+          height: 140,
+          width: 140,
           child: pdf.Image(i),
         ),
       ),

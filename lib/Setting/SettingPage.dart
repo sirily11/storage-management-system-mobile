@@ -86,11 +86,20 @@ class AddressForm extends StatelessWidget {
           children: <Widget>[
             TextFormField(
               controller: _controller,
-              style: TextStyle(color: Colors.white),
+              autovalidate: true,
+              validator: (str) {
+                if (!(str.startsWith("http") | str.startsWith("https"))) {
+                  return "Invalid URL";
+                }
+                if (str.endsWith("/")) {
+                  return "Invalid URL";
+                }
+                return null;
+              },
               decoration: InputDecoration(
                 labelText: "Server Address",
-                fillColor: Colors.blueGrey,
-                filled: true,
+                labelStyle:
+                    Theme.of(context).textTheme.body1.copyWith(fontSize: 18),
                 border: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(),

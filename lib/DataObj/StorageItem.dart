@@ -212,6 +212,7 @@ class StorageItemDetail {
   String unit;
   int column;
   int row;
+  int quantity;
   double price;
   List<ImageObject> images;
   List<String> files;
@@ -234,7 +235,8 @@ class StorageItemDetail {
       this.qrCode,
       this.files,
       this.unit,
-      this.uuid});
+      this.uuid,
+      this.quantity});
 
   Map<String, dynamic> toJSON() {
     return {
@@ -250,7 +252,8 @@ class StorageItemDetail {
       "category_id": {"label": this.category.name, "value": this.category.id},
       "location_id": {"label": this.location.name, "value": this.location.id},
       "position_id": {"label": this.position.name, "value": this.position.id},
-      "uuid": this.uuid
+      "uuid": this.uuid,
+      "quantity": this.quantity.toString()
     };
   }
 
@@ -276,6 +279,7 @@ class StorageItemDetail {
         images: images,
         unit: json['unit'],
         uuid: json['uuid'],
+        quantity: json['quantity'],
         files: json['files'].cast<String>());
   }
 }
