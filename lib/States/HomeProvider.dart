@@ -7,6 +7,11 @@ class HomeProvider with ChangeNotifier {
   List<StorageItemAbstract> items = [];
   List<Category> categories = [];
   GlobalKey<ScaffoldState> scaffoldKey;
+  Dio dio;
+
+  HomeProvider({Dio networkProvider}) {
+    this.dio = networkProvider ?? Dio();
+  }
 
   PersistentBottomSheetController sheetController() {
     return scaffoldKey.currentState.showBottomSheet((context) {
@@ -33,7 +38,7 @@ class HomeProvider with ChangeNotifier {
     var url = await getURL("item/");
     try {
       PersistentBottomSheetController controller = sheetController();
-      final response = await Dio().get(url);
+      final response = await this.dio.get(url);
       List<StorageItemAbstract> list = [];
       response.data.forEach((data) {
         list.add(StorageItemAbstract.fromJson(data));
@@ -57,7 +62,7 @@ class HomeProvider with ChangeNotifier {
 
   Future<void> fetchCategories() async {
     var url = await getURL("category");
-    final response = await Dio().get<List<dynamic>>(url);
+    final response = await this.dio.get<List<dynamic>>(url);
     try {
       var categories = response.data
           .map((d) => Category.fromJson((d as Map<String, dynamic>)))
@@ -78,7 +83,7 @@ class HomeProvider with ChangeNotifier {
 
   remove(StorageItemAbstract item) async {
     var url = await getURL("item/${item.id}/");
-    var respnse = await Dio().delete(url);
+    var respnse = await this.dio.delete(url);
     items.remove(item);
     scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text("物品已经删除"),

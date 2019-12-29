@@ -3,14 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:dio/dio.dart';
-import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
 
@@ -24,6 +21,11 @@ class ItemDetailState with ChangeNotifier {
   StorageItemDetail item;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey qrKey = new GlobalKey();
+  Dio dio;
+
+  ItemDetailState({Dio networkProvider}) {
+    this.dio = networkProvider ?? Dio();
+  }
 
   PersistentBottomSheetController _sheetController() {
     return scaffoldKey.currentState.showBottomSheet((context) {
@@ -51,18 +53,12 @@ class ItemDetailState with ChangeNotifier {
     var controller = _sheetController();
     try {
       var url = await getURL("item/$id");
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        Utf8Decoder decode = Utf8Decoder();
-        var data = json.decode(decode.convert(response.bodyBytes));
-        var item = StorageItemDetail.fromJson(data);
-        Future.delayed(Duration(milliseconds: 500), () {
-          controller.close();
-        });
-        return item;
-      } else {
-        throw ("Error");
-      }
+      final response = await this.dio.get(url);
+      var item = StorageItemDetail.fromJson(response.data);
+      Future.delayed(Duration(milliseconds: 500), () {
+        controller.close();
+      });
+      return item;
     } on Exception catch (err) {
       print(err);
       scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -75,7 +71,7 @@ class ItemDetailState with ChangeNotifier {
   Future deleteImage(int id) async {
     try {
       var url = await getURL("itemimage/$id/");
-      var response = await Dio().delete(url);
+      var response = await this.dio.delete(url);
       item.images.removeWhere((i) => i.id == id);
       notifyListeners();
     } catch (err) {
@@ -120,7 +116,7 @@ class ItemDetailState with ChangeNotifier {
   Future fetchItemByQR(BuildContext context, {String qrCode}) async {
     try {
       var url = await getURL("searchByQR?qr=$qrCode");
-      final response = await Dio().get(url);
+      final response = await this.dio.get(url);
       if (response.data is List) {
         List<StorageItemAbstract> items = (response.data as List)
             .map((i) => StorageItemAbstract.fromJson(i))
@@ -159,7 +155,7 @@ class ItemDetailState with ChangeNotifier {
   Future<void> modifyQuantity(int value) async {
     try {
       var url = await getURL("item/${item.id}/");
-      var response = await Dio().patch(url, data: {"quantity": value});
+      var response = await this.dio.patch(url, data: {"quantity": value});
       item.quantity = value;
       notifyListeners();
     } catch (err) {
