@@ -79,6 +79,24 @@ class ItemDetailState with ChangeNotifier {
     }
   }
 
+  Future updateCategory(String category, int itemID) async {
+    try {
+      var url = await getURL("category/");
+      var response = await this.dio.post(
+          "http://192.168.1.114:8000/storage_management/category/",
+          data: {"name": category});
+      Category c = Category.fromJson(response.data);
+      var url2 = await getURL("item/$itemID/");
+      item.category = c;
+      var response2 =
+          await this.dio.patch(url2, data: {"category": response.data});
+      print(response2);
+      notifyListeners();
+    } catch (err) {
+      print(err);
+    }
+  }
+
   Future<void> printPDF() async {
     final p = pdf.Document();
     RenderRepaintBoundary boundary = qrKey.currentContext.findRenderObject();

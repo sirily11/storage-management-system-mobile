@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_chooser/file_chooser.dart';
@@ -23,15 +24,23 @@ class _ImageScreenState extends State<ImageScreen> {
     super.initState();
   }
 
-  void uploadImage(File image) async {
+  void uploadImage(File image, List<ImageLabel> labels) async {
     if (image != null)
       await showDialog(
         context: context,
         builder: (context) => UploadDialog(
           id: widget.id,
           image: image,
+          labels: labels,
         ),
       );
+  }
+
+  Future<List<ImageLabel>> labelImage(File image) async {
+    final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
+    List<ImageLabel> labels =
+        await labeler.processImage(FirebaseVisionImage.fromFile(image));
+    return labels;
   }
 
   @override
@@ -70,7 +79,8 @@ class _ImageScreenState extends State<ImageScreen> {
                         try {
                           File image = await ImagePicker.pickImage(
                               source: ImageSource.camera);
-                          uploadImage(image);
+                          var labels = await labelImage(image);
+                          uploadImage(image, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(
@@ -103,7 +113,8 @@ class _ImageScreenState extends State<ImageScreen> {
                         try {
                           File image = await ImagePicker.pickImage(
                               source: ImageSource.gallery);
-                          uploadImage(image);
+                          var labels = await labelImage(image);
+                          uploadImage(image, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(
@@ -165,7 +176,7 @@ class _ImageScreenState extends State<ImageScreen> {
                           if (!result.canceled) {
                             var paths = result.paths;
                             if (paths.length > 0) {
-                              uploadImage(File(paths.first));
+                              uploadImage(File(paths.first), null);
                             }
                           }
                         } catch (err) {
