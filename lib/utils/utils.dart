@@ -116,16 +116,6 @@ Future<StorageItemAbstract> addItem(StorageItemDetail item) async {
   }
 }
 
-Future<bool> removeItem(StorageItemAbstract item) async {
-  var url = await getURL("item/${item.id}/");
-  final response = await http.delete(url);
-  if (response.statusCode == 204) {
-    Utf8Decoder decode = Utf8Decoder();
-    return true;
-  } else {
-    throw Exception();
-  }
-}
 
 /**
  * Update item and sync with database

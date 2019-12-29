@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'Home/Homepage.dart';
+import 'States/HomeProvider.dart';
 import 'States/ItemDetailState.dart';
 
 Future<void> main() async {
@@ -17,6 +18,9 @@ class StorageManagement extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           builder: (_) => ItemDetailState(),
+        ),
+        ChangeNotifierProvider(
+          builder: (_) => HomeProvider(),
         )
       ],
       child: MaterialApp(

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/States/HomeProvider.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../utils/utils.dart';
@@ -9,9 +11,8 @@ import 'Detail/ItemDetailPage.dart';
 
 class ItemDisplay extends StatelessWidget {
   final List<StorageItemAbstract> items;
-  final Function removeItemById;
 
-  ItemDisplay({@required this.items, @required this.removeItemById});
+  ItemDisplay({@required this.items});
 
   Widget itemIcon(String type) {
     switch (type) {
@@ -44,8 +45,8 @@ class ItemDisplay extends StatelessWidget {
                 color: Colors.red,
                 onTap: () async {
                   try {
-                    await removeItemById(item);
-                    await removeItem(item);
+                    HomeProvider provider = Provider.of(context);
+                    await provider.remove(item);
                   } on Exception catch (err) {}
                 },
               )

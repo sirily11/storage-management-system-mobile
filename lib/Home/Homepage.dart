@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemDetailState.dart';
 
 import '../DataObj/StorageItem.dart';
@@ -21,11 +22,8 @@ class Homepage extends StatefulWidget {
 }
 
 class HomePageState extends State<Homepage> with TickerProviderStateMixin {
-  List<StorageItemAbstract> items = [];
   TabController _tabController;
-  String errorMessage;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  List<Category> categories = [];
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -35,104 +33,48 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     });
   }
 
-  addItem(StorageItemAbstract item) {
-    print(item);
-    setState(() {
-      items.add(item);
-    });
-  }
-
-  PersistentBottomSheetController _sheetController() {
-    return _scaffoldKey.currentState.showBottomSheet((context) {
-      return Container(
-        height: 80,
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: Center(
-                child: Text(
-                  "Loading...",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              subtitle: LinearProgressIndicator(),
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  Future fetchData() async {
-    PersistentBottomSheetController controller = _sheetController();
-    try {
-      setState(() {
-        errorMessage = null;
-      });
-      List<StorageItemAbstract> items = await fetchItems();
-      final c = await fetchCategories();
-      setState(() {
-        _tabController = new TabController(length: c.length, vsync: this);
-        categories = c;
-      });
-      Future.delayed(Duration(milliseconds: 500), () {
-        setState(() {
-          controller.close();
-          this.items = items;
-        });
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("数据已获取"),
-          duration: Duration(seconds: 2),
-        ));
-      });
-    } on Exception catch (err) {
-      print(err);
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(err.toString()),
-      ));
-      setState(() {
-        errorMessage = err.toString();
-      });
-    }
-  }
-
   Future scanQR() async {
     ItemDetailState state = Provider.of(context);
+    HomeProvider homePageState = Provider.of(context);
     try {
       String barcode = await BarcodeScanner.scan();
       await state.fetchItemByQR(context, qrCode: barcode);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
+        homePageState.scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Unable to access camera"),
           duration: Duration(seconds: 3),
         ));
       }
     } on FormatException {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("No qr has been scanned"),
+      homePageState.scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("No qr has been scaned"),
         duration: Duration(seconds: 3),
       ));
     } on Exception catch (err) {
-      print("error");
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      homePageState.scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Item not found"),
         duration: Duration(seconds: 3),
       ));
     }
   }
 
-  remove(StorageItemAbstract item) {
-    setState(() {
-      items.remove(item);
-    });
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text("物品已经删除"),
-    ));
+  Future fetchData() async {
+    HomeProvider provider = Provider.of(context);
+    provider.scaffoldKey = scaffoldKey;
+    await provider.fetchCategories();
+    int index = _tabController?.index;
+    _tabController = TabController(
+        length: provider.categories.length,
+        vsync: this,
+        initialIndex: index ?? 0);
+    await provider.fetchItems();
   }
 
   @override
   Widget build(BuildContext context) {
+    HomeProvider homeProvider = Provider.of(context);
+
     Widget _body = _tabController == null
         ? Center(
             child: Icon(
@@ -144,16 +86,16 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
         : Container(
             child: TabBarView(
               controller: _tabController,
-              children: categories.map((c) {
-                var fItems =
-                    items.where((i) => i.categoryName == c.name).toList();
+              children: homeProvider.categories.map((c) {
+                var fItems = homeProvider.items
+                    .where((i) => i.categoryName == c.name)
+                    .toList();
                 return RefreshIndicator(
                   onRefresh: () async {
                     await this.fetchData();
                   },
                   child: ItemDisplay(
                     items: fItems,
-                    removeItemById: remove,
                   ),
                 );
               }).toList(),
@@ -161,17 +103,16 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
           );
 
     return Scaffold(
-      key: _scaffoldKey,
+      key: scaffoldKey,
       appBar: AppBar(
-        title: errorMessage == null
-            ? Text("Storage Management")
-            : Text(errorMessage),
+        title: Text("Storage Management"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
               showSearch(
-                  context: context, delegate: CustomSearchDelegate(items));
+                  context: context,
+                  delegate: CustomSearchDelegate(homeProvider.items));
             },
           ),
           IconButton(
@@ -184,7 +125,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             : TabBar(
                 controller: _tabController,
                 isScrollable: true,
-                tabs: categories
+                tabs: homeProvider.categories
                     .map((c) => Tab(
                           text: c.name,
                         ))
@@ -226,7 +167,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
                             .push(MaterialPageRoute(builder: (context) {
                           return NewEditPage();
                         }));
-                        fetchData();
+                        await fetchData();
                       },
                     ),
                     ListTile(

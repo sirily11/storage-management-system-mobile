@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:storage_management_mobile/Home/ConfirmDialog.dart';
+import 'package:storage_management_mobile/Home/Detail/quantityEditPannel.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
@@ -184,7 +185,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                       navigationTo(Path.location);
                     }),
               ],
-            )
+            ),
+            QuantityEdit(),
           ],
         ),
       ),
@@ -383,42 +385,49 @@ class ButtonInfo extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final Function onClick;
 
   ButtonInfo(
       {@required this.label,
       @required this.icon,
       @required this.color,
-      @required this.value});
+      @required this.value,
+      this.onClick});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Icon(
-            icon,
-            color: Colors.white,
+    return GestureDetector(
+      onTap: () {
+        this.onClick();
+      },
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Icon(
+              icon,
+              color: Colors.white,
+            ),
+            decoration:
+                BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.15),
+                blurRadius: 8.0,
+              )
+            ]),
           ),
-          decoration:
-              BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.15),
-              blurRadius: 8.0,
-            )
-          ]),
-        ),
-        SizedBox(
-          height: 12.0,
-        ),
-        Text(
-          label,
-        ),
-        Text(
-          value,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        )
-      ],
+          SizedBox(
+            height: 12.0,
+          ),
+          Text(
+            label,
+          ),
+          Text(
+            value,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
     );
   }
 }

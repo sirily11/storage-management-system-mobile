@@ -155,4 +155,15 @@ class ItemDetailState with ChangeNotifier {
     this.item = item;
     notifyListeners();
   }
+
+  Future<void> modifyQuantity(int value) async {
+    try {
+      var url = await getURL("item/${item.id}/");
+      var response = await Dio().patch(url, data: {"quantity": value});
+      item.quantity = value;
+      notifyListeners();
+    } catch (err) {
+      print(err);
+    }
+  }
 }
