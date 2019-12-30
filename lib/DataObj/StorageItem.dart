@@ -218,6 +218,7 @@ class StorageItemDetail {
   List<String> files;
   String qrCode;
   String uuid;
+  DateTime createAt;
 
   StorageItemDetail(
       {this.id,
@@ -236,7 +237,8 @@ class StorageItemDetail {
       this.files,
       this.unit,
       this.uuid,
-      this.quantity});
+      this.quantity,
+      this.createAt});
 
   Map<String, dynamic> toJSON() {
     return {
@@ -280,6 +282,7 @@ class StorageItemDetail {
         unit: json['unit'],
         uuid: json['uuid'],
         quantity: json['quantity'],
+        createAt: DateTime.parse(json['created_time']),
         files: json['files'].cast<String>());
   }
 }

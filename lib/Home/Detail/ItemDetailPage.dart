@@ -8,6 +8,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:storage_management_mobile/Home/ConfirmDialog.dart';
 import 'package:storage_management_mobile/Home/Detail/quantityEditPannel.dart';
+import 'package:storage_management_mobile/utils/utils.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
@@ -102,6 +103,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             fontSize: 24.0,
           ),
         ),
+        Text(getTime(item.createAt)),
         _bodypanel(),
       ],
     );
