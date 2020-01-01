@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_form/JSONSchemaForm.dart';
 import 'package:json_schema_form/models/Action.dart';
@@ -118,7 +121,18 @@ class _NewEditPageState extends State<NewEditPage> {
                         FieldAction(
                             schemaName: "qr_code",
                             actionTypes: ActionTypes.qrScan,
-                            actionDone: ActionDone.getInput)
+                            actionDone: ActionDone.getInput),
+                        FieldAction<File>(
+                            schemaName: "name",
+                            actionTypes: ActionTypes.image,
+                            actionDone: ActionDone.getInput,
+                            onDone: (file) async {
+                              final ImageLabeler labeler =
+                                  FirebaseVision.instance.imageLabeler();
+                              var result = await labeler.processImage(
+                                  FirebaseVisionImage.fromFile(file));
+                              return result.first.text;
+                            })
                       ],
                       onSubmit: (data) async {
                         data.removeWhere((k, v) => v == null);
