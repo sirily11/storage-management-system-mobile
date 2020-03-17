@@ -1,16 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:storage_management_mobile/DataObj/Setting.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/utils/utils.dart';
 
 class HomeProvider with ChangeNotifier {
   /// Current selected category
-  Category _selectedCategory;
+  static Category allCategory = Category(id: null, name: "All");
+  static Location allLocation = Location(id: null, name: "All");
+  static Position allPosition = Position(id: null, name: "All");
+
+  Category _selectedCategory = allCategory;
+  Location _selectedLocation = allLocation;
+  Position _selectedPosition = allPosition;
 
   /// Next page url
   String next;
   List<StorageItemAbstract> items = [];
-  List<Category> categories = [];
+  SettingObj settingObj;
   GlobalKey<ScaffoldState> scaffoldKey;
   Dio dio;
 
@@ -20,6 +27,22 @@ class HomeProvider with ChangeNotifier {
 
   set selectedCategory(Category c) {
     _selectedCategory = c;
+    notifyListeners();
+    fetchItems();
+  }
+
+  get selectedLocation => _selectedLocation;
+
+  set selectedLocation(Location c) {
+    _selectedLocation = c;
+    notifyListeners();
+    fetchItems();
+  }
+
+  get selectedPosition => _selectedPosition;
+
+  set selectedPosition(Position c) {
+    _selectedPosition = c;
     notifyListeners();
     fetchItems();
   }
@@ -78,8 +101,11 @@ class HomeProvider with ChangeNotifier {
     String url = await getURL("item/");
     PersistentBottomSheetController controller = sheetController();
     try {
-      if (_selectedCategory != null) {
-        url = "$url?category=${_selectedCategory.id}";
+      if (_selectedCategory != null ||
+          _selectedLocation != null ||
+          _selectedPosition != null) {
+        url =
+            "$url?category=${_selectedCategory?.id ?? ""}&location=${_selectedLocation?.id ?? ""}&detail_position=${_selectedPosition?.id ?? ""}";
       }
 
       final response = await this.dio.get(url);
@@ -93,10 +119,10 @@ class HomeProvider with ChangeNotifier {
       });
 
       this.items = list;
-      scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("数据已获取"),
-        duration: Duration(seconds: 1),
-      ));
+      // scaffoldKey.currentState.showSnackBar(SnackBar(
+      //   content: Text("数据已获取"),
+      //   duration: Duration(seconds: 1),
+      // ));
       Future.delayed(Duration(milliseconds: 500), () {
         controller.close();
       });
@@ -110,14 +136,19 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchCategories() async {
-    var url = await getURL("category");
-    final response = await this.dio.get<List<dynamic>>(url);
+  Future<void> fetchSettings() async {
+    var url = await getURL("settings");
+    final response = await this.dio.get(url);
     try {
-      var categories = response.data
-          .map((d) => Category.fromJson((d as Map<String, dynamic>)))
-          .toList();
-      this.categories = categories;
+      var settings = SettingObj.fromJson(response.data);
+      settings.categories = List.from([allCategory])
+        ..addAll(settings.categories);
+
+      settings.positions = List.from([allPosition])..addAll(settings.positions);
+
+      settings.locations = List.from([allLocation])..addAll(settings.locations);
+
+      this.settingObj = settings;
       notifyListeners();
     } catch (err) {
       scaffoldKey.currentState.showSnackBar(SnackBar(

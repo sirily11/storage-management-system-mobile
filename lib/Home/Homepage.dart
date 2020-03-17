@@ -35,8 +35,8 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Future scanQR() async {
-    ItemDetailState state = Provider.of(context);
-    HomeProvider homePageState = Provider.of(context);
+    ItemDetailState state = Provider.of(context, listen: false);
+    HomeProvider homePageState = Provider.of(context, listen: false);
     try {
       String barcode = await BarcodeScanner.scan();
       await state.fetchItemByQR(context, qrCode: barcode);
@@ -61,9 +61,9 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Future fetchData() async {
-    HomeProvider provider = Provider.of(context);
+    HomeProvider provider = Provider.of(context, listen: false);
     provider.scaffoldKey = scaffoldKey;
-    await provider.fetchCategories();
+    await provider.fetchSettings();
     await provider.fetchItems();
   }
 
