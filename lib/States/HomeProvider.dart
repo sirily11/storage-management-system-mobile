@@ -4,6 +4,11 @@ import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/utils/utils.dart';
 
 class HomeProvider with ChangeNotifier {
+  /// Current selected category
+  Category _selectedCategory;
+
+  /// Next page url
+  String next;
   List<StorageItemAbstract> items = [];
   List<Category> categories = [];
   GlobalKey<ScaffoldState> scaffoldKey;
@@ -12,6 +17,14 @@ class HomeProvider with ChangeNotifier {
   HomeProvider({Dio networkProvider}) {
     this.dio = networkProvider ?? Dio();
   }
+
+  set selectedCategory(Category c) {
+    _selectedCategory = c;
+    notifyListeners();
+    fetchItems();
+  }
+
+  get selectedCategory => _selectedCategory;
 
   PersistentBottomSheetController sheetController() {
     return scaffoldKey.currentState.showBottomSheet((context) {
@@ -34,19 +47,55 @@ class HomeProvider with ChangeNotifier {
     });
   }
 
-  Future<void> fetchItems() async {
-    var url = await getURL("item/");
+  Future<void> fetchMore() async {
+    if (next == null) {
+      return;
+    }
+
     try {
-      PersistentBottomSheetController controller = sheetController();
+      final response = await this.dio.get(next);
+      Result result = Result<dynamic>.fromJSON(response.data);
+      next = result.next;
+
+      List<StorageItemAbstract> moreList = [];
+      result.results.forEach((data) {
+        moreList.add(StorageItemAbstract.fromJson(data));
+      });
+
+      this.items = List.from(items)..addAll(moreList);
+
+      notifyListeners();
+    } catch (err) {
+      scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(err.toString()),
+      ));
+
+      throw ("Failed to fetch");
+    }
+  }
+
+  Future<void> fetchItems() async {
+    String url = await getURL("item/");
+    PersistentBottomSheetController controller = sheetController();
+    try {
+      if (_selectedCategory != null) {
+        url = "$url?category=${_selectedCategory.id}";
+      }
+
       final response = await this.dio.get(url);
+
+      Result result = Result<dynamic>.fromJSON(response.data);
+      next = result.next;
+
       List<StorageItemAbstract> list = [];
-      response.data.forEach((data) {
+      result.results.forEach((data) {
         list.add(StorageItemAbstract.fromJson(data));
       });
+
       this.items = list;
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("数据已获取"),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 1),
       ));
       Future.delayed(Duration(milliseconds: 500), () {
         controller.close();
@@ -56,6 +105,7 @@ class HomeProvider with ChangeNotifier {
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));
+      controller.close();
       throw ("Failed to fetch");
     }
   }

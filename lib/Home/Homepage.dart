@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/Home/CategorySelector.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemDetailState.dart';
 
@@ -22,7 +24,6 @@ class Homepage extends StatefulWidget {
 }
 
 class HomePageState extends State<Homepage> with TickerProviderStateMixin {
-  TabController _tabController;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -63,44 +64,12 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     HomeProvider provider = Provider.of(context);
     provider.scaffoldKey = scaffoldKey;
     await provider.fetchCategories();
-    int index = _tabController?.index;
-    _tabController = TabController(
-        length: provider.categories.length,
-        vsync: this,
-        initialIndex: index ?? 0);
     await provider.fetchItems();
   }
 
   @override
   Widget build(BuildContext context) {
     HomeProvider homeProvider = Provider.of(context);
-
-    Widget _body = _tabController == null
-        ? Center(
-            child: Icon(
-              Icons.pages,
-              color: Colors.white,
-              size: 100,
-            ),
-          )
-        : Container(
-            child: TabBarView(
-              controller: _tabController,
-              children: homeProvider.categories.map((c) {
-                var fItems = homeProvider.items
-                    .where((i) => i.categoryName == c.name)
-                    .toList();
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await this.fetchData();
-                  },
-                  child: ItemDisplay(
-                    items: fItems,
-                  ),
-                );
-              }).toList(),
-            ),
-          );
 
     return Scaffold(
       key: scaffoldKey,
@@ -119,20 +88,35 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             icon: Icon(Icons.camera_alt),
             onPressed: scanQR,
           ),
+          IconButton(
+            tooltip: "Select category",
+            icon: Icon(Icons.category),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (c) => CategorySelector(),
+              );
+            },
+          )
         ],
-        bottom: _tabController == null
-            ? null
-            : TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                tabs: homeProvider.categories
-                    .map((c) => Tab(
-                          text: c.name,
-                        ))
-                    .toList(),
-              ),
       ),
-      body: _body,
+      body: EasyRefresh(
+        header: ClassicalHeader(
+          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+        ),
+        footer: ClassicalFooter(
+          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+        ),
+        onRefresh: () async {
+          await fetchData();
+        },
+        onLoad: () async {
+          await homeProvider.fetchMore();
+        },
+        child: ItemDisplay(
+          items: homeProvider.items,
+        ),
+      ),
       drawer: new HomepageDrawer(),
       floatingActionButton: buildFloatingActionButton(context),
     );

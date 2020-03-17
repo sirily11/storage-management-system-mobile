@@ -1,5 +1,22 @@
 import 'Decodeable.dart';
 
+class Result<T> {
+  int count;
+  String next;
+  String previous;
+  List<T> results;
+
+  Result({this.count, this.next, this.previous, this.results});
+
+  factory Result.fromJSON(Map<String, dynamic> json) {
+    return Result(
+        count: json['count'],
+        results: json['results'],
+        next: json['next'],
+        previous: json['previous']);
+  }
+}
+
 class StorageItemAbstract {
   int id;
   String name;

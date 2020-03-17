@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
-import 'package:json_schema_form/JSONSchemaForm.dart';
-import 'package:json_schema_form/models/Action.dart';
-import 'package:json_schema_form/models/Icon.dart';
+import 'package:json_schema_form/json_schema_form.dart' hide getURL;
 
 import '../utils/utils.dart';
 
@@ -130,7 +128,8 @@ class _NewEditPageState extends State<NewEditPage> {
                               final ImageLabeler labeler =
                                   FirebaseVision.instance.imageLabeler();
                               var result = await labeler.processImage(
-                                  FirebaseVisionImage.fromFile(file));
+                                FirebaseVisionImage.fromFile(file),
+                              );
                               return result.first.text;
                             })
                       ],

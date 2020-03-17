@@ -17,10 +17,10 @@ class StorageManagement extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          builder: (_) => ItemDetailState(),
+          create: (_) => ItemDetailState(),
         ),
         ChangeNotifierProvider(
-          builder: (_) => HomeProvider(),
+          create: (_) => HomeProvider(),
         )
       ],
       child: MaterialApp(

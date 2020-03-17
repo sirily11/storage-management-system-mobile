@@ -30,40 +30,42 @@ class ItemDisplay extends StatelessWidget {
       return CircularProgressIndicator();
     }
 
-    return ListView.builder(
-        itemCount: items.length,
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int i) {
-          var item = items[i];
-          return Slidable(
-            key: Key(item.id.toString()),
-            actionPane: SlidableDrawerActionPane(),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                caption: "Delete",
-                icon: Icons.delete,
-                color: Colors.red,
-                onTap: () async {
-                  try {
-                    HomeProvider provider = Provider.of(context);
-                    await provider.remove(item);
-                  } on Exception catch (err) {}
-                },
-              )
-            ],
-            child: Column(
-              children: <Widget>[
-                Card(
-                  margin:
-                      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                  child: Container(
-                    child: buildListTile(item, context),
-                  ),
-                ),
+    return Scrollbar(
+      child: ListView.builder(
+          itemCount: items.length,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int i) {
+            var item = items[i];
+            return Slidable(
+              key: Key(item.id.toString()),
+              actionPane: SlidableDrawerActionPane(),
+              secondaryActions: <Widget>[
+                IconSlideAction(
+                  caption: "Delete",
+                  icon: Icons.delete,
+                  color: Colors.red,
+                  onTap: () async {
+                    try {
+                      HomeProvider provider = Provider.of(context);
+                      await provider.remove(item);
+                    } on Exception catch (err) {}
+                  },
+                )
               ],
-            ),
-          );
-        });
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    margin: new EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 6.0),
+                    child: Container(
+                      child: buildListTile(item, context),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+    );
   }
 
   ListTile buildListTile(StorageItemAbstract item, BuildContext context) {
