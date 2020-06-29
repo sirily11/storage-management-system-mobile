@@ -279,7 +279,7 @@ class StorageItemDetail {
   factory StorageItemDetail.fromJson(Map<String, dynamic> json) {
     List<ImageObject> images = [];
 
-    json['images_objects'].forEach((data) {
+    json['images_objects']?.forEach((data) {
       images.add(ImageObject.fromJson(data));
     });
     return StorageItemDetail(
@@ -299,7 +299,9 @@ class StorageItemDetail {
         unit: json['unit'],
         uuid: json['uuid'],
         quantity: json['quantity'],
-        createAt: DateTime.parse(json['created_time']),
+        createAt: json['created_time'] != null
+            ? DateTime.parse(json['created_time'])
+            : null,
         files: json['files'].cast<String>());
   }
 }

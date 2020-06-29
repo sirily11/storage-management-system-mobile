@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/States/ItemDetailState.dart';
+import 'package:storage_management_mobile/States/urls.dart';
 
 import '../utils/utils.dart';
 
@@ -53,7 +54,7 @@ class _UploadDialogState extends State<UploadDialog> {
 
   @override
   Widget build(BuildContext context) {
-    ItemDetailState state = Provider.of(context);
+    ItemProvider state = Provider.of(context);
     return Dialog(
       child: Container(
         height: 400,
@@ -102,11 +103,8 @@ class _UploadDialogState extends State<UploadDialog> {
                           "image":
                               await MultipartFile.fromFile(widget.image.path)
                         });
-                        String url = await getURL("itemimage/");
+                        String url = "${state.baseURL}$itemImageURL/";
                         Response response = await Dio().post(url, data: data);
-                        // if (selectedLabel != null) {
-                        //   await state.updateCategory(selectedLabel, widget.id);
-                        // }
                         if (Navigator.canPop(context)) {
                           Navigator.of(context).pop();
                         }

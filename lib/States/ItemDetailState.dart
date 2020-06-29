@@ -8,8 +8,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:printing/printing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
 import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
+import 'package:storage_management_mobile/States/urls.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../utils/utils.dart';
@@ -17,14 +19,22 @@ import '../utils/utils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdf;
 
-class ItemDetailState with ChangeNotifier {
+class ItemProvider with ChangeNotifier {
   StorageItemDetail item;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey qrKey = new GlobalKey();
+  String baseURL;
   Dio dio;
 
-  ItemDetailState({Dio networkProvider}) {
+  ItemProvider({Dio networkProvider}) {
     this.dio = networkProvider ?? Dio();
+    this.initURL();
+  }
+
+  Future<void> initURL() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    this.baseURL = preferences.getString("server");
+    notifyListeners();
   }
 
   PersistentBottomSheetController _sheetController() {
@@ -52,7 +62,7 @@ class ItemDetailState with ChangeNotifier {
   Future<StorageItemDetail> _fetchItem(int id) async {
     var controller = _sheetController();
     try {
-      var url = await getURL("item/$id");
+      var url = "$baseURL$itemURL/$id";
       final response = await this.dio.get(url);
       var item = StorageItemDetail.fromJson(response.data);
       Future.delayed(Duration(milliseconds: 500), () {
@@ -70,7 +80,7 @@ class ItemDetailState with ChangeNotifier {
 
   Future deleteImage(int id) async {
     try {
-      var url = await getURL("itemimage/$id/");
+      var url = "$baseURL$itemImageURL/";
       var response = await this.dio.delete(url);
       item.images.removeWhere((i) => i.id == id);
       notifyListeners();
@@ -81,12 +91,10 @@ class ItemDetailState with ChangeNotifier {
 
   Future updateCategory(String category, int itemID) async {
     try {
-      var url = await getURL("category/");
-      var response = await this.dio.post(
-          "http://192.168.1.114:8000/storage_management/category/",
-          data: {"name": category});
+      var url = "$baseURL$categoryURL";
+      var response = await this.dio.post(url, data: {"name": category});
       Category c = Category.fromJson(response.data);
-      var url2 = await getURL("item/$itemID/");
+      var url2 = "$baseURL$itemURL/$itemID/";
       item.category = c;
       var response2 =
           await this.dio.patch(url2, data: {"category": response.data});
@@ -133,7 +141,7 @@ class ItemDetailState with ChangeNotifier {
 
   Future fetchItemByQR(BuildContext context, {String qrCode}) async {
     try {
-      var url = await getURL("searchByQR?qr=$qrCode");
+      var url = "$baseURL/searchByQR?qr=$qrCode";
       final response = await this.dio.get(url);
       if (response.data is List) {
         List<StorageItemAbstract> items = (response.data as List)
@@ -172,7 +180,7 @@ class ItemDetailState with ChangeNotifier {
 
   Future<void> modifyQuantity(int value) async {
     try {
-      var url = await getURL("item/${item.id}/");
+      var url = "$baseURL$itemURL/${item.id}/";
       var response = await this.dio.patch(url, data: {"quantity": value});
       item.quantity = value;
       notifyListeners();

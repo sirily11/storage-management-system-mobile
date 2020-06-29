@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:storage_management_mobile/States/HomeProvider.dart';
+import 'package:storage_management_mobile/States/ItemDetailState.dart';
+import 'package:storage_management_mobile/States/urls.dart';
 
 import '../Edit/CardTheme.dart';
 import '../Home/DrawerNav.dart';
@@ -13,8 +17,6 @@ class _SettingPageState extends State<SettingPage> {
   final TextEditingController _websocket = TextEditingController();
   final TextEditingController _server = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final wsPath = "websocket";
-  final serverPath = "server";
 
   @override
   void initState() {
@@ -79,6 +81,9 @@ class AddressForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomeProvider homeProvider = Provider.of(context);
+    ItemProvider itemProvider = Provider.of(context);
+
     return CardSelectorTheme(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -123,9 +128,9 @@ class AddressForm extends StatelessWidget {
                                   leading: new Icon(Icons.save),
                                   title: new Text('Save'),
                                   onTap: () async {
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    prefs.setString(to, _controller.text);
+                                    await homeProvider.setURL(_controller.text);
+                                    await itemProvider.initURL();
+                                    await homeProvider.initURL();
                                     Navigator.pop(context);
                                     onSaved();
                                   }),

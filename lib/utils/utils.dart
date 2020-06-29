@@ -5,23 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
 
-Future<String> getURL(String path, {bool onlyBase = false}) async {
-  String base = "http://0.0.0.0:80";
-  try {
-    final prefs = await SharedPreferences.getInstance();
-
-    String url = prefs.getString("server") ?? base;
-    if (onlyBase) {
-      return url;
-    }
-    return "$url/storage_management/$path";
-  } on Exception catch (err) {
-    if (onlyBase) {
-      return base;
-    }
-    return "$base/storage_management/$path";
-  }
-}
 
 Future<String> getWebSocket({String path}) async {
   String base = "ws://192.168.31.19:4000";

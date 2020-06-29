@@ -28,7 +28,8 @@ class PositionDetail extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.print),
             onPressed: () async {
-              ItemDetailState itemDetailState = Provider.of(context);
+              ItemProvider itemDetailState =
+                  Provider.of(context, listen: false);
               showDialog(
                 context: context,
                 builder: (_) => AlertDialog(

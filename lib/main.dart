@@ -17,7 +17,7 @@ class StorageManagement extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ItemDetailState(),
+          create: (_) => ItemProvider(),
         ),
         ChangeNotifierProvider(
           create: (_) => HomeProvider(),
@@ -28,8 +28,24 @@ class StorageManagement extends StatelessWidget {
         themeMode: ThemeMode.system,
         theme: Theme.of(context).copyWith(accentColor: Colors.black),
         darkTheme: ThemeData.dark(),
-        home: Homepage(),
+        home: LoadingScreen(),
       ),
+    );
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    HomeProvider homeProvider = Provider.of(context);
+    ItemProvider itemProvider = Provider.of(context);
+
+    if (homeProvider.baseURL != null && itemProvider.baseURL != null) {
+      return Homepage();
+    }
+
+    return Container(
+      color: Colors.white,
     );
   }
 }

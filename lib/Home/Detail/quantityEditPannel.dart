@@ -16,7 +16,7 @@ class _QuantityEditState extends State<QuantityEdit> {
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 20), () {
-      ItemDetailState itemDetailState = Provider.of(context);
+      ItemProvider itemDetailState = Provider.of(context, listen: false);
       setState(() {
         value = itemDetailState.item.quantity;
       });
@@ -25,7 +25,7 @@ class _QuantityEditState extends State<QuantityEdit> {
 
   @override
   Widget build(BuildContext context) {
-    ItemDetailState itemDetailState = Provider.of(context);
+    ItemProvider itemDetailState = Provider.of(context);
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Card(

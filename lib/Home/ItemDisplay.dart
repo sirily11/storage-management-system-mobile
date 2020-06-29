@@ -32,6 +32,7 @@ class ItemDisplay extends StatelessWidget {
 
     return Scrollbar(
       child: ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
           itemCount: items.length,
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int i) {
@@ -46,7 +47,8 @@ class ItemDisplay extends StatelessWidget {
                   color: Colors.red,
                   onTap: () async {
                     try {
-                      HomeProvider provider = Provider.of(context);
+                      HomeProvider provider =
+                          Provider.of(context, listen: false);
                       await provider.remove(item);
                     } on Exception catch (err) {}
                   },

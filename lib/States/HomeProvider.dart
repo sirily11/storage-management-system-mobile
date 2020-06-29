@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storage_management_mobile/DataObj/Setting.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
+import 'package:storage_management_mobile/States/urls.dart';
 import 'package:storage_management_mobile/utils/utils.dart';
 
 class HomeProvider with ChangeNotifier {
@@ -19,10 +21,23 @@ class HomeProvider with ChangeNotifier {
   List<StorageItemAbstract> items = [];
   SettingObj settingObj;
   GlobalKey<ScaffoldState> scaffoldKey;
+  String baseURL;
   Dio dio;
 
   HomeProvider({Dio networkProvider}) {
     this.dio = networkProvider ?? Dio();
+    this.initURL();
+  }
+
+  Future<void> initURL() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    this.baseURL = preferences.getString(serverPath);
+    notifyListeners();
+  }
+
+  Future<void> setURL(String url) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(serverPath, url);
   }
 
   set selectedCategory(Category c) {
@@ -98,8 +113,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future<void> fetchItems() async {
-    String url = await getURL("item/");
-    PersistentBottomSheetController controller = sheetController();
+    String url = "$baseURL$itemURL";
     try {
       if (_selectedCategory != null ||
           _selectedLocation != null ||
@@ -119,25 +133,19 @@ class HomeProvider with ChangeNotifier {
       });
 
       this.items = list;
-      // scaffoldKey.currentState.showSnackBar(SnackBar(
-      //   content: Text("数据已获取"),
-      //   duration: Duration(seconds: 1),
-      // ));
-      Future.delayed(Duration(milliseconds: 500), () {
-        controller.close();
-      });
+
       notifyListeners();
     } catch (err) {
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));
-      controller.close();
+
       throw ("Failed to fetch");
     }
   }
 
   Future<void> fetchSettings() async {
-    var url = await getURL("settings");
+    var url = "$baseURL$settingsURL";
     final response = await this.dio.get(url);
     try {
       var settings = SettingObj.fromJson(response.data);
@@ -163,7 +171,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   remove(StorageItemAbstract item) async {
-    var url = await getURL("item/${item.id}/");
+    var url = "$baseURL$itemURL/{item.id}";
     var respnse = await this.dio.delete(url);
     items.remove(item);
     scaffoldKey.currentState.showSnackBar(SnackBar(

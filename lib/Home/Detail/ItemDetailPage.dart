@@ -47,13 +47,15 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 20), () async {
-      ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+      ItemProvider detailState =
+          Provider.of<ItemProvider>(context, listen: false);
       await detailState.fetchData(id: this.id);
     });
   }
 
   navigationTo(Path navTo) {
-    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    ItemProvider detailState =
+        Provider.of<ItemProvider>(context, listen: false);
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       switch (navTo) {
         case Path.author:
@@ -69,7 +71,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   }
 
   Widget _panel() {
-    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    ItemProvider detailState =
+        Provider.of<ItemProvider>(context, listen: false);
     StorageItemDetail item = detailState.item;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +112,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   }
 
   Widget _bodypanel() {
-    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    ItemProvider detailState =
+        Provider.of<ItemProvider>(context, listen: false);
     StorageItemDetail item = detailState.item;
     return Expanded(
       child: Container(
@@ -196,7 +200,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    ItemDetailState detailState = Provider.of<ItemDetailState>(context);
+    ItemProvider detailState = Provider.of<ItemProvider>(context);
     var item = detailState.item;
     return Scaffold(
       key: detailState.scaffoldKey,
@@ -205,7 +209,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         actions: <Widget>[
           IconButton(
             onPressed: () async {
-              ItemDetailState itemDetailState = Provider.of(context);
+              ItemProvider itemDetailState =
+                  Provider.of(context, listen: false);
               showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
@@ -246,8 +251,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                   );
                 }),
               );
-              ItemDetailState detailState =
-                  Provider.of<ItemDetailState>(context);
+              ItemProvider detailState =
+                  Provider.of<ItemProvider>(context, listen: false);
               await detailState.fetchData(id: this.id);
             },
           )
@@ -277,8 +282,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                       leading: Icon(Icons.add),
                       title: Text("编辑新的物品"),
                       onTap: () async {
-                        ItemDetailState detailState =
-                            Provider.of<ItemDetailState>(context);
+                        ItemProvider detailState =
+                            Provider.of<ItemProvider>(context, listen: false);
                         Map<String, dynamic> values = detailState.item.toJSON();
                         // init edit info
                         // put current author, series info into the setting state
@@ -397,9 +402,11 @@ class ButtonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        this.onClick();
+        if (this.onClick != null) {
+          this.onClick();
+        }
       },
       child: Column(
         children: <Widget>[
@@ -459,7 +466,8 @@ class ImageCard extends StatelessWidget {
                 right: 0,
                 child: IconButton(
                   onPressed: () async {
-                    ItemDetailState pageState = Provider.of(context);
+                    ItemProvider pageState =
+                        Provider.of(context, listen: false);
                     await pageState.deleteImage(i.id);
                   },
                   icon: Icon(Icons.clear),
@@ -512,7 +520,8 @@ class ImageGrid extends StatelessWidget {
                   right: 0,
                   child: IconButton(
                     onPressed: () async {
-                      ItemDetailState pageState = Provider.of(context);
+                      ItemProvider pageState =
+                          Provider.of(context, listen: false);
                       showDialog(
                         context: context,
                         builder: (_) => ConfirmDialog(
