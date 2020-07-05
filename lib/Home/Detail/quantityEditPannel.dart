@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
-import 'package:storage_management_mobile/States/ItemDetailState.dart';
+import 'package:storage_management_mobile/States/ItemProvider.dart';
 
 class QuantityEdit extends StatefulWidget {
   @override

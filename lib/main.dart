@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
 
 import 'Home/Homepage.dart';
 import 'States/HomeProvider.dart';
-import 'States/ItemDetailState.dart';
+import 'States/ItemProvider.dart';
 
 Future<void> main() async {
   runApp(StorageManagement());
@@ -28,7 +29,17 @@ class StorageManagement extends StatelessWidget {
         themeMode: ThemeMode.system,
         theme: Theme.of(context).copyWith(accentColor: Colors.black),
         darkTheme: ThemeData.dark(),
-        home: LoadingScreen(),
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (context) => Container(),
+          );
+        },
+        routes: {
+          '/': (c) => CupertinoScaffold(
+                body: LoadingScreen(),
+              )
+        },
       ),
     );
   }

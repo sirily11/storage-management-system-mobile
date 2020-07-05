@@ -82,15 +82,15 @@ class _ScannerState extends State<ScannerPage> {
 
   Future scanQR() async {
     try {
-      String barcode = await BarcodeScanner.scan();
+      var result = await BarcodeScanner.scan();
       setState(() {
-        this.qrCode = barcode;
+        this.qrCode = result.rawContent;
       });
       Message message =
-          Message(body: barcode, type: "message", from: "scanner");
+          Message(body: this.qrCode, type: "message", from: "scanner");
       _socket.add(json.encode(message));
     } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Unable to access camera"),
           duration: Duration(seconds: 3),

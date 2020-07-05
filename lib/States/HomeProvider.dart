@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:json_schema_form/json_textform/models/Schema.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:storage_management_mobile/DataObj/Schema.dart';
 import 'package:storage_management_mobile/DataObj/Setting.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/urls.dart';
@@ -27,6 +29,58 @@ class HomeProvider with ChangeNotifier {
   HomeProvider({Dio networkProvider}) {
     this.dio = networkProvider ?? Dio();
     this.initURL();
+  }
+
+  Future<void> updateForignKey(
+      int id, String path, Map<String, dynamic> data) async {
+    var response = await Dio().patch("$baseURL/$path/$id/", data: data);
+  }
+
+  Future<void> addForignKey(String path, Map<String, dynamic> data) async {
+    try {
+      var response = await Dio().post("$baseURL/$path/", data: data);
+    } catch (err) {
+      print(err);
+      rethrow;
+    }
+  }
+
+  Future<List<Choice>> fetchChoices(String path) async {
+    var response = await Dio().get<List>("$baseURL/$path/");
+    var choices = response.data
+        .map((e) => Choice(label: e['name'], value: e['id']))
+        .toList();
+    return choices;
+  }
+
+  Future<List> fetchSchema(String path) async {
+    try {
+      var response = await Dio().request(
+        "$baseURL/$path/",
+        options: Options(method: "OPTIONS"),
+      );
+
+      return (response.data['fields'] as List)
+          .map((e) => e as Map<String, dynamic>)
+          .where((element) => element['label'] != "image")
+          .toList();
+    } catch (err) {
+      print("$err");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchSchemaValues(String path, int id) async {
+    try {
+      var response = await Dio().get(
+        "$baseURL/$path/$id/",
+      );
+
+      return response.data;
+    } catch (err) {
+      print("$err");
+      rethrow;
+    }
   }
 
   Future<void> initURL() async {
@@ -139,8 +193,7 @@ class HomeProvider with ChangeNotifier {
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));
-
-      throw ("Failed to fetch");
+      return [];
     }
   }
 
@@ -171,7 +224,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   remove(StorageItemAbstract item) async {
-    var url = "$baseURL$itemURL/{item.id}";
+    var url = "$baseURL$itemURL/${item.id}/";
     var respnse = await this.dio.delete(url);
     items.remove(item);
     scaffoldKey.currentState.showSnackBar(SnackBar(

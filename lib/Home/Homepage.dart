@@ -4,10 +4,12 @@ import 'package:flutter/widgets.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/Home/CategorySelector.dart';
+import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
-import 'package:storage_management_mobile/States/ItemDetailState.dart';
+import 'package:storage_management_mobile/States/ItemProvider.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../Edit/NewEditPage.dart';
@@ -38,10 +40,11 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     ItemProvider state = Provider.of(context, listen: false);
     HomeProvider homePageState = Provider.of(context, listen: false);
     try {
-      String barcode = await BarcodeScanner.scan();
-      await state.fetchItemByQR(context, qrCode: barcode);
+      var result = await BarcodeScanner.scan();
+      String barCode = result.rawContent;
+      await state.fetchItemByQR(context, qrCode: barCode);
     } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
         homePageState.scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Unable to access camera"),
           duration: Duration(seconds: 3),
@@ -63,7 +66,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   Future fetchData() async {
     HomeProvider provider = Provider.of(context, listen: false);
     provider.scaffoldKey = scaffoldKey;
-    // await provider.fetchSettings();
+    await provider.fetchSettings();
     await provider.fetchItems();
   }
 
@@ -80,8 +83,9 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             icon: Icon(Icons.search),
             onPressed: () {
               showSearch(
-                  context: context,
-                  delegate: CustomSearchDelegate(homeProvider.items));
+                context: context,
+                delegate: CustomSearchDelegate(homeProvider.items),
+              );
             },
           ),
           IconButton(
@@ -92,9 +96,9 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             tooltip: "Select category",
             icon: Icon(Icons.category),
             onPressed: () {
-              showDialog(
+              CupertinoScaffold.showCupertinoModalBottomSheet(
                 context: context,
-                builder: (c) => CategorySelector(),
+                builder: (c, s) => CategorySelector(),
               );
             },
           )
@@ -211,7 +215,7 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
   Widget buildResults(BuildContext context) {
     return buildSuggestions(context);
   }
-
+  
   @override
   Widget buildSuggestions(BuildContext context) {
     if (items == null) {

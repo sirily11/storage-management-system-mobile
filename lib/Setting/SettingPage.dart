@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
-import 'package:storage_management_mobile/States/ItemDetailState.dart';
+import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
 
 import '../Edit/CardTheme.dart';

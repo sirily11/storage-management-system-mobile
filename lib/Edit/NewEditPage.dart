@@ -4,7 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_form/json_schema_form.dart' hide getURL;
+import 'package:json_schema_form/json_textform/JSONForm.dart';
+import 'package:json_schema_form/json_textform/models/Schema.dart';
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/DataObj/Schema.dart';
 import 'package:storage_management_mobile/Home/Homepage.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
@@ -98,6 +101,29 @@ class _NewEditPageState extends State<NewEditPage> {
               List<Map<String, dynamic>> json =
                   snapshot.data.map((s) => s as Map<String, dynamic>).toList();
               return JSONSchemaForm(
+                onAddForignKeyField: (path, values) async {
+                  String basePath = path.split("/")[1];
+                  await homeProvider.addForignKey(basePath, values);
+                },
+                onUpdateForignKeyField: (path, values, id) async {
+                  String basePath = path.split("/")[1];
+                  await homeProvider.updateForignKey(id, basePath, values);
+                },
+                onFetchingForignKeyChoices: (path) async {
+                  String basePath = path.split("/")[1];
+                  var choices = await homeProvider.fetchChoices(basePath);
+                  return choices;
+                },
+                onFetchingSchema: (path, isEdit, id) async {
+                  String basePath = path.split("/")[1];
+                  var schema = await homeProvider.fetchSchema(basePath);
+                  Map<String, dynamic> values = {};
+                  if (isEdit) {
+                    values = await homeProvider.fetchSchemaValues(basePath, id);
+                  }
+
+                  return SchemaValues(schema: schema, values: values);
+                },
                 url: homeProvider.baseURL,
                 rounded: true,
                 schema: json,
@@ -132,7 +158,6 @@ class _NewEditPageState extends State<NewEditPage> {
                 ],
                 onSubmit: (data) async {
                   data.removeWhere((k, v) => v == null);
-                  print(data);
                   try {
                     if (widget.id == null) {
                       await _postItem(data);

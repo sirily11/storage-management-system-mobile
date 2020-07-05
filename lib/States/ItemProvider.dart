@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
@@ -80,7 +82,7 @@ class ItemProvider with ChangeNotifier {
 
   Future deleteImage(int id) async {
     try {
-      var url = "$baseURL$itemImageURL/";
+      var url = "$baseURL$itemImageURL/$id/";
       var response = await this.dio.delete(url);
       item.images.removeWhere((i) => i.id == id);
       notifyListeners();
@@ -144,14 +146,17 @@ class ItemProvider with ChangeNotifier {
       var url = "$baseURL/searchByQR?qr=$qrCode";
       final response = await this.dio.get(url);
       if (response.data is List) {
+        /// qr code is a detail position
         List<StorageItemAbstract> items = (response.data as List)
             .map((i) => StorageItemAbstract.fromJson(i))
             .toList();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (c) => SearchListPage(
-              items: items,
-            ),
+        CupertinoScaffold.showCupertinoModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          duration: Duration(milliseconds: 500),
+          expand: true,
+          builder: (context, controller) => SearchListPage(
+            items: items,
           ),
         );
       } else {
@@ -187,5 +192,23 @@ class ItemProvider with ChangeNotifier {
     } catch (err) {
       print(err);
     }
+  }
+
+  Future<void> updateLocation({
+    @required double latitude,
+    @required double longitude,
+  }) async {
+    var url = "$baseURL$locationURL/${item.location.id}/";
+    await this.dio.patch(
+      url,
+      data: {"latitude": latitude, "longitude": longitude},
+    );
+  }
+
+  static Future<File> pickImage(ImageSource source) async {
+    var imagePicker = ImagePicker();
+    PickedFile image = await imagePicker.getImage(source: source);
+    File imageFile = File(image.path);
+    return imageFile;
   }
 }

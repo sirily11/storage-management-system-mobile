@@ -67,33 +67,41 @@ class Location implements Decodeable {
   String unit;
   String room_number;
   String name;
+  double longitude;
+  double latitude;
 
   @override
   String toString() {
     return "${this.country} ${this.city} ${this.street} ${this.building} ${this.unit} ${this.room_number}";
   }
 
-  Location(
-      {this.id,
-      this.building,
-      this.street,
-      this.country,
-      this.city,
-      this.room_number,
-      this.name,
-      this.unit});
+  Location({
+    this.id,
+    this.building,
+    this.street,
+    this.country,
+    this.city,
+    this.room_number,
+    this.name,
+    this.unit,
+    this.latitude,
+    this.longitude,
+  });
 
   factory Location.fromJson(Map<String, dynamic> json) {
     if (json != null) {
       return Location(
-          id: json['id'],
-          city: json['city'],
-          building: json['building'],
-          street: json['street'],
-          country: json['country'],
-          room_number: json['room_number'],
-          name: json['name'],
-          unit: json['unit']);
+        id: json['id'],
+        city: json['city'],
+        building: json['building'],
+        street: json['street'],
+        country: json['country'],
+        room_number: json['room_number'],
+        name: json['name'],
+        unit: json['unit'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+      );
     }
     return null;
   }
@@ -107,7 +115,9 @@ class Location implements Decodeable {
       "building": building,
       "unit": unit,
       "room_number": room_number,
-      "id": id
+      "id": id,
+      "longitude": longitude,
+      "latitude": latitude,
     };
   }
 }
@@ -180,8 +190,15 @@ class Position implements Decodeable {
   String name;
   String description;
   String uuid;
+  String imageURL;
 
-  Position({this.id, this.name, this.description, this.uuid});
+  Position({
+    this.id,
+    this.name,
+    this.description,
+    this.uuid,
+    this.imageURL,
+  });
 
   factory Position.fromJson(Map<String, dynamic> json) {
     if (json != null) {
@@ -189,7 +206,8 @@ class Position implements Decodeable {
           id: json['id'],
           name: json['position'],
           description: json['description'],
-          uuid: json['uuid']);
+          uuid: json['uuid'],
+          imageURL: json['image']);
     }
     return null;
   }
@@ -266,11 +284,11 @@ class StorageItemDetail {
       "row": this.row.toString(),
       "qr_code": this.qrCode.toString(),
       "unit": this.unit,
-      "author_id": {"label": this.author.name, "value": this.author.id},
-      "series_id": {"label": this.series.name, "value": this.series.id},
-      "category_id": {"label": this.category.name, "value": this.category.id},
-      "location_id": {"label": this.location.name, "value": this.location.id},
-      "position_id": {"label": this.position.name, "value": this.position.id},
+      "author_id": {"label": this.author?.name, "value": this.author?.id},
+      "series_id": {"label": this.series?.name, "value": this.series?.id},
+      "category_id": {"label": this.category?.name, "value": this.category?.id},
+      "location_id": {"label": this.location?.name, "value": this.location?.id},
+      "position_id": {"label": this.position?.name, "value": this.position?.id},
       "uuid": this.uuid,
       "quantity": this.quantity.toString()
     };

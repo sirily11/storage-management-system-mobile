@@ -12,10 +12,10 @@ class DetailedCard extends StatelessWidget {
       child: Container(
         child: ListTile(
           title: Text(
-            this.title,
+            "${this.title}",
           ),
           subtitle: Text(
-            this.subtitle,
+            "${this.subtitle}",
             overflow: TextOverflow.ellipsis,
             softWrap: true,
             maxLines: 30,

@@ -4,6 +4,8 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_chooser/file_chooser.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'UploadDialog.dart';
 
 class ImageScreen extends StatefulWidget {
@@ -24,11 +26,12 @@ class _ImageScreenState extends State<ImageScreen> {
     super.initState();
   }
 
-  void uploadImage(File image, List<ImageLabel> labels) async {
+  Future<void> uploadImage(File image, List<ImageLabel> labels) async {
     if (image != null)
-      await showDialog(
+      await showCupertinoModalBottomSheet(
         context: context,
-        builder: (context) => UploadDialog(
+        expand: true,
+        builder: (context, _) => UploadDialog(
           id: widget.id,
           image: image,
           labels: labels,
@@ -77,10 +80,11 @@ class _ImageScreenState extends State<ImageScreen> {
                     child: RaisedButton(
                       onPressed: () async {
                         try {
-                          File image = await ImagePicker.pickImage(
-                              source: ImageSource.camera);
-                          var labels = await labelImage(image);
-                          uploadImage(image, labels);
+                          var imageFile = await ItemProvider.pickImage(
+                            ImageSource.camera,
+                          );
+                          var labels = await labelImage(imageFile);
+                          await uploadImage(imageFile, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(
@@ -111,10 +115,11 @@ class _ImageScreenState extends State<ImageScreen> {
                     child: RaisedButton(
                       onPressed: () async {
                         try {
-                          File image = await ImagePicker.pickImage(
-                              source: ImageSource.gallery);
-                          var labels = await labelImage(image);
-                          uploadImage(image, labels);
+                          var imageFile = await ItemProvider.pickImage(
+                            ImageSource.gallery,
+                          );
+                          var labels = await labelImage(imageFile);
+                          await uploadImage(imageFile, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(

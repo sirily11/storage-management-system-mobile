@@ -18,13 +18,13 @@ class SearchListPage extends StatelessWidget {
         ),
       ),
       title: Text(
-        "${item.name}",
+        "${item?.name}",
         style: TextStyle(color: Colors.white),
       ),
-      subtitle: Text("${item.authorName} - ${item.seriesName}",
+      subtitle: Text("${item?.authorName} - ${item?.seriesName}",
           style: TextStyle(color: Colors.white)),
       trailing: Text(
-        "${item.position}\nRow:${item.row}: Col:${item.column}",
+        "${item?.position}\nRow:${item?.row}: Col:${item?.column}",
         style: TextStyle(color: Colors.white),
       ),
       onTap: () {
@@ -44,7 +44,7 @@ class SearchListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(items.first.position),
+        title: Text(items.length > 0 ? items.first.position : ""),
       ),
       body: ListView.builder(
         itemCount: items.length,

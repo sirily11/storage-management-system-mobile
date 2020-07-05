@@ -22,38 +22,61 @@ class _CategorySelectorState extends State<CategorySelector> {
       2: buildPositions(homeProvider)
     };
 
-    return AlertDialog(
-      title: Text("Select"),
-      content: Container(
-          width: double.maxFinite,
-          height: 300,
-          child: Column(
-            children: <Widget>[
-              CupertinoSlidingSegmentedControl(
-                groupValue: index,
-                onValueChanged: (v) {
-                  setState(() {
-                    index = v;
-                  });
-                },
-                children: {
-                  0: Text("Categories"),
-                  1: Text("Locations"),
-                  2: Text("Positions")
-                },
-              ),
-              Expanded(
-                child: widgets[index],
-              )
-            ],
-          )),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("ok"),
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
+    return Material(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Select",
+                  style: TextStyle(fontSize: 25),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.close),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          buildBody(widgets),
+        ],
+      ),
     );
+  }
+
+  Container buildBody(Map<int, Widget> widgets) {
+    return Container(
+        width: double.maxFinite,
+        height: 300,
+        child: Column(
+          children: <Widget>[
+            CupertinoSlidingSegmentedControl(
+              groupValue: index,
+              onValueChanged: (v) {
+                setState(() {
+                  index = v;
+                });
+              },
+              children: {
+                0: Text("Categories"),
+                1: Text("Locations"),
+                2: Text("Positions")
+              },
+            ),
+            Expanded(
+              child: widgets[index],
+            )
+          ],
+        ));
   }
 
   Widget buildCategories(HomeProvider homeProvider) {

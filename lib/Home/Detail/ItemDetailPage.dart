@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -11,7 +12,7 @@ import 'package:storage_management_mobile/utils/utils.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
-import '../../States/ItemDetailState.dart';
+import '../../States/ItemProvider.dart';
 import 'ItemCard.dart';
 import 'SubDetail/AuthorDetail.dart';
 import 'SubDetail/LocationDetail.dart';
@@ -56,7 +57,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
   navigationTo(Path navTo) {
     ItemProvider detailState =
         Provider.of<ItemProvider>(context, listen: false);
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    Navigator.of(context).push(MaterialWithModalsPageRoute(builder: (context) {
       switch (navTo) {
         case Path.author:
           return AuthorDetail(detailState.item.author);
@@ -70,44 +71,47 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     }));
   }
 
-  Widget _panel() {
+  Widget _panel([ScrollController sc]) {
     ItemProvider detailState =
         Provider.of<ItemProvider>(context, listen: false);
     StorageItemDetail item = detailState.item;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          height: 12.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 30,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12.0),
+    return SingleChildScrollView(
+      controller: sc,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 12.0,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 30,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12.0),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 18.0,
-        ),
-        Text(
-          item.name,
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 24.0,
+            ],
           ),
-        ),
-        Text(getTime(item.createAt)),
-        _bodypanel(),
-      ],
+          SizedBox(
+            height: 18.0,
+          ),
+          Text(
+            item.name,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 24.0,
+            ),
+          ),
+          Text(getTime(item.createAt)),
+          _bodypanel(),
+        ],
+      ),
     );
   }
 
@@ -115,86 +119,82 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     ItemProvider detailState =
         Provider.of<ItemProvider>(context, listen: false);
     StorageItemDetail item = detailState.item;
-    return Expanded(
-      child: Container(
-        child: ListView(
-          children: <Widget>[
-            Card(
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ButtonInfo(
-                        label: "Price",
-                        icon: Icons.label,
-                        color: Colors.blue,
-                        value: '${item.price} ${item.unit}',
-                      ),
-                      ButtonInfo(
-                        label: "Column",
-                        icon: Icons.view_column,
-                        color: Colors.orange,
-                        value: item.column.toString(),
-                      ),
-                      ButtonInfo(
-                        label: "Row",
-                        icon: Icons.reorder,
-                        color: Colors.green,
-                        value: item.row.toString(),
-                      ),
-                      ButtonInfo(
-                        label: "Quantity",
-                        icon: Icons.shopping_cart,
-                        color: Colors.red,
-                        value: item.quantity.toString(),
-                      )
-                    ],
+    return Column(
+      children: <Widget>[
+        Card(
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  ButtonInfo(
+                    label: "Price",
+                    icon: Icons.label,
+                    color: Colors.blue,
+                    value: '${item.price} ${item.unit}',
                   ),
-                ),
+                  ButtonInfo(
+                    label: "Column",
+                    icon: Icons.view_column,
+                    color: Colors.orange,
+                    value: item.column.toString(),
+                  ),
+                  ButtonInfo(
+                    label: "Row",
+                    icon: Icons.reorder,
+                    color: Colors.green,
+                    value: item.row.toString(),
+                  ),
+                  ButtonInfo(
+                    label: "Quantity",
+                    icon: Icons.shopping_cart,
+                    color: Colors.red,
+                    value: item.quantity.toString(),
+                  )
+                ],
               ),
             ),
-            CardInfo(
-              info: [Info(title: "Description", subtitle: item.description)],
-            ),
-            CardInfo(
-              info: [
-                Info(
-                    title: "Author",
-                    subtitle: item?.author?.name,
-                    onPress: () {
-                      navigationTo(Path.author);
-                    }),
-                Info(title: "Category", subtitle: item?.category?.name),
-                Info(
-                    title: "Series",
-                    subtitle: item?.series?.name,
-                    onPress: () {
-                      navigationTo(Path.series);
-                    }),
-              ],
-            ),
-            CardInfo(
-              info: [
-                Info(
-                    title: "Position",
-                    subtitle: item?.position?.name,
-                    onPress: () {
-                      navigationTo(Path.position);
-                    }),
-                Info(
-                    title: "Location",
-                    subtitle: item?.location?.toString(),
-                    onPress: () {
-                      navigationTo(Path.location);
-                    }),
-              ],
-            ),
-            QuantityEdit(),
+          ),
+        ),
+        CardInfo(
+          info: [Info(title: "Description", subtitle: item.description)],
+        ),
+        CardInfo(
+          info: [
+            Info(
+                title: "Author",
+                subtitle: item?.author?.name,
+                onPress: () {
+                  navigationTo(Path.author);
+                }),
+            Info(title: "Category", subtitle: item?.category?.name),
+            Info(
+                title: "Series",
+                subtitle: item?.series?.name,
+                onPress: () {
+                  navigationTo(Path.series);
+                }),
           ],
         ),
-      ),
+        CardInfo(
+          info: [
+            Info(
+                title: "Position",
+                subtitle: item?.position?.name,
+                onPress: () {
+                  navigationTo(Path.position);
+                }),
+            Info(
+                title: "Location",
+                subtitle: item?.location?.toString(),
+                onPress: () {
+                  navigationTo(Path.location);
+                }),
+          ],
+        ),
+        QuantityEdit(),
+      ],
     );
   }
 
@@ -245,7 +245,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             onPressed: () async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (ctx) {
+                MaterialWithModalsPageRoute(builder: (ctx) {
                   return ImageScreen(
                     id: id,
                   );
@@ -289,7 +289,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                         // put current author, series info into the setting state
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          MaterialWithModalsPageRoute(
                             builder: (context) {
                               return NewEditPage(
                                 values: values,
@@ -378,8 +378,10 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           color: Theme.of(context).scaffoldBackgroundColor,
           parallaxEnabled: true,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(18.0), topRight: Radius.circular(18.0)),
-          panel: _panel(),
+            topLeft: Radius.circular(18.0),
+            topRight: Radius.circular(18.0),
+          ),
+          panelBuilder: (ScrollController sc) => _panel(sc),
         )
       ],
     );
@@ -449,7 +451,7 @@ class ImageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       enableInfiniteScroll: false,
-      height: 600,
+      height: MediaQuery.of(context).size.height - 300,
       items: imageSrc.map((i) {
         return Container(
           child: Stack(
@@ -459,6 +461,7 @@ class ImageCard extends StatelessWidget {
                 child: Image.network(
                   i.image,
                   fit: BoxFit.cover,
+                  height: MediaQuery.of(context).size.height,
                   // width: 1000,
                 ),
               ),
