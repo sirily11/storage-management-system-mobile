@@ -237,10 +237,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 imageSrc: item.images,
               )
             : Center(
-                child: Image.asset(
-                  "assets/database.png",
-                  height: 240,
-                  color: Theme.of(context).accentColor,
+                child: Icon(
+                  Icons.computer,
+                  size: 300,
                 ),
               ),
         SlidingUpPanel(

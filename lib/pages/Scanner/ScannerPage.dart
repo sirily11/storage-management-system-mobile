@@ -32,7 +32,7 @@ class _ScannerState extends State<ScannerPage> {
 
   @override
   dispose() {
-    _socket.close();
+    _socket?.close();
     super.dispose();
   }
 
@@ -159,11 +159,9 @@ class _ScannerState extends State<ScannerPage> {
                             return await scanQR();
                           },
                           color: renderColor(),
-                          child: Image.asset(
-                            "assets/barcode.png",
-                            height: height / 1.7,
-                            width: width,
-                            color: Colors.white,
+                          child: Icon(
+                            Icons.photo_camera,
+                            size: 100,
                           ),
                         ),
                       ),

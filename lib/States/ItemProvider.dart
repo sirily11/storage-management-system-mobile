@@ -133,22 +133,32 @@ class ItemProvider with ChangeNotifier {
 
   Future fetchItemByQR(BuildContext context, {String qrCode}) async {
     try {
-      var url = "$baseURL/searchByQR?qr=$qrCode";
+      var url = "$baseURL/storage_management/searchByQR?qr=$qrCode";
       final response = await this.dio.get(url);
       if (response.data is List) {
         /// qr code is a detail position
         List<StorageItemAbstract> items = (response.data as List)
             .map((i) => StorageItemAbstract.fromJson(i))
             .toList();
-        CupertinoScaffold.showCupertinoModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          duration: Duration(milliseconds: 500),
-          expand: true,
-          builder: (context, controller) => SearchListPage(
-            items: items,
-          ),
-        );
+        try {
+          await CupertinoScaffold.showCupertinoModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            expand: true,
+            builder: (context, controller) => SearchListPage(
+              items: items,
+            ),
+          );
+        } catch (err) {
+          await showCupertinoModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.transparent,
+            expand: true,
+            builder: (context, controller) => SearchListPage(
+              items: items,
+            ),
+          );
+        }
       } else {
         StorageItemAbstract item = StorageItemAbstract.fromJson(response.data);
         Navigator.of(context).push(
