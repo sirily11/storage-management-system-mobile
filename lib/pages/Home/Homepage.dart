@@ -6,14 +6,11 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:storage_management_mobile/Home/CategorySelector.dart';
-import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
-
-import '../DataObj/StorageItem.dart';
+import 'package:storage_management_mobile/pages/Home/CategorySelector.dart';
 import '../Edit/NewEditPage.dart';
-import '../utils/utils.dart';
 import 'Detail/ItemDetailPage.dart';
 import 'DrawerNav.dart';
 import 'ItemDisplay.dart';
@@ -66,8 +63,10 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   Future fetchData() async {
     HomeProvider provider = Provider.of(context, listen: false);
     provider.scaffoldKey = scaffoldKey;
-    await provider.fetchSettings();
-    await provider.fetchItems();
+    if (provider.baseURL != "") {
+      await provider.fetchSettings();
+      await provider.fetchItems();
+    }
   }
 
   @override
@@ -215,7 +214,7 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
   Widget buildResults(BuildContext context) {
     return buildSuggestions(context);
   }
-  
+
   @override
   Widget buildSuggestions(BuildContext context) {
     if (items == null) {

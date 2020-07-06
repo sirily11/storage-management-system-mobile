@@ -2,11 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_form/json_textform/models/Schema.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:storage_management_mobile/DataObj/Schema.dart';
 import 'package:storage_management_mobile/DataObj/Setting.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
-import 'package:storage_management_mobile/utils/utils.dart';
 
 class HomeProvider with ChangeNotifier {
   /// Current selected category
@@ -33,12 +32,24 @@ class HomeProvider with ChangeNotifier {
 
   Future<void> updateForignKey(
       int id, String path, Map<String, dynamic> data) async {
-    var response = await Dio().patch("$baseURL/$path/$id/", data: data);
+    var header = await LoginProvider.getLoginAccessKey();
+    var response = await Dio().patch(
+      "$baseURL/$path/$id/",
+      data: data,
+      options: Options(headers: header),
+    );
   }
 
   Future<void> addForignKey(String path, Map<String, dynamic> data) async {
     try {
-      var response = await Dio().post("$baseURL/$path/", data: data);
+      var header = await LoginProvider.getLoginAccessKey();
+      var response = await Dio().post(
+        "$baseURL/$path/",
+        data: data,
+        options: Options(
+          headers: header,
+        ),
+      );
     } catch (err) {
       print(err);
       rethrow;
@@ -85,7 +96,7 @@ class HomeProvider with ChangeNotifier {
 
   Future<void> initURL() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    this.baseURL = preferences.getString(serverPath);
+    this.baseURL = preferences.getString(serverPath) ?? "";
     notifyListeners();
   }
 
@@ -139,6 +150,7 @@ class HomeProvider with ChangeNotifier {
     });
   }
 
+  /// Fetch more
   Future<void> fetchMore() async {
     if (next == null) {
       return;
@@ -166,6 +178,7 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
+  /// Fetch list of items
   Future<void> fetchItems() async {
     String url = "$baseURL$itemURL";
     try {
@@ -190,6 +203,7 @@ class HomeProvider with ChangeNotifier {
 
       notifyListeners();
     } catch (err) {
+      print(err);
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));
@@ -212,6 +226,7 @@ class HomeProvider with ChangeNotifier {
       this.settingObj = settings;
       notifyListeners();
     } catch (err) {
+      print(err);
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(err.toString()),
       ));

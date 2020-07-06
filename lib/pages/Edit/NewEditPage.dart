@@ -7,12 +7,9 @@ import 'package:json_schema_form/json_schema_form.dart' hide getURL;
 import 'package:json_schema_form/json_textform/JSONForm.dart';
 import 'package:json_schema_form/json_textform/models/Schema.dart';
 import 'package:provider/provider.dart';
-import 'package:storage_management_mobile/DataObj/Schema.dart';
-import 'package:storage_management_mobile/Home/Homepage.dart';
+
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
-
-import '../utils/utils.dart';
 
 class NewEditPage extends StatefulWidget {
   final Map<String, dynamic> values;

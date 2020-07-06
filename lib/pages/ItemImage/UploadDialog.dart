@@ -8,8 +8,6 @@ import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
 
-import '../utils/utils.dart';
-
 enum ImageDestination { detailPosition, itemImage }
 
 class UploadDialog extends StatefulWidget {

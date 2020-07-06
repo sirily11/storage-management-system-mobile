@@ -35,7 +35,7 @@ dependencies:
   dio:
   image: ^2.1.4
   web_socket_channel: ^1.0.13
-  json_schema_form: ^1.0.4+2
+  json_schema_form: ^1.0.4+3
   google_maps_flutter: ^0.5.28+1
   image_picker: ^0.6.7+2
   permission_handler: ^4.4.0+hotfix.1

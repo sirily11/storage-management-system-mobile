@@ -11,9 +11,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
-import 'package:storage_management_mobile/SearchListPage/SearchListPage.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
+
 import 'package:storage_management_mobile/States/urls.dart';
+import 'package:storage_management_mobile/pages/Home/Detail/ItemDetailPage.dart';
+import 'package:storage_management_mobile/pages/SearchListPage/SearchListPage.dart';
 
 import '../DataObj/StorageItem.dart';
 import '../utils/utils.dart';
@@ -35,7 +37,7 @@ class ItemProvider with ChangeNotifier {
 
   Future<void> initURL() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    this.baseURL = preferences.getString("server");
+    this.baseURL = preferences.getString("server") ?? "";
     notifyListeners();
   }
 
@@ -83,24 +85,12 @@ class ItemProvider with ChangeNotifier {
   Future deleteImage(int id) async {
     try {
       var url = "$baseURL$itemImageURL/$id/";
-      var response = await this.dio.delete(url);
+      var header = await LoginProvider.getLoginAccessKey();
+      var response = await this.dio.delete(
+            url,
+            options: Options(headers: header),
+          );
       item.images.removeWhere((i) => i.id == id);
-      notifyListeners();
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  Future updateCategory(String category, int itemID) async {
-    try {
-      var url = "$baseURL$categoryURL";
-      var response = await this.dio.post(url, data: {"name": category});
-      Category c = Category.fromJson(response.data);
-      var url2 = "$baseURL$itemURL/$itemID/";
-      item.category = c;
-      var response2 =
-          await this.dio.patch(url2, data: {"category": response.data});
-      print(response2);
       notifyListeners();
     } catch (err) {
       print(err);
@@ -186,7 +176,12 @@ class ItemProvider with ChangeNotifier {
   Future<void> modifyQuantity(int value) async {
     try {
       var url = "$baseURL$itemURL/${item.id}/";
-      var response = await this.dio.patch(url, data: {"quantity": value});
+      var header = await LoginProvider.getLoginAccessKey();
+      var response = await this.dio.patch(
+            url,
+            data: {"quantity": value},
+            options: Options(headers: header),
+          );
       item.quantity = value;
       notifyListeners();
     } catch (err) {
@@ -199,10 +194,12 @@ class ItemProvider with ChangeNotifier {
     @required double longitude,
   }) async {
     var url = "$baseURL$locationURL/${item.location.id}/";
+    var header = await LoginProvider.getLoginAccessKey();
     await this.dio.patch(
-      url,
-      data: {"latitude": latitude, "longitude": longitude},
-    );
+          url,
+          data: {"latitude": latitude, "longitude": longitude},
+          options: Options(headers: header),
+        );
   }
 
   static Future<File> pickImage(ImageSource source) async {

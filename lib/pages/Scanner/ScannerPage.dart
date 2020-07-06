@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:barcode_scan/barcode_scan.dart';
-
-import '../DataObj/Message.dart';
+import 'package:storage_management_mobile/DataObj/Message.dart';
+import 'package:storage_management_mobile/utils/utils.dart';
 import '../Home/DrawerNav.dart';
-import '../utils/utils.dart';
 
 class ScannerPage extends StatefulWidget {
   _ScannerState createState() => _ScannerState();

@@ -3,9 +3,9 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
 
-import 'Home/Homepage.dart';
 import 'States/HomeProvider.dart';
 import 'States/ItemProvider.dart';
+import 'pages/Home/Homepage.dart';
 
 Future<void> main() async {
   runApp(StorageManagement());
@@ -51,12 +51,17 @@ class LoadingScreen extends StatelessWidget {
     HomeProvider homeProvider = Provider.of(context);
     ItemProvider itemProvider = Provider.of(context);
 
+    Widget widget = Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+    );
+
     if (homeProvider.baseURL != null && itemProvider.baseURL != null) {
-      return Homepage();
+      widget = Homepage();
     }
 
-    return Container(
-      color: Colors.white,
+    return AnimatedSwitcher(
+      duration: Duration(seconds: 1),
+      child: widget,
     );
   }
 }

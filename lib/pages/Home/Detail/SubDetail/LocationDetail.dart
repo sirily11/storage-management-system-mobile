@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as d;
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';

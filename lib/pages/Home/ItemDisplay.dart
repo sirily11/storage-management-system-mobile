@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 
 import '../DataObj/StorageItem.dart';
-import '../utils/utils.dart';
 import 'Detail/ItemDetailPage.dart';
 
 class ItemDisplay extends StatelessWidget {

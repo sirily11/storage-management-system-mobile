@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../Scanner/ScannerPage.dart';
 import '../Setting/SettingPage.dart';
 import 'Homepage.dart';

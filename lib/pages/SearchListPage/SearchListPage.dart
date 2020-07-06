@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
-import 'package:storage_management_mobile/Home/Detail/ItemDetailPage.dart';
+import 'package:storage_management_mobile/pages/Home/Detail/ItemDetailPage.dart';
 
 class SearchListPage extends StatelessWidget {
   final List<StorageItemAbstract> items;

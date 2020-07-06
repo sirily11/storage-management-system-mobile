@@ -6,8 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:storage_management_mobile/ItemImage/UploadDialog.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/pages/ItemImage/UploadDialog.dart';
 
 import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';

@@ -6,13 +6,14 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:storage_management_mobile/Home/ConfirmDialog.dart';
-import 'package:storage_management_mobile/Home/Detail/quantityEditPannel.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
+import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/pages/Home/Detail/quantityEditPannel.dart';
 import 'package:storage_management_mobile/utils/utils.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
-import '../../States/ItemProvider.dart';
+import '../ConfirmDialog.dart';
 import 'ItemCard.dart';
 import 'SubDetail/AuthorDetail.dart';
 import 'SubDetail/LocationDetail.dart';
@@ -78,6 +79,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     return SingleChildScrollView(
       controller: sc,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           SizedBox(
@@ -328,14 +330,19 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
   Widget buildLargeScreen(StorageItemDetail item, BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Expanded(
           flex: 9,
-          child: Card(
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                  cardColor: Theme.of(context).scaffoldBackgroundColor),
-              child: _panel(),
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Card(
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                    cardColor: Theme.of(context).scaffoldBackgroundColor),
+                child: _panel(),
+              ),
             ),
           ),
         ),
