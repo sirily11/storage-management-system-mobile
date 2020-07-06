@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:storage_management_mobile/pages/login/LoginPage.dart';
 import '../Scanner/ScannerPage.dart';
 import '../Setting/SettingPage.dart';
 import 'Homepage.dart';
@@ -27,15 +29,32 @@ class HomepageDrawer extends StatelessWidget {
                 "Home",
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return Homepage();
-                }));
+                Navigator.pushReplacement(
+                  context,
+                  MaterialWithModalsPageRoute(builder: (context) {
+                    return Homepage();
+                  }),
+                );
+              },
+            ),
+            ListTile(
+              title: Text(
+                "Login",
+              ),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialWithModalsPageRoute(builder: (context) {
+                    return LoginPage();
+                  }),
+                );
               },
             ),
             ListTile(
               title: Text("Scanner"),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.pushReplacement(context,
+                    MaterialWithModalsPageRoute(builder: (context) {
                   return ScannerPage();
                 }));
               },
@@ -43,7 +62,8 @@ class HomepageDrawer extends StatelessWidget {
             ListTile(
               title: Text("Settings"),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.pushReplacement(context,
+                    MaterialWithModalsPageRoute(builder: (context) {
                   return SettingPage();
                 }));
               },

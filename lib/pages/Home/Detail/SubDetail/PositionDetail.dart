@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/pages/ItemImage/UploadDialog.dart';
 
 import '../../../DataObj/StorageItem.dart';
@@ -40,6 +41,8 @@ class _PositionDetailState extends State<PositionDetail> {
 
   @override
   Widget build(BuildContext context) {
+    LoginProvider loginProvider = Provider.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Position"),
@@ -77,38 +80,39 @@ class _PositionDetailState extends State<PositionDetail> {
               );
             },
           ),
-          IconButton(
-            onPressed: () async {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => ListView(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: <Widget>[
-                    ListTile(
-                      onTap: () async {
-                        var file =
-                            await ItemProvider.pickImage(ImageSource.camera);
-                        Navigator.pop(context);
-                        await uploadImage(file);
-                      },
-                      title: Text("From Camera"),
-                    ),
-                    ListTile(
-                      onTap: () async {
-                        var file =
-                            await ItemProvider.pickImage(ImageSource.gallery);
-                        Navigator.pop(context);
-                        await uploadImage(file);
-                      },
-                      title: Text("From Photo Library"),
-                    ),
-                  ],
-                ),
-              );
-            },
-            icon: Icon(Icons.photo_library),
-          )
+          if (loginProvider.hasLogined)
+            IconButton(
+              onPressed: () async {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => ListView(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: <Widget>[
+                      ListTile(
+                        onTap: () async {
+                          var file =
+                              await ItemProvider.pickImage(ImageSource.camera);
+                          Navigator.pop(context);
+                          await uploadImage(file);
+                        },
+                        title: Text("From Camera"),
+                      ),
+                      ListTile(
+                        onTap: () async {
+                          var file =
+                              await ItemProvider.pickImage(ImageSource.gallery);
+                          Navigator.pop(context);
+                          await uploadImage(file);
+                        },
+                        title: Text("From Photo Library"),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: Icon(Icons.photo_library),
+            )
         ],
       ),
       body: ListView(

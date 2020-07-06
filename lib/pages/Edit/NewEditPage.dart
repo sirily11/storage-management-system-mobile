@@ -9,6 +9,7 @@ import 'package:json_schema_form/json_textform/models/Schema.dart';
 import 'package:provider/provider.dart';
 
 import 'package:storage_management_mobile/States/HomeProvider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
 
 class NewEditPage extends StatefulWidget {
@@ -41,12 +42,16 @@ class _NewEditPageState extends State<NewEditPage> {
     }
   }
 
-  Future _postItem(Map<String, dynamic> data) async {
+  Future<void> _postItem(Map<String, dynamic> data) async {
     try {
       HomeProvider homeProvider = Provider.of(context, listen: false);
-
+      var header = await LoginProvider.getLoginAccessKey();
       String url = "${homeProvider.baseURL}$itemURL/";
-      Response response = await Dio().post(url, data: data);
+      Response response = await Dio().post(
+        url,
+        data: data,
+        options: Options(headers: header),
+      );
       Navigator.pop(context);
       if (response.statusCode == 201) {
         print("ok");
@@ -63,9 +68,13 @@ class _NewEditPageState extends State<NewEditPage> {
   Future _updateItem(Map<String, dynamic> data) async {
     try {
       HomeProvider homeProvider = Provider.of(context, listen: false);
-
+      var header = await LoginProvider.getLoginAccessKey();
       String url = "${homeProvider.baseURL}$itemURL/${widget.id}/";
-      Response response = await Dio().patch(url, data: data);
+      Response response = await Dio().patch(
+        url,
+        data: data,
+        options: Options(headers: header),
+      );
       Navigator.pop(context);
       if (response.statusCode == 201) {
         print("ok");

@@ -152,7 +152,7 @@ class ItemProvider with ChangeNotifier {
       } else {
         StorageItemAbstract item = StorageItemAbstract.fromJson(response.data);
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) {
+          MaterialWithModalsPageRoute(builder: (context) {
             return ItemDetailPage(
               id: item.id,
               name: item.name,
@@ -200,6 +200,7 @@ class ItemProvider with ChangeNotifier {
           data: {"latitude": latitude, "longitude": longitude},
           options: Options(headers: header),
         );
+    await this._fetchItem(item.id);
   }
 
   static Future<File> pickImage(ImageSource source) async {

@@ -5,6 +5,7 @@ import 'package:location/location.dart' as d;
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';
 
@@ -40,55 +41,57 @@ class _LocationDetailState extends State<LocationDetail> {
   @override
   Widget build(BuildContext context) {
     ItemProvider itemProvider = Provider.of(context);
+    LoginProvider loginProvider = Provider.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Location"),
         actions: <Widget>[
-          IconButton(
-            tooltip: "Update location",
-            icon: Icon(Icons.location_on),
-            onPressed: () async {
-              d.Location location = new d.Location();
-              var permission = await location.hasPermission();
-              if (permission == d.PermissionStatus.denied) {
-                permission = await location.requestPermission();
-              }
-              if (permission == d.PermissionStatus.granted) {
-                var l = await location.getLocation();
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text("Update Location"),
-                    content: Text("Use Location"),
-                    actions: <Widget>[
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("Cancel"),
-                      ),
-                      FlatButton(
-                        onPressed: () async {
-                          await itemProvider.updateLocation(
-                            latitude: l.latitude,
-                            longitude: l.longitude,
-                          );
+          if (loginProvider.hasLogined)
+            IconButton(
+              tooltip: "Update location",
+              icon: Icon(Icons.location_on),
+              onPressed: () async {
+                d.Location location = new d.Location();
+                var permission = await location.hasPermission();
+                if (permission == d.PermissionStatus.denied) {
+                  permission = await location.requestPermission();
+                }
+                if (permission == d.PermissionStatus.granted) {
+                  var l = await location.getLocation();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Update Location"),
+                      content: Text("Use Location"),
+                      actions: <Widget>[
+                        FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel"),
+                        ),
+                        FlatButton(
+                          onPressed: () async {
+                            await itemProvider.updateLocation(
+                              latitude: l.latitude,
+                              longitude: l.longitude,
+                            );
 
-                          setState(() {
-                            latitude = l.latitude;
-                            longitude = l.longitude;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Text("ok"),
-                      )
-                    ],
-                  ),
-                );
-              }
-            },
-          )
+                            setState(() {
+                              latitude = l.latitude;
+                              longitude = l.longitude;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Text("ok"),
+                        )
+                      ],
+                    ),
+                  );
+                }
+              },
+            )
         ],
       ),
       body: ListView(

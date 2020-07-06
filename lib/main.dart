@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
+import 'package:storage_management_mobile/pages/Loading/LoadingScreen.dart';
 
 import 'States/HomeProvider.dart';
 import 'States/ItemProvider.dart';
@@ -22,6 +24,9 @@ class StorageManagement extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => HomeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LoginProvider(),
         )
       ],
       child: MaterialApp(
@@ -30,7 +35,7 @@ class StorageManagement extends StatelessWidget {
         theme: Theme.of(context).copyWith(accentColor: Colors.black),
         darkTheme: ThemeData.dark(),
         onGenerateRoute: (settings) {
-          return MaterialPageRoute(
+          return MaterialWithModalsPageRoute(
             settings: settings,
             builder: (context) => Container(),
           );
@@ -41,27 +46,6 @@ class StorageManagement extends StatelessWidget {
               )
         },
       ),
-    );
-  }
-}
-
-class LoadingScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    HomeProvider homeProvider = Provider.of(context);
-    ItemProvider itemProvider = Provider.of(context);
-
-    Widget widget = Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-    );
-
-    if (homeProvider.baseURL != null && itemProvider.baseURL != null) {
-      widget = Homepage();
-    }
-
-    return AnimatedSwitcher(
-      duration: Duration(seconds: 1),
-      child: widget,
     );
   }
 }

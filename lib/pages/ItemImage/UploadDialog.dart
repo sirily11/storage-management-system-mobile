@@ -6,6 +6,7 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
 
 enum ImageDestination { detailPosition, itemImage }
@@ -130,12 +131,20 @@ class _UploadDialogState extends State<UploadDialog> {
                             url =
                                 "${state.baseURL}$detailPositionURL/${itemProvider.item.id}/";
                           }
-
+                          var header = await LoginProvider.getLoginAccessKey();
                           if (widget.imageDestination ==
                               ImageDestination.itemImage) {
-                            response = await Dio().post(url, data: formData);
+                            response = await Dio().post(
+                              url,
+                              data: formData,
+                              options: Options(headers: header),
+                            );
                           } else {
-                            response = await Dio().patch(url, data: formData);
+                            response = await Dio().patch(
+                              url,
+                              data: formData,
+                              options: Options(headers: header),
+                            );
                           }
 
                           if (Navigator.canPop(context)) {

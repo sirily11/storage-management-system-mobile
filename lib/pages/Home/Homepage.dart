@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/pages/Home/CategorySelector.dart';
 import '../Edit/NewEditPage.dart';
 import 'Detail/ItemDetailPage.dart';
@@ -94,11 +95,18 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
           IconButton(
             tooltip: "Select category",
             icon: Icon(Icons.category),
-            onPressed: () {
-              CupertinoScaffold.showCupertinoModalBottomSheet(
-                context: context,
-                builder: (c, s) => CategorySelector(),
-              );
+            onPressed: () async {
+              try {
+                await CupertinoScaffold.showCupertinoModalBottomSheet(
+                  context: context,
+                  builder: (c, s) => CategorySelector(),
+                );
+              } catch (err) {
+                showCupertinoModalBottomSheet(
+                  context: context,
+                  builder: (c, s) => CategorySelector(),
+                );
+              }
             },
           )
         ],
@@ -127,6 +135,11 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   }
 
   Widget buildFloatingActionButton(BuildContext context) {
+    LoginProvider loginProvider = Provider.of(context, listen: false);
+    if (!loginProvider.hasLogined) {
+      return null;
+    }
+
     return FloatingActionButton(
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       child: Icon(
@@ -151,8 +164,8 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
                       title: Text("添加新的物品"),
                       onTap: () async {
                         Navigator.pop(context);
-                        await Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
+                        await Navigator.of(context).push(
+                            MaterialWithModalsPageRoute(builder: (context) {
                           return NewEditPage();
                         }));
                         await fetchData();
@@ -241,7 +254,8 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
             subtitle: Text(result[i].seriesName),
             trailing: Text(result[i].authorName),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              Navigator.of(context)
+                  .push(MaterialWithModalsPageRoute(builder: (context) {
                 return ItemDetailPage(
                   id: result[i].id,
                   name: result[i].name,

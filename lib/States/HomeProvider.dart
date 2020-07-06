@@ -34,7 +34,7 @@ class HomeProvider with ChangeNotifier {
       int id, String path, Map<String, dynamic> data) async {
     var header = await LoginProvider.getLoginAccessKey();
     var response = await Dio().patch(
-      "$baseURL/$path/$id/",
+      "$baseURL/storage_management/$path/$id/",
       data: data,
       options: Options(headers: header),
     );
@@ -44,7 +44,7 @@ class HomeProvider with ChangeNotifier {
     try {
       var header = await LoginProvider.getLoginAccessKey();
       var response = await Dio().post(
-        "$baseURL/$path/",
+        "$baseURL/storage_management/$path/",
         data: data,
         options: Options(
           headers: header,
@@ -57,7 +57,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future<List<Choice>> fetchChoices(String path) async {
-    var response = await Dio().get<List>("$baseURL/$path/");
+    var response = await Dio().get<List>("$baseURL/storage_management/$path");
     var choices = response.data
         .map((e) => Choice(label: e['name'], value: e['id']))
         .toList();
@@ -67,7 +67,7 @@ class HomeProvider with ChangeNotifier {
   Future<List> fetchSchema(String path) async {
     try {
       var response = await Dio().request(
-        "$baseURL/$path/",
+        "$baseURL/storage_management/$path/",
         options: Options(method: "OPTIONS"),
       );
 
@@ -84,7 +84,7 @@ class HomeProvider with ChangeNotifier {
   Future<Map<String, dynamic>> fetchSchemaValues(String path, int id) async {
     try {
       var response = await Dio().get(
-        "$baseURL/$path/$id/",
+        "$baseURL/storage_management/$path/$id/",
       );
 
       return response.data;
