@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageCard extends StatelessWidget {
   final List<ImageObject> imageSrc;
@@ -20,11 +21,15 @@ class ImageCard extends StatelessWidget {
             children: <Widget>[
               ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                child: Image.network(
-                  i.image,
-                  fit: BoxFit.cover,
+                child: CachedNetworkImage(
+                  imageUrl: i.image,
                   height: MediaQuery.of(context).size.height,
-                  // width: 1000,
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, progress) => Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
+                    ),
+                  ),
                 ),
               ),
               Positioned(

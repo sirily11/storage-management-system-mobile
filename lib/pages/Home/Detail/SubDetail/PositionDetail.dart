@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -120,10 +121,19 @@ class _PositionDetailState extends State<PositionDetail> {
           imageURL != null
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                    imageURL,
-                    height: 200,
-                    fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: imageURL,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      progressIndicatorBuilder: (context, url, progress) =>
+                          Center(
+                        child: CircularProgressIndicator(
+                          value: progress.progress,
+                        ),
+                      ),
+                    ),
                   ),
                 )
               : Container(),
