@@ -46,10 +46,11 @@ class BodyPanel extends StatelessWidget {
       children: <Widget>[
         Card(
           child: Container(
+            width: MediaQuery.of(context).size.width,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Wrap(
+                alignment: WrapAlignment.center,
                 children: <Widget>[
                   ButtonInfo(
                     label: "Price",

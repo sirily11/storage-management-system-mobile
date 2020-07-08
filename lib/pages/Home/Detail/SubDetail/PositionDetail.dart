@@ -33,13 +33,6 @@ class _PositionDetailState extends State<PositionDetail> {
     this.imageURL = widget.position.imageURL;
   }
 
-  Widget item(String label, String value) {
-    return ListTile(
-      title: Text(label),
-      subtitle: Text(value == null ? "Empty" : value),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     LoginProvider loginProvider = Provider.of(context);
@@ -49,6 +42,7 @@ class _PositionDetailState extends State<PositionDetail> {
         title: Text("Position"),
         actions: <Widget>[
           IconButton(
+            key: Key("Print position"),
             icon: Icon(Icons.print),
             onPressed: () async {
               ItemProvider itemDetailState =
@@ -62,8 +56,9 @@ class _PositionDetailState extends State<PositionDetail> {
                     child: RepaintBoundary(
                       key: itemDetailState.qrKey,
                       child: QrImage(
+                        key: Key("Qrimage"),
                         backgroundColor: Colors.white,
-                        data: itemDetailState.item.position.uuid,
+                        data: widget.position.uuid,
                         version: QrVersions.auto,
                         gapless: false,
                       ),
@@ -83,6 +78,7 @@ class _PositionDetailState extends State<PositionDetail> {
           ),
           if (loginProvider.hasLogined)
             IconButton(
+              key: Key("Add detail image"),
               onPressed: () async {
                 showModalBottomSheet(
                   context: context,

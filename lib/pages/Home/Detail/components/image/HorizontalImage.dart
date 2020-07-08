@@ -40,6 +40,7 @@ class HorizontalImage extends StatelessWidget {
                     height: 200,
                     child: Scrollbar(
                       child: ListView.builder(
+                        shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         itemCount: images.length,
                         itemBuilder: (context, index) {

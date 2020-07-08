@@ -17,7 +17,7 @@ import 'package:storage_management_mobile/utils/utils.dart';
 import '../../DataObj/StorageItem.dart';
 import '../../Edit/NewEditPage.dart';
 import '../../ItemImage/NewImageScreen.dart';
-import '../ConfirmDialog.dart';
+import '../components/ConfirmDialog.dart';
 import 'components/image/ImageGrid.dart';
 import 'components/item/ItemCard.dart';
 import 'SubDetail/AuthorDetail.dart';
@@ -104,6 +104,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           ),
           if (loginProvider.hasLogined)
             IconButton(
+              key: Key("Add Image"),
               icon: Icon(Icons.camera_alt),
               onPressed: () async {
                 await Navigator.push(
@@ -123,6 +124,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
       ),
       floatingActionButton: loginProvider.hasLogined
           ? FloatingActionButton(
+              key: Key("Edit"),
               backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
               child: Icon(
                 Icons.edit,
@@ -218,10 +220,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                   imageSrc: item.images,
                 )
               : Center(
-                  child: Image.asset(
-                    "assets/database.png",
-                    height: 240,
-                    color: Theme.of(context).accentColor,
+                  child: Icon(
+                    Icons.computer,
+                    size: 100,
                   ),
                 ),
         )

@@ -16,39 +16,44 @@ class ButtonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        if (this.onClick != null) {
-          this.onClick();
-        }
-      },
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Icon(
-              icon,
-              color: Colors.white,
+    return Container(
+      width: 90,
+      child: InkWell(
+        onTap: () {
+          if (this.onClick != null) {
+            this.onClick();
+          }
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Icon(
+                icon,
+                color: Colors.white,
+              ),
+              decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.15),
+                      blurRadius: 8.0,
+                    )
+                  ]),
             ),
-            decoration:
-                BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.15),
-                blurRadius: 8.0,
-              )
-            ]),
-          ),
-          SizedBox(
-            height: 12.0,
-          ),
-          Text(
-            label,
-          ),
-          Text(
-            value,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          )
-        ],
+            SizedBox(
+              height: 12.0,
+            ),
+            Text(
+              label,
+            ),
+            Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
 
 import '../Edit/CardTheme.dart';
-import '../Home/DrawerNav.dart';
+import '../Home/components/DrawerNav.dart';
 
 class SettingPage extends StatefulWidget {
   @override

@@ -33,7 +33,7 @@ class HomeProvider with ChangeNotifier {
   Future<void> updateForignKey(
       int id, String path, Map<String, dynamic> data) async {
     var header = await LoginProvider.getLoginAccessKey();
-    var response = await Dio().patch(
+    var response = await dio.patch(
       "$baseURL/storage_management/$path/$id/",
       data: data,
       options: Options(headers: header),
@@ -43,7 +43,7 @@ class HomeProvider with ChangeNotifier {
   Future<void> addForignKey(String path, Map<String, dynamic> data) async {
     try {
       var header = await LoginProvider.getLoginAccessKey();
-      var response = await Dio().post(
+      var response = await dio.post(
         "$baseURL/storage_management/$path/",
         data: data,
         options: Options(
@@ -57,7 +57,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   Future<List<Choice>> fetchChoices(String path) async {
-    var response = await Dio().get<List>("$baseURL/storage_management/$path");
+    var response = await dio.get<List>("$baseURL/storage_management/$path");
     var choices = response.data
         .map((e) => Choice(label: e['name'], value: e['id']))
         .toList();
@@ -66,7 +66,7 @@ class HomeProvider with ChangeNotifier {
 
   Future<List> fetchSchema(String path) async {
     try {
-      var response = await Dio().request(
+      var response = await dio.request(
         "$baseURL/storage_management/$path/",
         options: Options(method: "OPTIONS"),
       );
@@ -83,7 +83,7 @@ class HomeProvider with ChangeNotifier {
 
   Future<Map<String, dynamic>> fetchSchemaValues(String path, int id) async {
     try {
-      var response = await Dio().get(
+      var response = await dio.get(
         "$baseURL/storage_management/$path/$id/",
       );
 
@@ -162,7 +162,7 @@ class HomeProvider with ChangeNotifier {
       next = result.next;
 
       List<StorageItemAbstract> moreList = [];
-      result.results.forEach((data) {
+      result.results?.forEach((data) {
         moreList.add(StorageItemAbstract.fromJson(data));
       });
 
@@ -195,7 +195,7 @@ class HomeProvider with ChangeNotifier {
       next = result.next;
 
       List<StorageItemAbstract> list = [];
-      result.results.forEach((data) {
+      result.results?.forEach((data) {
         list.add(StorageItemAbstract.fromJson(data));
       });
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:json_schema_form/json_textform/JSONSchemaForm.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
-import 'package:storage_management_mobile/pages/Home/DrawerNav.dart';
+import 'package:storage_management_mobile/pages/Home/components/DrawerNav.dart';
 
 final List<Map<String, dynamic>> loginSchema = [
   {

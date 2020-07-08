@@ -5,6 +5,11 @@ import 'package:storage_management_mobile/States/urls.dart';
 
 class LoginProvider with ChangeNotifier {
   bool hasLogined = false;
+  Dio dio;
+
+  LoginProvider({Dio networkProvider}) {
+    this.dio = networkProvider ?? Dio();
+  }
 
   /// Get Login Access key
   static Future<Map<String, dynamic>> getLoginAccessKey() async {
@@ -28,13 +33,14 @@ class LoginProvider with ChangeNotifier {
   Future<Response> _sendSignInRequest(String username, String password) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String baseURL = preferences.getString(serverPath) ?? "";
-    var response = await Dio().post(
+    var response = await dio.post(
       "$baseURL$loginURL/",
       data: {"username": username, "password": password},
     );
     return response;
   }
 
+  /// Sign out
   Future<void> signOut() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove(accessPath);

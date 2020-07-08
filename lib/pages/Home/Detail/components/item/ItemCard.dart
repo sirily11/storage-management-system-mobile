@@ -34,8 +34,11 @@ class CardInfo extends StatelessWidget {
               i.subtitle ?? "",
             ),
             trailing: i.onPress != null
-                ? Icon(
-                    Icons.more_horiz,
+                ? Container(
+                    width: 20,
+                    child: Icon(
+                      Icons.more_horiz,
+                    ),
                   )
                 : null,
             onTap: i.onPress,

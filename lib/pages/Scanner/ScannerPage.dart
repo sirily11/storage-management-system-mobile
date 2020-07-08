@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:storage_management_mobile/DataObj/Message.dart';
 import 'package:storage_management_mobile/utils/utils.dart';
-import '../Home/DrawerNav.dart';
+import '../Home/components/DrawerNav.dart';
 
 class ScannerPage extends StatefulWidget {
   _ScannerState createState() => _ScannerState();

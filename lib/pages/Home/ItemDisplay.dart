@@ -5,10 +5,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
-
-import '../DataObj/StorageItem.dart';
 import 'Detail/ItemDetailPage.dart';
 
+/// Render list of items
 class ItemDisplay extends StatelessWidget {
   final List<StorageItemAbstract> items;
 

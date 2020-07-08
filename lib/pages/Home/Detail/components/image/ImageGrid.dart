@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 
-import '../../../ConfirmDialog.dart';
+import '../../../components/ConfirmDialog.dart';
 
 class ImageGrid extends StatelessWidget {
   final List<ImageObject> imageSrc;

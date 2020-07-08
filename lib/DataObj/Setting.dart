@@ -23,23 +23,23 @@ class SettingObj {
     List<Location> locations = [];
     List<Position> positions = [];
 
-    json['categories'].forEach((data) {
+    json['categories']?.forEach((data) {
       categories.add(Category.fromJson(data));
     });
 
-    json['series'].forEach((data) {
+    json['series']?.forEach((data) {
       series.add(Series.fromJson(data));
     });
 
-    json['authors'].forEach((data) {
+    json['authors']?.forEach((data) {
       authors.add(Author.fromJson(data));
     });
 
-    json['locations'].forEach((data) {
+    json['locations']?.forEach((data) {
       locations.add(Location.fromJson(data));
     });
 
-    json['positions'].forEach((data) {
+    json['positions']?.forEach((data) {
       positions.add(Position.fromJson(data));
     });
 

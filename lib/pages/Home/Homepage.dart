@@ -10,10 +10,10 @@ import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
-import 'package:storage_management_mobile/pages/Home/CategorySelector.dart';
+import 'package:storage_management_mobile/pages/Home/components/CategorySelector.dart';
 import '../Edit/NewEditPage.dart';
 import 'Detail/ItemDetailPage.dart';
-import 'DrawerNav.dart';
+import 'components/DrawerNav.dart';
 import 'ItemDisplay.dart';
 
 class Homepage extends StatefulWidget {
@@ -29,9 +29,6 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 100), () async {
-      await fetchData();
-    });
   }
 
   Future scanQR() async {
@@ -93,6 +90,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
             onPressed: scanQR,
           ),
           IconButton(
+            key: Key("Select Category"),
             tooltip: "Select category",
             icon: Icon(Icons.category),
             onPressed: () async {
@@ -141,6 +139,7 @@ class HomePageState extends State<Homepage> with TickerProviderStateMixin {
     }
 
     return FloatingActionButton(
+      key: Key("Add Item"),
       backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
       child: Icon(
         Icons.edit,

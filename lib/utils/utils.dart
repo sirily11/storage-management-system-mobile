@@ -3,34 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-List<String> currencyUnit = ["CNY", "JPY", "USD", "EUR", "HKD", "BKP"];
-
-
 Future<String> getWebSocket({String path}) async {
   String base = "ws://192.168.31.19:4000";
   final prefs = await SharedPreferences.getInstance();
   String url = prefs.getString("websocket") ?? base;
   return "$base/?type=scanner";
-}
-
-showErrorMessageSnackBar(BuildContext context, String message) {
-  Scaffold.of(context).showSnackBar(SnackBar(
-    content: Text(message),
-  ));
-}
-
-String isEmpty(String value) {
-  if (value.isEmpty) {
-    return "This Should not be empty";
-  }
-  return null;
-}
-
-String isSelected(dynamic value) {
-  if (value != null) {
-    return null;
-  }
-  return "This should not be empty";
 }
 
 /// Get time difference
