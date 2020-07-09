@@ -66,5 +66,6 @@ class LoginProvider with ChangeNotifier {
       hasLogined = true;
       notifyListeners();
     }
+    return;
   }
 }

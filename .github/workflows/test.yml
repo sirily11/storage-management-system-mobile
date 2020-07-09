@@ -25,4 +25,4 @@ jobs:
           file: ./coverage/lcov.info
           flags: uitests,unittests
           name: codecov-storage_management
-          fail_ci_if_error: true
+          fail_ci_if_error: false

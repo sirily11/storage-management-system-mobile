@@ -17,6 +17,8 @@ import 'components/DrawerNav.dart';
 import 'ItemDisplay.dart';
 
 class Homepage extends StatefulWidget {
+  Homepage({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return HomePageState();

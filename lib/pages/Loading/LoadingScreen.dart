@@ -11,12 +11,18 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  bool hasLoaded = false;
   @override
   void initState() {
     super.initState();
     LoginProvider loginProvider = Provider.of(context, listen: false);
 
-    loginProvider.autoSignIn().catchError((err) => print(err));
+    loginProvider.autoSignIn().catchError((err) => print(err)).then((value) {
+      print("Finished");
+      setState(() {
+        hasLoaded = true;
+      });
+    });
   }
 
   @override
@@ -26,15 +32,26 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     Widget widget = Container(
       color: Theme.of(context).scaffoldBackgroundColor,
+      child: Center(
+        child: CircularProgressIndicator(
+          key: Key("Loading progress"),
+        ),
+      ),
     );
 
     if (homeProvider.baseURL != null && itemProvider.baseURL != null) {
-      widget = Homepage();
+      if (hasLoaded) {
+        widget = Homepage(
+          key: Key("Homepage"),
+        );
+      }
     }
 
     return AnimatedSwitcher(
       duration: Duration(seconds: 1),
-      child: widget,
+      child: Material(
+        child: widget,
+      ),
     );
   }
 }
