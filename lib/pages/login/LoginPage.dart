@@ -83,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
             )
           : Center(
               child: RaisedButton(
+                onPressed: () async => await loginProvider.signOut(),
                 child: Text("Sign Out"),
               ),
             ),

@@ -49,7 +49,9 @@ class ItemDisplay extends StatelessWidget {
                       HomeProvider provider =
                           Provider.of(context, listen: false);
                       await provider.remove(item);
-                    } on Exception catch (err) {}
+                    } on Exception catch (err) {
+                      print(err);
+                    }
                   },
                 )
               ],

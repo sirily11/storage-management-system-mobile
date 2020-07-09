@@ -240,7 +240,11 @@ class HomeProvider with ChangeNotifier {
 
   remove(StorageItemAbstract item) async {
     var url = "$baseURL$itemURL/${item.id}/";
-    var respnse = await this.dio.delete(url);
+    var header = await LoginProvider.getLoginAccessKey();
+    var respnse = await this.dio.delete(
+          url,
+          options: Options(headers: header),
+        );
     items.remove(item);
     scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text("物品已经删除"),
