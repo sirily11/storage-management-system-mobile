@@ -20,11 +20,9 @@ jobs:
           channel: ${{ matrix.flutter }}
       - run: flutter pub get
       - run: flutter test --coverage
+      - uses: codecov/codecov-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          - uses: codecov/codecov-action@v1
-          with:
-            file: ./coverage/lcov.info
-            flags: uitests,unittests
-            name: codecov-umbrella
-            fail_ci_if_error: true
+          file: ./coverage/lcov.info
+          flags: uitests,unittests
+          name: codecov-storage_management
+          fail_ci_if_error: true
