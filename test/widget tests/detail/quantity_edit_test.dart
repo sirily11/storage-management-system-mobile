@@ -64,7 +64,15 @@ void main() {
             data: anyNamed("data"),
             options: anyNamed("options"),
           ),
-        ).called(greaterThan(0));
+        ).called(1);
+
+        await tester.tap(find.byIcon(Icons.remove));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(setBtnFinder).height, greaterThan(0));
+        expect(find.text("1"), findsOneWidget);
+        await tester.tap(setBtnFinder);
+        await tester.pumpAndSettle();
+        expect(tester.getSize(setBtnFinder).height, equals(0));
       },
     );
 
@@ -106,6 +114,8 @@ void main() {
         await tester.tap(setBtnFinder);
         await tester.pumpAndSettle();
         expect(find.text("Update Quantity Error"), findsOneWidget);
+        await tester.tap(find.text("OK"));
+        await tester.pumpAndSettle();
       },
     );
   });
