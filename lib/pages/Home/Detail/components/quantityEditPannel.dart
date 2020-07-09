@@ -15,18 +15,15 @@ class _QuantityEditState extends State<QuantityEdit> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 20), () {
-      ItemProvider itemDetailState = Provider.of(context, listen: false);
-      setState(() {
-        value = itemDetailState.item.quantity;
-      });
-    });
+    ItemProvider itemDetailState = Provider.of(context, listen: false);
+    value = itemDetailState.item.quantity;
   }
 
   @override
   Widget build(BuildContext context) {
     ItemProvider itemDetailState = Provider.of(context);
     return Container(
+      key: Key("Quantity Edit Panel"),
       width: MediaQuery.of(context).size.width,
       child: Card(
         child: Column(
@@ -69,11 +66,28 @@ class _QuantityEditState extends State<QuantityEdit> {
               duration: Duration(milliseconds: 100),
               height: hasModified ? 30 : 0,
               child: FlatButton(
+                key: Key("Set value"),
                 onPressed: () async {
-                  await itemDetailState.modifyQuantity(value);
-                  setState(() {
-                    hasModified = false;
-                  });
+                  try {
+                    await itemDetailState.modifyQuantity(value);
+                    setState(() {
+                      hasModified = false;
+                    });
+                  } catch (err) {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Update Quantity Error"),
+                        content: Text("$err"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("OK"),
+                          )
+                        ],
+                      ),
+                    );
+                  }
                 },
                 child: Text("Set Value"),
               ),

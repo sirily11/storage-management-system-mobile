@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,9 +9,11 @@ import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/ItemDetailPage.dart';
+import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/AuthorDetail.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/PositionDetail.dart';
+import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/SeriesDetail.dart';
 
-import 'data/response.dart';
+import '../home/data/response.dart';
 
 class MockDio extends Mock implements Dio {}
 
@@ -66,6 +70,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text("Position"), findsOneWidget);
         expect(find.byKey(detailAddKey), findsNothing);
+        expect(find.byKey(Key("Quantity Edit Panel")), findsNothing);
       },
     );
 
@@ -101,6 +106,7 @@ void main() {
         expect(find.text("500.0 USD"), findsOneWidget);
         expect(find.text("1"), findsWidgets);
         expect(find.text("Position"), findsOneWidget);
+        expect(find.byKey(Key("Quantity Edit Panel")), findsOneWidget);
         await tester.tap(find.text("Position"));
         await tester.pumpAndSettle();
         expect(find.text("Position"), findsOneWidget);
@@ -186,6 +192,7 @@ void main() {
         expect(find.text("500.0 USD"), findsOneWidget);
         expect(find.text("1"), findsWidgets);
         expect(find.text("Position"), findsOneWidget);
+        expect(find.byKey(Key("Quantity Edit Panel")), findsOneWidget);
         await tester.tap(find.text("Position"));
         await tester.pumpAndSettle();
       },
@@ -266,6 +273,44 @@ void main() {
         await tester.tap(find.byKey(positionPrintKey));
         await tester.pumpAndSettle();
         expect(find.byKey(qrKey), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      "Author Detail",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: AuthorDetail(
+                Author(name: "Test", description: "Test Author"),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        expect(find.text("Test"), findsWidgets);
+        expect(find.text("Test Author"), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      "Series Detail",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: SeriesDetail(
+                Series(name: "Test", description: "Test Author"),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        expect(find.text("Test"), findsWidgets);
+        expect(find.text("Test Author"), findsOneWidget);
       },
     );
   });

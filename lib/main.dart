@@ -7,7 +7,6 @@ import 'package:storage_management_mobile/pages/Loading/LoadingScreen.dart';
 
 import 'States/HomeProvider.dart';
 import 'States/ItemProvider.dart';
-import 'pages/Home/Homepage.dart';
 
 Future<void> main() async {
   runApp(StorageManagement());

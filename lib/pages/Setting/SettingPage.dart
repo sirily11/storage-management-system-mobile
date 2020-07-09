@@ -90,9 +90,10 @@ class AddressForm extends StatelessWidget {
         child: Column(
           children: <Widget>[
             TextFormField(
+              key: Key("URL Field"),
               controller: _controller,
               autovalidate: true,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText1,
               validator: (str) {
                 if (!(str.startsWith("http") | str.startsWith("https"))) {
                   return "Invalid URL";

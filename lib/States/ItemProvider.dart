@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -11,15 +10,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
-
 import 'package:storage_management_mobile/States/urls.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/ItemDetailPage.dart';
 import 'package:storage_management_mobile/pages/SearchListPage/SearchListPage.dart';
-
-import '../DataObj/StorageItem.dart';
-import '../utils/utils.dart';
-
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdf;
 
@@ -196,6 +191,7 @@ class ItemProvider with ChangeNotifier {
       notifyListeners();
     } catch (err) {
       print(err);
+      rethrow;
     }
   }
 

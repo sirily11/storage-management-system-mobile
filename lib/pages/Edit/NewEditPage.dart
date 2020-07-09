@@ -29,8 +29,8 @@ class _NewEditPageState extends State<NewEditPage> {
     try {
       HomeProvider homeProvider = Provider.of(context, listen: false);
       String url = "${homeProvider.baseURL}$itemURL/";
-      Response response =
-          await Dio().request(url, options: Options(method: "OPTIONS"));
+      Response response = await homeProvider.dio
+          .request(url, options: Options(method: "OPTIONS"));
       return response.data['fields'];
     } on DioError catch (e) {
       key.currentState.showSnackBar(
@@ -47,7 +47,7 @@ class _NewEditPageState extends State<NewEditPage> {
       HomeProvider homeProvider = Provider.of(context, listen: false);
       var header = await LoginProvider.getLoginAccessKey();
       String url = "${homeProvider.baseURL}$itemURL/";
-      Response response = await Dio().post(
+      Response response = await homeProvider.dio.post(
         url,
         data: data,
         options: Options(headers: header),
@@ -70,7 +70,7 @@ class _NewEditPageState extends State<NewEditPage> {
       HomeProvider homeProvider = Provider.of(context, listen: false);
       var header = await LoginProvider.getLoginAccessKey();
       String url = "${homeProvider.baseURL}$itemURL/${widget.id}/";
-      Response response = await Dio().patch(
+      Response response = await homeProvider.dio.patch(
         url,
         data: data,
         options: Options(headers: header),

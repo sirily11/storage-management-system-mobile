@@ -60,6 +60,7 @@ class HomepageDrawer extends StatelessWidget {
               },
             ),
             ListTile(
+              key: Key("Settings"),
               title: Text("Settings"),
               onTap: () {
                 Navigator.pushReplacement(context,

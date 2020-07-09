@@ -23,7 +23,7 @@ class Homepage extends StatefulWidget {
   }
 }
 
-class HomePageState extends State<Homepage> with TickerProviderStateMixin {
+class HomePageState extends State<Homepage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
