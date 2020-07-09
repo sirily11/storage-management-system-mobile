@@ -112,6 +112,7 @@ class HomePageState extends State<Homepage> {
         ],
       ),
       body: EasyRefresh(
+        key: Key("Refresher"),
         firstRefresh: true,
         header: ClassicalHeader(
           textColor: Theme.of(context).primaryTextTheme.bodyText1.color,

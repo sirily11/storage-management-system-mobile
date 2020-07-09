@@ -69,6 +69,33 @@ var homeResponse = {
   ]
 };
 
+var homeResponseWithNext = {
+  "count": 2,
+  "next": "https://more.com",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "uuid": "465eaae8-9b50-4ad3-9e92-5e60bfcc5ed4",
+      "name": "Computer",
+      "description": "some description",
+      "author": 1,
+      "author_name": "Apple",
+      "category_name": "Mac",
+      "series_name": "MacBook",
+      "column": 1,
+      "row": 1,
+      "unit": "USD",
+      "position": "position1",
+      "images": [
+        {"id": 6, "image": "some image1.jpg"},
+        {"id": 7, "image": "some image2.jpg"}
+      ],
+      "price": 500.0
+    }
+  ]
+};
+
 var settingsResponse = {
   "categories": [
     {"id": 1, "name": "电脑"}

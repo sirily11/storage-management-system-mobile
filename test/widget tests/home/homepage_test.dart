@@ -15,6 +15,7 @@ class MockDio extends Mock implements Dio {}
 void main() {
   group("Home page test", () {
     Dio dio = MockDio();
+    final refresherFinder = find.byKey(Key("Refresher"));
 
     setUpAll(() {
       when(dio.post(any)).thenAnswer(
@@ -91,6 +92,41 @@ void main() {
         await tester.tap(find.byKey(Key("Select Category")));
         await tester.pumpAndSettle();
         expect(find.text("Categories"), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      "Test fetch more",
+      (WidgetTester tester) async {
+        when(dio.get(any)).thenAnswer(
+          (realInvocation) async => Response(data: homeResponseWithNext),
+        );
+        HomeProvider homeProvider = HomeProvider(networkProvider: dio);
+        LoginProvider loginProvider = LoginProvider(networkProvider: dio);
+
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (context) => homeProvider,
+              ),
+              ChangeNotifierProvider(
+                create: (context) => loginProvider,
+              )
+            ],
+            child: MaterialApp(
+              home: Homepage(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle(Duration(seconds: 2));
+
+        await tester.drag(refresherFinder, Offset(0, 600));
+        await tester.pumpAndSettle(Duration(seconds: 2));
+        expect(find.text("Computer"), findsNWidgets(2));
+        await homeProvider.fetchItems();
+        await tester.pumpAndSettle(Duration(seconds: 2));
+        expect(find.text("Computer"), findsNWidgets(1));
       },
     );
   });
