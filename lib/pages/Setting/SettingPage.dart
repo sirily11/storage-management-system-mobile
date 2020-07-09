@@ -4,8 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
-
-import '../Edit/CardTheme.dart';
 import '../Home/components/DrawerNav.dart';
 
 class SettingPage extends StatefulWidget {
@@ -84,71 +82,69 @@ class AddressForm extends StatelessWidget {
     HomeProvider homeProvider = Provider.of(context);
     ItemProvider itemProvider = Provider.of(context);
 
-    return CardSelectorTheme(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              key: Key("URL Field"),
-              controller: _controller,
-              autovalidate: true,
-              style: Theme.of(context).textTheme.bodyText1,
-              validator: (str) {
-                if (!(str.startsWith("http") | str.startsWith("https"))) {
-                  return "Invalid URL";
-                }
-                if (str.endsWith("/")) {
-                  return "Invalid URL";
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                labelText: "Server Address",
-                labelStyle:
-                    Theme.of(context).textTheme.body1.copyWith(fontSize: 18),
-                border: new OutlineInputBorder(
-                  borderRadius: new BorderRadius.circular(15.0),
-                  borderSide: new BorderSide(),
-                ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: <Widget>[
+          TextFormField(
+            key: Key("URL Field"),
+            controller: _controller,
+            autovalidate: true,
+            style: Theme.of(context).textTheme.bodyText1,
+            validator: (str) {
+              if (!(str.startsWith("http") | str.startsWith("https"))) {
+                return "Invalid URL";
+              }
+              if (str.endsWith("/")) {
+                return "Invalid URL";
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              labelText: "Server Address",
+              labelStyle:
+                  Theme.of(context).textTheme.body1.copyWith(fontSize: 18),
+              border: new OutlineInputBorder(
+                borderRadius: new BorderRadius.circular(15.0),
+                borderSide: new BorderSide(),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text("Save"),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                              child: new Wrap(
-                            children: <Widget>[
-                              new ListTile(
-                                  leading: new Icon(Icons.save),
-                                  title: new Text('Save'),
-                                  onTap: () async {
-                                    await homeProvider.setURL(_controller.text);
-                                    await itemProvider.initURL();
-                                    await homeProvider.initURL();
-                                    Navigator.pop(context);
-                                    onSaved();
-                                  }),
-                              new ListTile(
-                                leading: new Icon(Icons.clear),
-                                title: new Text('Cancel'),
-                                onTap: () => Navigator.pop(context),
-                              ),
-                            ],
-                          ));
-                        });
-                  },
-                ),
-              ],
-            )
-          ],
-        ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              RaisedButton(
+                child: Text("Save"),
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                            child: new Wrap(
+                          children: <Widget>[
+                            new ListTile(
+                                leading: new Icon(Icons.save),
+                                title: new Text('Save'),
+                                onTap: () async {
+                                  await homeProvider.setURL(_controller.text);
+                                  await itemProvider.initURL();
+                                  await homeProvider.initURL();
+                                  Navigator.pop(context);
+                                  onSaved();
+                                }),
+                            new ListTile(
+                              leading: new Icon(Icons.clear),
+                              title: new Text('Cancel'),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ));
+                      });
+                },
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

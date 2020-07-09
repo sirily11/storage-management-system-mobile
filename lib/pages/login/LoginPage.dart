@@ -61,9 +61,10 @@ class _LoginPageState extends State<LoginPage> {
                   });
                   await loginProvider.signIn(v['username'], v['password']);
                 } catch (err) {
-                  showDialog(
+                  await showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
+                      key: Key("Error"),
                       title: Text("Error"),
                       content: Text("$error"),
                       actions: <Widget>[
@@ -83,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
             )
           : Center(
               child: RaisedButton(
+                key: Key("Signout"),
                 onPressed: () async => await loginProvider.signOut(),
                 child: Text("Sign Out"),
               ),

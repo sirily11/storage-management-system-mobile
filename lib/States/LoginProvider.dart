@@ -22,12 +22,17 @@ class LoginProvider with ChangeNotifier {
   /// Login
   Future<void> signIn(String username, String password) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    var response = await _sendSignInRequest(username, password);
-    hasLogined = true;
-    await preferences.setString(accessPath, response.data['access']);
-    await preferences.setString(passwordPath, password);
-    await preferences.setString(usernamePath, username);
-    notifyListeners();
+    try {
+      var response = await _sendSignInRequest(username, password);
+      hasLogined = true;
+      await preferences.setString(accessPath, response.data['access']);
+      await preferences.setString(passwordPath, password);
+      await preferences.setString(usernamePath, username);
+      notifyListeners();
+    } catch (err) {
+      print(err);
+      rethrow;
+    }
   }
 
   Future<Response> _sendSignInRequest(String username, String password) async {
