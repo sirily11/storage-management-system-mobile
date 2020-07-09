@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'UploadDialog.dart';
 
@@ -65,6 +66,7 @@ class _ImageScreenState extends State<ImageScreen> {
   }
 
   Widget buildMobile(BuildContext context) {
+    ItemProvider itemProvider = Provider.of(context, listen: false);
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Center(
@@ -80,7 +82,7 @@ class _ImageScreenState extends State<ImageScreen> {
                     child: RaisedButton(
                       onPressed: () async {
                         try {
-                          var imageFile = await ItemProvider.pickImage(
+                          var imageFile = await itemProvider.pickImage(
                             ImageSource.camera,
                           );
                           var labels = await labelImage(imageFile);
@@ -115,7 +117,7 @@ class _ImageScreenState extends State<ImageScreen> {
                     child: RaisedButton(
                       onPressed: () async {
                         try {
-                          var imageFile = await ItemProvider.pickImage(
+                          var imageFile = await itemProvider.pickImage(
                             ImageSource.gallery,
                           );
                           var labels = await labelImage(imageFile);

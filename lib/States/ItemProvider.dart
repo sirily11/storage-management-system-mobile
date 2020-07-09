@@ -22,11 +22,16 @@ class ItemProvider with ChangeNotifier {
   StorageItemDetail item;
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey qrKey = new GlobalKey();
+  ImagePicker imagePicker;
   String baseURL;
   Dio dio;
 
-  ItemProvider({Dio networkProvider}) {
+  /// Set this to true if you are running test.
+  bool isTest = false;
+
+  ItemProvider({Dio networkProvider, ImagePicker imagePicker}) {
     this.dio = networkProvider ?? Dio();
+    this.imagePicker = imagePicker ?? ImagePicker();
     this.initURL();
   }
 
@@ -37,7 +42,7 @@ class ItemProvider with ChangeNotifier {
   }
 
   PersistentBottomSheetController _sheetController() {
-    return scaffoldKey.currentState.showBottomSheet((context) {
+    return scaffoldKey.currentState?.showBottomSheet((context) {
       return Container(
         color: Color.fromRGBO(64, 75, 96, .9),
         height: 80,
@@ -65,7 +70,7 @@ class ItemProvider with ChangeNotifier {
       final response = await this.dio.get(url);
       var item = StorageItemDetail.fromJson(response.data);
       Future.delayed(Duration(milliseconds: 500), () {
-        controller.close();
+        controller?.close();
       });
       return item;
     } on Exception catch (err) {
@@ -201,16 +206,20 @@ class ItemProvider with ChangeNotifier {
   }) async {
     var url = "$baseURL$locationURL/${item.location.id}/";
     var header = await LoginProvider.getLoginAccessKey();
-    await this.dio.patch(
-          url,
-          data: {"latitude": latitude, "longitude": longitude},
-          options: Options(headers: header),
-        );
-    await this._fetchItem(item.id);
+    try {
+      await this.dio.patch(
+            url,
+            data: {"latitude": latitude, "longitude": longitude},
+            options: Options(headers: header),
+          );
+      await this._fetchItem(item.id);
+    } catch (err) {
+      print(err);
+      rethrow;
+    }
   }
 
-  static Future<File> pickImage(ImageSource source) async {
-    var imagePicker = ImagePicker();
+  Future<File> pickImage(ImageSource source) async {
     PickedFile image = await imagePicker.getImage(source: source);
     File imageFile = File(image.path);
     return imageFile;

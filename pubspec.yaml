@@ -59,6 +59,7 @@ dev_dependencies:
     sdk: flutter
   mockito: ^4.1.1
   mock_web_server: ^4.1.1
+  network_image_mock: ^1.0.0
   test: any
   flutter_driver:
     sdk: flutter

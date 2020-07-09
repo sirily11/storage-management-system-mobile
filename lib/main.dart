@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:provider/provider.dart';
+import 'package:storage_management_mobile/States/LocationProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/pages/Loading/LoadingScreen.dart';
 
@@ -26,6 +27,9 @@ class StorageManagement extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => LoginProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LocationProvider(),
         )
       ],
       child: MaterialApp(

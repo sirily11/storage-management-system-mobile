@@ -103,7 +103,10 @@ class _UploadDialogState extends State<UploadDialog> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: RaisedButton(
+                      key: Key("Upload"),
                       onPressed: () async {
+                        ItemProvider itemProvider =
+                            Provider.of(context, listen: false);
                         try {
                           setState(() {
                             progress = 0;
@@ -112,6 +115,10 @@ class _UploadDialogState extends State<UploadDialog> {
                           FormData formData;
                           String url;
                           Response response;
+
+                          if (itemProvider.isTest) {
+                            Navigator.pop(context, "http://fakeimage.jpg");
+                          }
 
                           if (widget.imageDestination ==
                               ImageDestination.itemImage) {
@@ -122,8 +129,6 @@ class _UploadDialogState extends State<UploadDialog> {
                             });
                             url = "${state.baseURL}$itemImageURL/";
                           } else {
-                            ItemProvider itemProvider =
-                                Provider.of(context, listen: false);
                             formData = FormData.fromMap({
                               "image": await MultipartFile.fromFile(
                                   widget.image.path)
@@ -134,13 +139,13 @@ class _UploadDialogState extends State<UploadDialog> {
                           var header = await LoginProvider.getLoginAccessKey();
                           if (widget.imageDestination ==
                               ImageDestination.itemImage) {
-                            response = await Dio().post(
+                            response = await itemProvider.dio.post(
                               url,
                               data: formData,
                               options: Options(headers: header),
                             );
                           } else {
-                            response = await Dio().patch(
+                            response = await itemProvider.dio.patch(
                               url,
                               data: formData,
                               options: Options(headers: header),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as d;
+import 'package:location/location.dart' show LocationData;
+
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
+import 'package:storage_management_mobile/States/LocationProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
-import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';
 
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,13 +32,6 @@ class _LocationDetailState extends State<LocationDetail> {
     this.longitude = widget.location.longitude;
   }
 
-  Widget item(String label, String value) {
-    return ListTile(
-      title: Text(label),
-      subtitle: Text(value == null ? "Empty" : value),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     ItemProvider itemProvider = Provider.of(context);
@@ -52,16 +46,16 @@ class _LocationDetailState extends State<LocationDetail> {
               tooltip: "Update location",
               icon: Icon(Icons.location_on),
               onPressed: () async {
-                d.Location location = new d.Location();
-                var permission = await location.hasPermission();
-                if (permission == d.PermissionStatus.denied) {
-                  permission = await location.requestPermission();
-                }
-                if (permission == d.PermissionStatus.granted) {
-                  var l = await location.getLocation();
-                  showDialog(
+                LocationProvider locationProvider =
+                    Provider.of(context, listen: false);
+                LocationData locationData =
+                    await locationProvider.getLocation();
+
+                if (locationData != null) {
+                  await showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
+                      key: Key("Update Location"),
                       title: Text("Update Location"),
                       content: Text("Use Location"),
                       actions: <Widget>[
@@ -74,17 +68,32 @@ class _LocationDetailState extends State<LocationDetail> {
                         FlatButton(
                           onPressed: () async {
                             await itemProvider.updateLocation(
-                              latitude: l.latitude,
-                              longitude: l.longitude,
+                              latitude: locationData.latitude,
+                              longitude: locationData.longitude,
                             );
 
                             setState(() {
-                              latitude = l.latitude;
-                              longitude = l.longitude;
+                              latitude = locationData.latitude;
+                              longitude = locationData.longitude;
                             });
                             Navigator.pop(context);
                           },
-                          child: Text("ok"),
+                          child: Text("OK"),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      key: Key("Error"),
+                      title: Text("Cannot Get Location"),
+                      content: Text("Cannot Get Location"),
+                      actions: <Widget>[
+                        FlatButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("OK"),
                         )
                       ],
                     ),
@@ -100,6 +109,7 @@ class _LocationDetailState extends State<LocationDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
+                key: Key("Map"),
                 height: 300,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),

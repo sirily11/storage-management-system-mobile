@@ -36,6 +36,7 @@ class _PositionDetailState extends State<PositionDetail> {
   @override
   Widget build(BuildContext context) {
     LoginProvider loginProvider = Provider.of(context);
+    ItemProvider itemProvider = Provider.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +48,7 @@ class _PositionDetailState extends State<PositionDetail> {
             onPressed: () async {
               ItemProvider itemDetailState =
                   Provider.of(context, listen: false);
-              showDialog(
+              await showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
                   content: Container(
@@ -67,6 +68,12 @@ class _PositionDetailState extends State<PositionDetail> {
                   actions: <Widget>[
                     FlatButton(
                       onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text("OK"),
+                    ),
+                    FlatButton(
+                      onPressed: () async {
                         itemDetailState.printPDF();
                       },
                       child: Text("Print"),
@@ -80,7 +87,7 @@ class _PositionDetailState extends State<PositionDetail> {
             IconButton(
               key: Key("Add detail image"),
               onPressed: () async {
-                showModalBottomSheet(
+                await showModalBottomSheet(
                   context: context,
                   builder: (context) => ListView(
                     shrinkWrap: true,
@@ -88,8 +95,8 @@ class _PositionDetailState extends State<PositionDetail> {
                     children: <Widget>[
                       ListTile(
                         onTap: () async {
-                          var file =
-                              await ItemProvider.pickImage(ImageSource.camera);
+                          File file =
+                              await itemProvider.pickImage(ImageSource.camera);
                           Navigator.pop(context);
                           await uploadImage(file);
                         },
@@ -98,7 +105,7 @@ class _PositionDetailState extends State<PositionDetail> {
                       ListTile(
                         onTap: () async {
                           var file =
-                              await ItemProvider.pickImage(ImageSource.gallery);
+                              await itemProvider.pickImage(ImageSource.gallery);
                           Navigator.pop(context);
                           await uploadImage(file);
                         },
@@ -147,16 +154,20 @@ class _PositionDetailState extends State<PositionDetail> {
   }
 
   Future<void> uploadImage(File file) async {
-    var url = await showCupertinoModalBottomSheet<String>(
-      context: context,
-      expand: true,
-      builder: (context, c) => UploadDialog(
-        image: file,
-        imageDestination: ImageDestination.detailPosition,
-      ),
-    );
+    ItemProvider itemProvider = Provider.of(context, listen: false);
+    String url;
+    if (!itemProvider.isTest) {
+      url = await showCupertinoModalBottomSheet<String>(
+        context: context,
+        expand: true,
+        builder: (context, c) => UploadDialog(
+          image: file,
+          imageDestination: ImageDestination.detailPosition,
+        ),
+      );
+    }
+
     if (url != null) {
-      ItemProvider itemProvider = Provider.of(context, listen: false);
       itemProvider.item.position.imageURL = url;
       setState(() {
         imageURL = url;
