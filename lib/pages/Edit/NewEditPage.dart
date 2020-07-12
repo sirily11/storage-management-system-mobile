@@ -24,6 +24,25 @@ class NewEditPage extends StatefulWidget {
 
 class _NewEditPageState extends State<NewEditPage> {
   GlobalKey<ScaffoldState> key = GlobalKey();
+  List<dynamic> schema;
+  bool isLoading = true;
+  String error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSchema().then((value) {
+      setState(() {
+        schema = value;
+        isLoading = false;
+      });
+    }).catchError((err) {
+      setState(() {
+        isLoading = false;
+        error = err;
+      });
+    });
+  }
 
   Future<List<dynamic>> _fetchSchema() async {
     try {
@@ -98,24 +117,35 @@ class _NewEditPageState extends State<NewEditPage> {
         appBar: AppBar(
           title: Text("Edit"),
         ),
-        body: FutureBuilder<List<dynamic>>(
-          future: _fetchSchema(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+        body: Builder(
+          builder: (context) {
+            if (isLoading) {
               return LinearProgressIndicator();
-            } else {
-              List<Map<String, dynamic>> json =
-                  snapshot.data.map((s) => s as Map<String, dynamic>).toList();
-              return JSONSchemaForm(
-                onAddForignKeyField: (path, values) async {
+            }
+
+            if (error != null) {
+              return Center(
+                child: Text("$error"),
+              );
+            }
+
+            List<Map<String, dynamic>> json =
+                schema.map((s) => s as Map<String, dynamic>).toList();
+            return Scrollbar(
+              child: JSONSchemaForm(
+                onAddforeignKeyField: (path, values) async {
                   String basePath = path.split("/")[1];
-                  await homeProvider.addForignKey(basePath, values);
+                  var result =
+                      await homeProvider.addForeignKey(basePath, values);
+                  return result;
                 },
-                onUpdateForignKeyField: (path, values, id) async {
+                onUpdateforeignKeyField: (path, values, id) async {
                   String basePath = path.split("/")[1];
-                  await homeProvider.updateForignKey(id, basePath, values);
+                  var result =
+                      await homeProvider.updateForeignKey(id, basePath, values);
+                  return result;
                 },
-                onFetchingForignKeyChoices: (path) async {
+                onFetchingforeignKeyChoices: (path) async {
                   String basePath = path.split("/")[1];
                   var choices = await homeProvider.fetchChoices(basePath);
                   return choices;
@@ -172,8 +202,12 @@ class _NewEditPageState extends State<NewEditPage> {
                     }
                   } catch (err) {}
                 },
-              );
-            }
+                onDeleteforeignKeyField: (String path, id) async {
+                  var response = await homeProvider.deleteForeignKey(id, path);
+                  return response;
+                },
+              ),
+            );
           },
         ),
       ),

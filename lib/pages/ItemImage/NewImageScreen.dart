@@ -169,23 +169,7 @@ class _ImageScreenState extends State<ImageScreen> {
                     child: RaisedButton(
                       onPressed: () async {
                         try {
-                          FileChooserResult result = await showOpenPanel(
-                              allowedFileTypes: [
-                                'png',
-                                'jpg',
-                                'jpeg',
-                                'JPG',
-                                'PNG',
-                                "gif",
-                                "GIF"
-                              ]);
-
-                          if (!result.canceled) {
-                            var paths = result.paths;
-                            if (paths.length > 0) {
-                              uploadImage(File(paths.first), null);
-                            }
-                          }
+                          
                         } catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(

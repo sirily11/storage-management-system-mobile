@@ -30,7 +30,7 @@ class HomeProvider with ChangeNotifier {
     this.initURL();
   }
 
-  Future<void> updateForignKey(
+  Future<Choice> updateForeignKey(
       int id, String path, Map<String, dynamic> data) async {
     var header = await LoginProvider.getLoginAccessKey();
     var response = await dio.patch(
@@ -38,9 +38,20 @@ class HomeProvider with ChangeNotifier {
       data: data,
       options: Options(headers: header),
     );
+    return Choice(label: response.data['name'], value: response.data['id']);
   }
 
-  Future<void> addForignKey(String path, Map<String, dynamic> data) async {
+  Future<Choice> deleteForeignKey(
+      int id, String path) async {
+    var header = await LoginProvider.getLoginAccessKey();
+    var response = await dio.delete(
+      "$baseURL/storage_management/$path/$id/",
+      options: Options(headers: header),
+    );
+    return Choice(label: response.data['name'], value: response.data['id']);
+  }
+
+  Future<Choice> addForeignKey(String path, Map<String, dynamic> data) async {
     try {
       var header = await LoginProvider.getLoginAccessKey();
       var response = await dio.post(
@@ -50,6 +61,7 @@ class HomeProvider with ChangeNotifier {
           headers: header,
         ),
       );
+      return Choice(label: response.data['name'], value: response.data['id']);
     } catch (err) {
       print(err);
       rethrow;

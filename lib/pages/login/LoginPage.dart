@@ -51,9 +51,6 @@ class _LoginPageState extends State<LoginPage> {
           ? JSONSchemaForm(
               schema: loginSchema,
               onFetchingSchema: null,
-              onFetchingForignKeyChoices: null,
-              onAddForignKeyField: null,
-              onUpdateForignKeyField: null,
               onSubmit: (v) async {
                 try {
                   setState(() {
@@ -81,6 +78,12 @@ class _LoginPageState extends State<LoginPage> {
                   });
                 }
               },
+              onAddforeignKeyField:
+                  (String path, Map<String, dynamic> values) {},
+              onFetchingforeignKeyChoices: (String path) {},
+              onDeleteforeignKeyField: (String path, id) {},
+              onUpdateforeignKeyField:
+                  (String path, Map<String, dynamic> values, id) {},
             )
           : Center(
               child: RaisedButton(

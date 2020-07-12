@@ -134,7 +134,7 @@ class _UploadDialogState extends State<UploadDialog> {
                                   widget.image.path)
                             });
                             url =
-                                "${state.baseURL}$detailPositionURL/${itemProvider.item.id}/";
+                                "${state.baseURL}$detailPositionURL/${itemProvider.item.position.id}/";
                           }
                           var header = await LoginProvider.getLoginAccessKey();
                           if (widget.imageDestination ==
