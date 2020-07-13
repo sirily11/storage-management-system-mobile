@@ -96,7 +96,11 @@ class _UploadDialogState extends State<UploadDialog> {
                     : null,
               ),
             ),
-            progress != null ? LinearProgressIndicator() : Container(),
+            progress != null
+                ? LinearProgressIndicator(
+                    value: progress,
+                  )
+                : Container(),
             Row(
               children: <Widget>[
                 Expanded(
@@ -143,12 +147,22 @@ class _UploadDialogState extends State<UploadDialog> {
                               url,
                               data: formData,
                               options: Options(headers: header),
+                              onSendProgress: (count, total) {
+                                setState(() {
+                                  progress = count / total;
+                                });
+                              },
                             );
                           } else {
                             response = await itemProvider.dio.patch(
                               url,
                               data: formData,
                               options: Options(headers: header),
+                              onSendProgress: (count, total) {
+                                setState(() {
+                                  progress = count / total;
+                                });
+                              },
                             );
                           }
 

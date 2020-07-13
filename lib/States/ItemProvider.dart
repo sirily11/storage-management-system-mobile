@@ -97,7 +97,7 @@ class ItemProvider with ChangeNotifier {
     }
   }
 
-  Future<void> printPDF() async {
+  Future<void> printPDF({int number = 1}) async {
     final p = pdf.Document();
     RenderRepaintBoundary boundary = qrKey.currentContext.findRenderObject();
     var image = await boundary.toImage();
@@ -111,11 +111,14 @@ class ItemProvider with ChangeNotifier {
     p.addPage(
       pdf.Page(
         pageFormat: PdfPageFormat.a4,
-        build: (c) => pdf.Container(
-          height: 140,
-          width: 140,
-          child: pdf.Image(i),
-        ),
+        build: (c) => pdf.Wrap(children: [
+          for (int n = 0; n < number; n++)
+            pdf.Container(
+              height: 140,
+              width: 140,
+              child: pdf.Image(i),
+            ),
+        ]),
       ),
     );
     await Printing.layoutPdf(onLayout: (f) async => p.save());
@@ -220,7 +223,10 @@ class ItemProvider with ChangeNotifier {
   }
 
   Future<File> pickImage(ImageSource source) async {
-    PickedFile image = await imagePicker.getImage(source: source);
+    PickedFile image = await imagePicker.getImage(
+      source: source,
+      maxWidth: 1920,
+    );
     File imageFile = File(image.path);
     return imageFile;
   }

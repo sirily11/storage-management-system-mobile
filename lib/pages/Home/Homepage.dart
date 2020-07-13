@@ -14,7 +14,7 @@ import 'package:storage_management_mobile/pages/Home/components/CategorySelector
 import '../Edit/NewEditPage.dart';
 import 'Detail/ItemDetailPage.dart';
 import 'components/DrawerNav.dart';
-import 'ItemDisplay.dart';
+import 'ItemRow.dart';
 
 class Homepage extends StatefulWidget {
   Homepage({Key key}) : super(key: key);
@@ -39,7 +39,9 @@ class HomePageState extends State<Homepage> {
     try {
       var result = await BarcodeScanner.scan();
       String barCode = result.rawContent;
-      await state.fetchItemByQR(context, qrCode: barCode);
+      if (barCode.isNotEmpty) {
+        await state.fetchItemByQR(context, qrCode: barCode);
+      }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.cameraAccessDenied) {
         homePageState.scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -111,23 +113,33 @@ class HomePageState extends State<Homepage> {
           )
         ],
       ),
-      body: EasyRefresh(
-        key: Key("Refresher"),
-        firstRefresh: true,
-        header: ClassicalHeader(
-          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
-        ),
-        footer: ClassicalFooter(
-          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
-        ),
-        onRefresh: () async {
-          await fetchData();
-        },
-        onLoad: () async {
-          await homeProvider.fetchMore();
-        },
-        child: ItemDisplay(
-          items: homeProvider.items,
+      body: Scrollbar(
+        child: EasyRefresh(
+          key: Key("Refresher"),
+          firstRefresh: true,
+          header: ClassicalHeader(
+            textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+          ),
+          footer: ClassicalFooter(
+            textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+          ),
+          onRefresh: () async {
+            await fetchData();
+          },
+          onLoad: homeProvider.next == null
+              ? null
+              : () async {
+                  await homeProvider.fetchMore();
+                },
+          child: ListView.builder(
+            itemCount: homeProvider.items.length,
+            itemBuilder: (context, index) {
+              var item = homeProvider.items[index];
+              return ItemRow(
+                item: item,
+              );
+            },
+          ),
         ),
       ),
       drawer: new HomepageDrawer(),

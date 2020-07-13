@@ -11,8 +11,6 @@ import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/pages/ItemImage/UploadDialog.dart';
-
-import '../../../DataObj/StorageItem.dart';
 import 'DetailedCard.dart';
 
 class PositionDetail extends StatefulWidget {
@@ -50,35 +48,8 @@ class _PositionDetailState extends State<PositionDetail> {
                   Provider.of(context, listen: false);
               await showDialog(
                 context: context,
-                builder: (_) => AlertDialog(
-                  content: Container(
-                    height: 200,
-                    width: 200,
-                    child: RepaintBoundary(
-                      key: itemDetailState.qrKey,
-                      child: QrImage(
-                        key: Key("Qrimage"),
-                        backgroundColor: Colors.white,
-                        data: widget.position.uuid,
-                        version: QrVersions.auto,
-                        gapless: false,
-                      ),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                      },
-                      child: Text("OK"),
-                    ),
-                    FlatButton(
-                      onPressed: () async {
-                        itemDetailState.printPDF();
-                      },
-                      child: Text("Print"),
-                    )
-                  ],
+                builder: (_) => PrintingWidget(
+                  positionDetail: widget.position,
                 ),
               );
             },
@@ -173,5 +144,82 @@ class _PositionDetailState extends State<PositionDetail> {
         imageURL = url;
       });
     }
+  }
+}
+
+class PrintingWidget extends StatefulWidget {
+  final Position positionDetail;
+  const PrintingWidget({
+    Key key,
+    @required this.positionDetail,
+  }) : super(key: key);
+
+  @override
+  _PrintingWidgetState createState() => _PrintingWidgetState();
+}
+
+class _PrintingWidgetState extends State<PrintingWidget> {
+  TextEditingController textEditingController =
+      TextEditingController(text: "1");
+
+  @override
+  Widget build(BuildContext context) {
+    ItemProvider itemProvider = Provider.of(context);
+    return AlertDialog(
+      content: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 280,
+          child: Column(
+            children: [
+              Container(
+                height: 200,
+                width: 200,
+                child: RepaintBoundary(
+                  key: itemProvider.qrKey,
+                  child: QrImage(
+                    key: Key("Qrimage"),
+                    backgroundColor: Colors.white,
+                    data: widget.positionDetail.uuid,
+                    version: QrVersions.auto,
+                    gapless: false,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  controller: textEditingController,
+                  decoration: InputDecoration(
+                    labelText: "Number of QR Code",
+                    filled: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () async {
+            Navigator.pop(context);
+          },
+          child: Text("OK"),
+        ),
+        FlatButton(
+          onPressed: () async {
+            var number = int.tryParse(textEditingController.text);
+
+            await itemProvider.printPDF(number: number);
+          },
+          child: Text("Print"),
+        )
+      ],
+    );
   }
 }

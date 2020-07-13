@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
-import 'package:storage_management_mobile/pages/Home/ItemDisplay.dart';
+import 'package:storage_management_mobile/pages/Home/ItemRow.dart';
 
 void main() {
   group("items tests", () {

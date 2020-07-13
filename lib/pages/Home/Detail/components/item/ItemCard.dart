@@ -32,6 +32,8 @@ class CardInfo extends StatelessWidget {
             ),
             subtitle: Text(
               i.subtitle ?? "",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             trailing: i.onPress != null
                 ? Container(

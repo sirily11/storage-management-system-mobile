@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
-import 'package:storage_management_mobile/pages/Home/Detail/ItemDetailPage.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/AuthorDetail.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/LocationDetail.dart';
 import 'package:storage_management_mobile/pages/Home/Detail/SubDetail/PositionDetail.dart';

@@ -41,8 +41,7 @@ class HomeProvider with ChangeNotifier {
     return Choice(label: response.data['name'], value: response.data['id']);
   }
 
-  Future<Choice> deleteForeignKey(
-      int id, String path) async {
+  Future<Choice> deleteForeignKey(int id, String path) async {
     var header = await LoginProvider.getLoginAccessKey();
     var response = await dio.delete(
       "$baseURL/storage_management/$path/$id/",

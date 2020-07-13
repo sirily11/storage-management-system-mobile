@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/DataObj/Setting.dart';
 import 'package:storage_management_mobile/DataObj/StorageItem.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
-import 'package:storage_management_mobile/pages/Home/ItemDisplay.dart';
+import 'package:storage_management_mobile/pages/Home/ItemRow.dart';
 import 'package:storage_management_mobile/pages/Home/components/CategorySelector.dart';
 
 void main() {

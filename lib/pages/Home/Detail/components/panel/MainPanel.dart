@@ -11,7 +11,6 @@ class MainPanel extends StatelessWidget {
 
   MainPanel({this.scrollController});
 
-
   @override
   Widget build(BuildContext context) {
     ItemProvider detailState =
@@ -44,11 +43,15 @@ class MainPanel extends StatelessWidget {
           SizedBox(
             height: 18.0,
           ),
-          Text(
-            item.name,
-            style: TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 24.0,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              item.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 24.0,
+              ),
             ),
           ),
           Text(getTime(item.createAt)),
