@@ -189,6 +189,14 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
+  Future<List<StorageItemAbstract>> search(String keyword) async {
+    String url = "$baseURL$itemURL";
+    var response = await dio.get(url, queryParameters: {"search": keyword});
+    return (response.data['results'] as List)
+        .map((e) => StorageItemAbstract.fromJson(e))
+        .toList();
+  }
+
   /// Fetch list of items
   Future<void> fetchItems() async {
     String url = "$baseURL$itemURL";

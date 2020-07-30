@@ -227,7 +227,7 @@ class ItemProvider with ChangeNotifier {
       source: source,
       maxWidth: 1920,
     );
-    File imageFile = File(image.path);
+    File imageFile = File(image?.path ?? "testfile");
     return imageFile;
   }
 }

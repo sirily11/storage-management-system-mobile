@@ -14,6 +14,8 @@ class ImageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
+      aspectRatio: 4 / 3,
+      viewportFraction: 1.0,
       enableInfiniteScroll: false,
       height: MediaQuery.of(context).size.height - 300,
       items: imageSrc.map((i) {

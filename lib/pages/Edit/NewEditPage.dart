@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/States/HomeProvider.dart';
 import 'package:storage_management_mobile/States/LoginProvider.dart';
 import 'package:storage_management_mobile/States/urls.dart';
+import 'package:storage_management_mobile/pages/Edit/WikiSearchPage.dart';
 
 class NewEditPage extends StatefulWidget {
   final Map<String, dynamic> values;
@@ -176,21 +177,42 @@ class _NewEditPageState extends State<NewEditPage> {
                 ],
                 actions: [
                   FieldAction(
-                      schemaName: "qr_code",
-                      actionTypes: ActionTypes.qrScan,
-                      actionDone: ActionDone.getInput),
-                  FieldAction<File>(
-                      schemaName: "name",
-                      actionTypes: ActionTypes.image,
-                      actionDone: ActionDone.getInput,
-                      onDone: (file) async {
-                        final ImageLabeler labeler =
-                            FirebaseVision.instance.imageLabeler();
-                        var result = await labeler.processImage(
-                          FirebaseVisionImage.fromFile(file),
-                        );
-                        return result.first.text;
-                      })
+                    schemaName: "qr_code",
+                    actionTypes: ActionTypes.qrScan,
+                    actionDone: ActionDone.getInput,
+                  ),
+                  FieldAction(
+                    schemaName: 'name',
+                    icon: Icons.search,
+                    actionTypes: ActionTypes.custom,
+                    actionDone: ActionDone.getInput,
+                    onActionTap: (schema) async {
+                      print(schema.value);
+                      String result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WikiSearchPage(),
+                        ),
+                      );
+                      return result;
+                    },
+                  ),
+                  FieldAction(
+                    schemaName: 'description',
+                    icon: Icons.search,
+                    actionTypes: ActionTypes.custom,
+                    actionDone: ActionDone.getInput,
+                    onActionTap: (schema) async {
+                      print(schema.value);
+                      String result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WikiSearchPage(),
+                        ),
+                      );
+                      return result;
+                    },
+                  )
                 ],
                 onSubmit: (data) async {
                   data.removeWhere((k, v) => v == null);

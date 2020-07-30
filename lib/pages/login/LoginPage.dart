@@ -85,12 +85,29 @@ class _LoginPageState extends State<LoginPage> {
               onUpdateforeignKeyField:
                   (String path, Map<String, dynamic> values, id) {},
             )
-          : Center(
-              child: RaisedButton(
-                key: Key("Signout"),
-                onPressed: () async => await loginProvider.signOut(),
-                child: Text("Sign Out"),
-              ),
+          : Column(
+              children: [
+                Card(
+                  elevation: 0,
+                  child: ListTile(
+                    title: Text("You are logined"),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: RaisedButton(
+                          key: Key("Signout"),
+                          onPressed: () async => await loginProvider.signOut(),
+                          child: Text("Sign Out"),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
       drawer: HomepageDrawer(),
     );

@@ -239,7 +239,24 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return buildSuggestions(context);
+    HomeProvider homeProvider = Provider.of(context, listen: false);
+    return FutureBuilder(
+      future: homeProvider.search(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        }
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return _renderResults(snapshot.data);
+      },
+    );
   }
 
   @override
@@ -260,6 +277,10 @@ class CustomSearchDelegate extends SearchDelegate<List<StorageItemAbstract>> {
           item.authorName.contains(query);
     }).toList();
 
+    return _renderResults(result);
+  }
+
+  ListView _renderResults(List<StorageItemAbstract> result) {
     return ListView.builder(
         itemCount: result.length,
         itemBuilder: (context, i) {
