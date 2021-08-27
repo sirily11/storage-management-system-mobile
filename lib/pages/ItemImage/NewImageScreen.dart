@@ -82,7 +82,7 @@ class _ImageScreenState extends State<ImageScreen> {
                           var imageFile = await itemProvider.pickImage(
                             ImageSource.camera,
                           );
-                          var labels = [];
+                          var labels = [""];
                           await uploadImage(imageFile, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
@@ -117,7 +117,7 @@ class _ImageScreenState extends State<ImageScreen> {
                           var imageFile = await itemProvider.pickImage(
                             ImageSource.gallery,
                           );
-                          var labels = [];
+                          var labels = [""];
                           await uploadImage(imageFile, labels);
                         } catch (err) {
                           ScaffoldMessenger.of(context).showSnackBar(
