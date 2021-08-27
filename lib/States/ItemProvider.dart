@@ -148,7 +148,7 @@ class ItemProvider with ChangeNotifier {
             context: context,
             backgroundColor: Colors.transparent,
             expand: true,
-            builder: (context, controller) => SearchListPage(
+            builder: (context) => SearchListPage(
               items: items,
             ),
           );
@@ -157,7 +157,7 @@ class ItemProvider with ChangeNotifier {
             context: context,
             backgroundColor: Colors.transparent,
             expand: true,
-            builder: (context, controller) => SearchListPage(
+            builder: (context) => SearchListPage(
               items: items,
             ),
           );

@@ -131,7 +131,7 @@ class _PositionDetailState extends State<PositionDetail> {
       url = await showCupertinoModalBottomSheet<String>(
         context: context,
         expand: true,
-        builder: (context, c) => UploadDialog(
+        builder: (context) => UploadDialog(
           image: file,
           imageDestination: ImageDestination.detailPosition,
         ),
@@ -205,7 +205,7 @@ class _PrintingWidgetState extends State<PrintingWidget> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () async {
             Navigator.pop(context);
           },

@@ -29,7 +29,7 @@ class _ImageScreenState extends State<ImageScreen> {
       await showCupertinoModalBottomSheet(
         context: context,
         expand: true,
-        builder: (context, _) => UploadDialog(
+        builder: (context) => UploadDialog(
           id: widget.id,
           image: image,
           labels: labels,

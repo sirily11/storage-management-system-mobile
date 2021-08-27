@@ -101,12 +101,12 @@ class HomePageState extends State<Homepage> {
               try {
                 await CupertinoScaffold.showCupertinoModalBottomSheet(
                   context: context,
-                  builder: (c, s) => CategorySelector(),
+                  builder: (c) => CategorySelector(),
                 );
               } catch (err) {
                 showCupertinoModalBottomSheet(
                   context: context,
-                  builder: (c, s) => CategorySelector(),
+                  builder: (c) => CategorySelector(),
                 );
               }
             },
