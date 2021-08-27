@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:json_schema_form/json_schema_form.dart' hide getURL;
 import 'package:json_schema_form/json_textform/JSONForm.dart';
@@ -53,7 +52,7 @@ class _NewEditPageState extends State<NewEditPage> {
           .request(url, options: Options(method: "OPTIONS"));
       return response.data['fields'];
     } on DioError catch (e) {
-      key.currentState.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Network issue:$e"),
         ),

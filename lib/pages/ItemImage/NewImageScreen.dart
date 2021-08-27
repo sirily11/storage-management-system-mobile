@@ -1,9 +1,6 @@
 import 'dart:io';
-
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_chooser/file_chooser.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:storage_management_mobile/States/ItemProvider.dart';
@@ -27,7 +24,7 @@ class _ImageScreenState extends State<ImageScreen> {
     super.initState();
   }
 
-  Future<void> uploadImage(File image, List<ImageLabel> labels) async {
+  Future<void> uploadImage(File image, List<String> labels) async {
     if (image != null)
       await showCupertinoModalBottomSheet(
         context: context,
@@ -40,12 +37,12 @@ class _ImageScreenState extends State<ImageScreen> {
       );
   }
 
-  Future<List<ImageLabel>> labelImage(File image) async {
-    final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
-    List<ImageLabel> labels =
-        await labeler.processImage(FirebaseVisionImage.fromFile(image));
-    return labels;
-  }
+  // Future<List<ImageLabel>> labelImage(File image) async {
+  //   final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
+  //   List<ImageLabel> labels =
+  //       await labeler.processImage(FirebaseVisionImage.fromFile(image));
+  //   return labels;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +82,7 @@ class _ImageScreenState extends State<ImageScreen> {
                           var imageFile = await itemProvider.pickImage(
                             ImageSource.camera,
                           );
-                          var labels = await labelImage(imageFile);
+                          var labels = [];
                           await uploadImage(imageFile, labels);
                         } catch (err) {
                           key.currentState.showSnackBar(
@@ -114,16 +111,16 @@ class _ImageScreenState extends State<ImageScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     height: 200,
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
                         try {
                           var imageFile = await itemProvider.pickImage(
                             ImageSource.gallery,
                           );
-                          var labels = await labelImage(imageFile);
+                          var labels = [];
                           await uploadImage(imageFile, labels);
                         } catch (err) {
-                          key.currentState.showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(err.toString()),
                             ),
@@ -168,9 +165,7 @@ class _ImageScreenState extends State<ImageScreen> {
                     height: 200,
                     child: RaisedButton(
                       onPressed: () async {
-                        try {
-                          
-                        } catch (err) {
+                        try {} catch (err) {
                           key.currentState.showSnackBar(
                             SnackBar(
                               content: Text(err.toString()),

@@ -98,30 +98,30 @@ class ItemProvider with ChangeNotifier {
   }
 
   Future<void> printPDF({int number = 1}) async {
-    final p = pdf.Document();
-    RenderRepaintBoundary boundary = qrKey.currentContext.findRenderObject();
-    var image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-    Uint8List pngBytes = byteData.buffer.asUint8List();
-    final imageProvider = MemoryImage(pngBytes);
-    final PdfImage i = await pdfImageFromImageProvider(
-      pdf: p.document,
-      image: imageProvider,
-    );
-    p.addPage(
-      pdf.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (c) => pdf.Wrap(children: [
-          for (int n = 0; n < number; n++)
-            pdf.Container(
-              height: 140,
-              width: 140,
-              child: pdf.Image(i),
-            ),
-        ]),
-      ),
-    );
-    await Printing.layoutPdf(onLayout: (f) async => p.save());
+    // final p = pdf.Document();
+    // RenderRepaintBoundary boundary = qrKey.currentContext.findRenderObject();
+    // var image = await boundary.toImage();
+    // ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+    // Uint8List pngBytes = byteData.buffer.asUint8List();
+    // final imageProvider = MemoryImage(pngBytes);
+    // final PdfImage i = await pdfImageFromImageProvider(
+    //   pdf: p.document,
+    //   image: imageProvider,
+    // );
+    // p.addPage(
+    //   pdf.Page(
+    //     pageFormat: PdfPageFormat.a4,
+    //     build: (c) => pdf.Wrap(children: [
+    //       for (int n = 0; n < number; n++)
+    //         pdf.Container(
+    //           height: 140,
+    //           width: 140,
+    //           child: pdf.Image(i),
+    //         ),
+    //     ]),
+    //   ),
+    // );
+    // await Printing.layoutPdf(onLayout: (f) async => p.save());
   }
 
   /// Fetch data from  internet

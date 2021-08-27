@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,7 @@ enum ImageDestination { detailPosition, itemImage }
 class UploadDialog extends StatefulWidget {
   final File image;
   final int id;
-  final List<ImageLabel> labels;
+  final List<String> labels;
   final ImageDestination imageDestination;
 
   UploadDialog({
@@ -39,7 +38,7 @@ class _UploadDialogState extends State<UploadDialog> {
       child: Tags(
         itemCount: widget.labels != null ? widget.labels.length : 0,
         itemBuilder: (index) {
-          final _item = widget.labels[index].text;
+          final _item = widget.labels[index];
           return ItemTags(
             index: index,
             title: _item,
