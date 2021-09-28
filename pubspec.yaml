@@ -36,12 +36,12 @@ dependencies:
   web_socket_channel: ^1.0.13
   json_schema_form: ^1.1.9+2
   dartwiki: ^1.0.1
-  google_maps_flutter: ^2.0.10
+  # google_maps_flutter: ^2.0.10
   image_picker: ^0.8.3+3
   flutter_staggered_grid_view: ^0.3.0
   modal_bottom_sheet: ^2.0.0
   printing: ^5.5.0
-  numberpicker: ^1.1.0
+  numberpicker: ^2.1.1
   firebase_core: ^1.6.0
   # google_ml_kit: ^0.7.1
   flutter_tags: ^0.4.5

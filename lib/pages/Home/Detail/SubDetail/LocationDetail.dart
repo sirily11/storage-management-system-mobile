@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' show LocationData;
 
 import 'package:provider/provider.dart';
@@ -105,30 +105,30 @@ class _LocationDetailState extends State<LocationDetail> {
       ),
       body: ListView(
         children: <Widget>[
-          if (latitude != null)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                key: Key("Map"),
-                height: 300,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: GoogleMap(
-                    myLocationButtonEnabled: false,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(latitude, longitude),
-                      zoom: 11,
-                    ),
-                    markers: [
-                      Marker(
-                        markerId: MarkerId("1"),
-                        position: LatLng(latitude, longitude),
-                      )
-                    ].toSet(),
-                  ),
-                ),
-              ),
-            ),
+          // if (latitude != null)
+          //   Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: Container(
+          //       key: Key("Map"),
+          //       height: 300,
+          //       child: ClipRRect(
+          //         borderRadius: BorderRadius.circular(10),
+          //         child: GoogleMap(
+          //           myLocationButtonEnabled: false,
+          //           initialCameraPosition: CameraPosition(
+          //             target: LatLng(latitude, longitude),
+          //             zoom: 11,
+          //           ),
+          //           markers: [
+          //             Marker(
+          //               markerId: MarkerId("1"),
+          //               position: LatLng(latitude, longitude),
+          //             )
+          //           ].toSet(),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
           DetailedCard(title: "Country", subtitle: widget.location?.country),
           DetailedCard(title: "City", subtitle: widget.location?.city),
           DetailedCard(title: "Street", subtitle: widget.location?.street),

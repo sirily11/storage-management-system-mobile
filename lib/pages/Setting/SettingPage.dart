@@ -103,7 +103,7 @@ class AddressForm extends StatelessWidget {
             decoration: InputDecoration(
               labelText: "Server Address",
               labelStyle:
-                  Theme.of(context).textTheme.body1.copyWith(fontSize: 18),
+                  Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 18),
               border: new OutlineInputBorder(
                 borderRadius: new BorderRadius.circular(15.0),
                 borderSide: new BorderSide(),
